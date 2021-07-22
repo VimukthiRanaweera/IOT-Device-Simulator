@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iot_device_simulator/presentation/component/mqttPublish.dart';
 
 import 'component/mainTopBar.dart';
 import 'component/mqttBody.dart';
@@ -23,7 +22,7 @@ class _PageBodyState extends State<PageBody> {
             children: [
               MainTopBar(),
               SizedBox(height: 30.0,),
-              MqttBody(),
+               MqttBody(),
             ],
            ),
         ),

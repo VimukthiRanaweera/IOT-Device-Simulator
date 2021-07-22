@@ -142,8 +142,8 @@ class _MobileNewMqttConnectionState extends State<MobileNewMqttConnection> {
           ),
           SizedBox(height: 30,),
           TextField(
+            maxLines: 5,
             decoration: InputDecoration(
-              hintMaxLines: 1,
               filled: true,
               fillColor: Colors.black26,
               border:OutlineInputBorder(

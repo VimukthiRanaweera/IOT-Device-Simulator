@@ -12,6 +12,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.symmetric(horizontal: 50,vertical: 50),
       child: Column(
         crossAxisAlignment:CrossAxisAlignment.end,
         children: [

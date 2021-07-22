@@ -4,8 +4,8 @@ import 'package:iot_device_simulator/presentation/MobileMqttNewConnection.dart';
 import 'package:iot_device_simulator/presentation/windowMqttNewConnection.dart';
 
 class MqttNewConnectionPage extends StatefulWidget {
-  // const MqttNewConnectionPage({Key key}) : super(key: key);
-
+  const MqttNewConnectionPage({required this.title}) : super();
+ final String title;
   @override
   _MqttNewConnectionPageState createState() => _MqttNewConnectionPageState();
 }
@@ -15,7 +15,7 @@ class _MqttNewConnectionPageState extends State<MqttNewConnectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:Text('MQTT Connection'),
+        title:Text(widget.title+' New Connection'),
       ),
       body:LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraint){

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iot_device_simulator/presentation/Responsive.dart';
+import 'package:iot_device_simulator/presentation/httpNewconnectionPage.dart';
 import 'package:iot_device_simulator/presentation/mqttNewConnectionPage.dart';
 
 class MainTopBar extends StatefulWidget {
@@ -55,10 +55,24 @@ class _MainTopBarState extends State<MainTopBar> {
             icon:Icon(Icons.settings,
             ),
             onPressed: (){
-                Navigator.of(context).push(MaterialPageRoute(builder:(_){
-                  return MqttNewConnectionPage();
+              if(dropdownValue=='MQTT') {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                  return MqttNewConnectionPage( title: 'MQTT',);
                 }
                 ));
+              }
+              else if(dropdownValue=="CoAP"){
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                  return MqttNewConnectionPage( title: 'CoAP',);
+                }
+                ));
+              }
+              else if(dropdownValue=='HTTP'){
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+                  return HttpNewConectionPage();
+                }
+                ));
+              }
             },
           ),
           // if(!Responsive.isMobile(context))

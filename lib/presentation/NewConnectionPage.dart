@@ -1,21 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iot_device_simulator/logic/protocolCubit.dart';
 import 'package:iot_device_simulator/presentation/MobileMqttNewConnection.dart';
 import 'package:iot_device_simulator/presentation/windowMqttNewConnection.dart';
 
-class MqttNewConnectionPage extends StatefulWidget {
-  const MqttNewConnectionPage({required this.title}) : super();
+class NewConnectionPage extends StatefulWidget {
+  const NewConnectionPage({required this.title}) : super();
  final String title;
   @override
-  _MqttNewConnectionPageState createState() => _MqttNewConnectionPageState();
+  _NewConnectionPageState createState() => _NewConnectionPageState();
 }
 
-class _MqttNewConnectionPageState extends State<MqttNewConnectionPage> {
+class _NewConnectionPageState extends State<NewConnectionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:Text(widget.title+' New Connection'),
+        title:BlocBuilder<ProtocolCubit,ProtocolState>(
+            builder:(context,state){
+              return Text(state.protocol+' New Connection');
+        }
+      ),
       ),
       body:LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraint){

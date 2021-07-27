@@ -7,8 +7,10 @@ class MqttSubscribe extends StatefulWidget {
   @override
   _MqttSubscribeState createState() => _MqttSubscribeState();
 }
-
+TextEditingController topic =TextEditingController();
+TextEditingController message = TextEditingController();
 class _MqttSubscribeState extends State<MqttSubscribe> {
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,8 +28,8 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                 borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               hintText: 'Topic',
-
             ),
+            controller: topic,
           ),
           SizedBox(height: 20,),
           ElevatedButton(
@@ -49,6 +51,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                 ),
                 hintText: 'Message'
             ),
+            controller: message,
           ),
         ],
       ),

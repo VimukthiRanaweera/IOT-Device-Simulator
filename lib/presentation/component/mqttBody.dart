@@ -1,6 +1,4 @@
-import 'dart:ffi';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iot_device_simulator/presentation/component/mqttPublish.dart';
 import 'package:iot_device_simulator/presentation/component/mqttSbuscribe.dart';
@@ -13,9 +11,9 @@ class MqttBody extends StatefulWidget {
   @override
   _MqttBodyState createState() => _MqttBodyState();
 }
-
+List<bool> isSelected =[true,false];
 class _MqttBodyState extends State<MqttBody> {
-  List<bool> isSelected =[true,false];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -44,6 +42,7 @@ class _MqttBodyState extends State<MqttBody> {
                       }
                     }
                   });
+
                 },
                 isSelected: isSelected,
                 fillColor:appbarColor,
@@ -55,42 +54,10 @@ class _MqttBodyState extends State<MqttBody> {
               if(isSelected[0])
                 MqttPublish(),
 
-              if(isSelected[1])
+               if(isSelected[1])
                 MqttSubscribe(),
             ],
           ),
-      // child: DefaultTabController(
-      //   length: 2,
-      //   child: Scaffold(
-      //     appBar:PreferredSize(
-      //       preferredSize: Size.fromHeight(52),
-      //       child: AppBar(
-      //         backgroundColor: Colors.blueAccent,
-      //         bottom: TabBar(
-      //           unselectedLabelColor: Colors.white30,
-      //           indicatorColor: Colors.white,
-      //           tabs: [
-      //             Padding(
-      //               padding: const EdgeInsets.all(11.0),
-      //               child: Text("Publish",style:TextStyle(fontSize:20),),
-      //             ),
-      //             Padding(
-      //               padding: const EdgeInsets.all(11.0),
-      //               child: Text("Subscribe",style:TextStyle(fontSize:20)),
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //     ) ,
-      //
-      //     body: TabBarView(
-      //       children: [
-      //         MqttPublish(),
-      //         Icon(Icons.directions_transit),
-      //       ],
-      //     ),
-      //   ),
-      // ),
     );
   }
 }

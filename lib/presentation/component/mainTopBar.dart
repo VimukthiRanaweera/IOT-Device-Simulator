@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iot_device_simulator/presentation/httpNewconnectionPage.dart';
-import 'package:iot_device_simulator/presentation/mqttNewConnectionPage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iot_device_simulator/controllers/menuControllers.dart';
+import 'package:iot_device_simulator/logic/protocolCubit.dart';
+
+
+import '../Responsive.dart';
 
 class MainTopBar extends StatefulWidget {
   // const MainTopBar({Key key}) : super(key: key);
@@ -19,11 +23,19 @@ class _MainTopBarState extends State<MainTopBar> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          if (!Responsive.isDesktop(context))
+            IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: (){
+              }
+            ),
+          SizedBox(width: 20,),
           DropdownButton<String>(
             value:dropdownValue,
             onChanged: (String? newValue) {
               setState(() {
                 dropdownValue = newValue!;
+                BlocProvider.of<ProtocolCubit>(context).SetProtocol(dropdownValue);
               });
             },
             items:<String>['MQTT','HTTP','CoAP'].map<DropdownMenuItem<String>>((String value) {
@@ -55,24 +67,7 @@ class _MainTopBarState extends State<MainTopBar> {
             icon:Icon(Icons.settings,
             ),
             onPressed: (){
-              if(dropdownValue=='MQTT') {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                  return MqttNewConnectionPage( title: 'MQTT',);
-                }
-                ));
-              }
-              else if(dropdownValue=="CoAP"){
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                  return MqttNewConnectionPage( title: 'CoAP',);
-                }
-                ));
-              }
-              else if(dropdownValue=='HTTP'){
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-                  return HttpNewConectionPage();
-                }
-                ));
-              }
+             Navigator.of(context).pushNamed('/newConnection');
             },
           ),
           // if(!Responsive.isMobile(context))

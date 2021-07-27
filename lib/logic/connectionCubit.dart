@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 
 class ConnectionCubit extends Cubit<ConnectionState>{
-  ConnectionCubit() : super(ConnectionState.ID(''));
+  ConnectionCubit() : super(ConnectionState.name(""));
   void setConnectionName(connectionName)=> emit(ConnectionState.name(connectionName));
   void setConnectionID(connectionID)=> emit(ConnectionState.ID(connectionID));
   void setBrokerAddress(connectionAddress)=> emit(ConnectionState.address(connectionAddress));
@@ -10,6 +10,7 @@ class ConnectionCubit extends Cubit<ConnectionState>{
   void setPassword(password)=> emit(ConnectionState.port(password));
   void setKeepAlive(alive)=> emit(ConnectionState.port(alive));
   void setTimeout(timeout)=> emit(ConnectionState.port(timeout));
+
 
 }
 
@@ -38,4 +39,6 @@ class ConnectionState{
   ConnectionState.keepalive(this.keepAlive);
 
   ConnectionState.connectiontimeout(this.connectionTimeOut);
+
+
 }

@@ -249,12 +249,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                         padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
                     ),
                     onPressed: (){
-                      formConnectionName.clear();
-                      formBrokerAddress.clear();
-                      formPort.clear();
-                      formUserName.clear();
-                      formPassword.clear();
-                      formConnectionID.clear();
+
                     },
                     child:Text('Delete')
                 ),
@@ -264,6 +259,12 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                         padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
                     ),
                     onPressed: (){
+                      formConnectionName.clear();
+                      formBrokerAddress.clear();
+                      formPort.clear();
+                      formUserName.clear();
+                      formPassword.clear();
+                      formConnectionID.clear();
 
                     },
                     child:Text('Cancel')

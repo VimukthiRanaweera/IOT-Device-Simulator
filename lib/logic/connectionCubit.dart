@@ -1,44 +1,36 @@
 import 'package:bloc/bloc.dart';
 
-class ConnectionCubit extends Cubit<ConnectionState>{
-  ConnectionCubit() : super(ConnectionState.name(""));
-  void setConnectionName(connectionName)=> emit(ConnectionState.name(connectionName));
-  void setConnectionID(connectionID)=> emit(ConnectionState.ID(connectionID));
-  void setBrokerAddress(connectionAddress)=> emit(ConnectionState.address(connectionAddress));
-  void setPort(connectionPort)=> emit(ConnectionState.port(connectionPort));
-  void setUsername(username)=> emit(ConnectionState.port(username));
-  void setPassword(password)=> emit(ConnectionState.port(password));
-  void setKeepAlive(alive)=> emit(ConnectionState.port(alive));
-  void setTimeout(timeout)=> emit(ConnectionState.port(timeout));
+class ConnectionCubit extends Cubit<ConState>{
+  ConnectionCubit() : super(ConState(username: '', connectionName: 'Iot Client',
+      password: '', port:1896, brokerAddress: '', connectionID: '' ,protocol: ''));
 
+  void setConnectionDetails(protocol,connectionName,connectionID,brokerAddress,port,username,password)=>
+      emit(ConState(protocol:protocol,connectionName:connectionName,connectionID:connectionID,brokerAddress:brokerAddress,port:port,username:username,password:password));
 
 }
 
-class ConnectionState{
+class ConState{
+
+  late String protocol;
   late String connectionName;
-  late String connectionID;
-  late String brokerAddress;
+ late String connectionID;
+   late String brokerAddress;
   late int port;
   late String username;
   late String password;
   late int keepAlive;
-  late int connectionTimeOut;
- static List<ConnectionState> list=[];
+
+  ConState({
+    required this.protocol,
+    required this.connectionName,
+    required this.connectionID,
+    required this.brokerAddress,
+    required this.port,
+    required this.username,
+    required this.password,
+  });
 
 
-
-  ConnectionState.name(this.connectionName);
-  ConnectionState.ID(this.connectionID);
-  ConnectionState.address(this.brokerAddress);
-  ConnectionState.port(this.port);
-
-  ConnectionState.username(this.username);
-
-  ConnectionState.password(this.password);
-
-  ConnectionState.keepalive(this.keepAlive);
-
-  ConnectionState.connectiontimeout(this.connectionTimeOut);
 
 
 }

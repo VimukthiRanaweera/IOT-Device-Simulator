@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MobileNewMqttConnection extends StatefulWidget {
   // const MobileNewMqttConnection({Key key}) : super(key: key);
@@ -19,7 +20,7 @@ class _MobileNewMqttConnectionState extends State<MobileNewMqttConnection> {
             alignment:Alignment.topRight,
             child: ElevatedButton(
                 style:ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                    padding: EdgeInsets.symmetric(horizontal:10,vertical:5)
                 ),
                 onPressed: (){
 
@@ -63,7 +64,7 @@ class _MobileNewMqttConnectionState extends State<MobileNewMqttConnection> {
           SizedBox(width: 30,),
           ElevatedButton(
               style:ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal:20,vertical:20)
+                  padding: EdgeInsets.symmetric(horizontal:10,vertical:5)
               ),
               onPressed: (){
 
@@ -98,6 +99,7 @@ class _MobileNewMqttConnectionState extends State<MobileNewMqttConnection> {
               ),
               hintText: 'Port',
             ),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
           SizedBox(height: 30,),
           TextField(
@@ -139,6 +141,7 @@ class _MobileNewMqttConnectionState extends State<MobileNewMqttConnection> {
               hintText: 'Keep Alive',
 
             ),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
           SizedBox(height: 30,),
           TextField(
@@ -158,7 +161,7 @@ class _MobileNewMqttConnectionState extends State<MobileNewMqttConnection> {
             children: [
               ElevatedButton(
                   style:ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                      padding: EdgeInsets.symmetric(horizontal:10,vertical:5)
                   ),
                   onPressed: (){
 
@@ -168,7 +171,7 @@ class _MobileNewMqttConnectionState extends State<MobileNewMqttConnection> {
               Spacer(),
               ElevatedButton(
                   style:ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                      padding: EdgeInsets.symmetric(horizontal:10,vertical:5)
                   ),
                   onPressed: (){
 
@@ -178,7 +181,7 @@ class _MobileNewMqttConnectionState extends State<MobileNewMqttConnection> {
               SizedBox(width:40,),
               ElevatedButton(
                   style:ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                      padding: EdgeInsets.symmetric(horizontal:10,vertical:5)
                   ),
                   onPressed: (){
 

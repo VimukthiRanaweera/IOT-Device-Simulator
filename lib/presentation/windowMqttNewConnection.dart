@@ -1,7 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:iot_device_simulator/constants/constants.dart';
+import 'package:iot_device_simulator/data/hiveConObject.dart';
 import 'package:iot_device_simulator/logic/connectionCubit.dart';
+import 'package:iot_device_simulator/logic/protocolCubit.dart';
 
 class WindowMqttNewConnection extends StatefulWidget {
   // const WindowMqttNewConnection({Key key}) : super(key: key);
@@ -9,6 +14,8 @@ class WindowMqttNewConnection extends StatefulWidget {
   @override
   _WindowMqttNewConnectionState createState() => _WindowMqttNewConnectionState();
 }
+
+
 final GlobalKey<FormState> _formKey = GlobalKey();
 TextEditingController formConnectionName = new TextEditingController();
 TextEditingController formConnectionID = new TextEditingController();
@@ -17,7 +24,25 @@ TextEditingController formPort = new TextEditingController();
 TextEditingController formUserName = new TextEditingController();
 TextEditingController formPassword= new TextEditingController();
 
+void ClearText(){
+  formConnectionName.clear();
+  formBrokerAddress.clear();
+  formPort.clear();
+  formUserName.clear();
+  formPassword.clear();
+  formConnectionID.clear();
+}
+
+
 class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
+  late Box<HiveConObject> consBox;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+   consBox=Hive.box<HiveConObject>( ConnectionsBoxName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -33,7 +58,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                       padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
                   ),
                   onPressed: (){
-
+                      print(consBox.getAt(0));
                   },
                   child:Text('New Connection')
               ),
@@ -51,13 +76,14 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                 hintText: 'Connection Name',
               ),
               controller: formConnectionName,
+
               validator: (text){
                 if(text!.isEmpty){
                   return 'Cannot be empty';
                 }
               },
               onSaved: (text){
-                  BlocProvider.of<ConnectionCubit>(context).setConnectionName(text);
+
               },
             ),
             SizedBox(height: 30,),
@@ -84,7 +110,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                       }
                     },
                     onSaved: (text){
-                      BlocProvider.of<ConnectionCubit>(context).setConnectionID(text);
+
                     },
                   ),
                 ),
@@ -123,7 +149,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                       }
                     },
                     onSaved: (text){
-                      BlocProvider.of<ConnectionCubit>(context).setBrokerAddress(text);
+
                     },
                   ),
                 ),
@@ -140,6 +166,8 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                       ),
                       hintText: 'Port',
                     ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     controller: formPort,
                     validator: (text){
                       if(text!.isEmpty){
@@ -147,7 +175,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                       }
                     },
                     onSaved: (text){
-                      BlocProvider.of<ConnectionCubit>(context).setPort(text);
+
                     },
                   ),
                 ),
@@ -176,7 +204,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                       }
                     },
                     onSaved: (text){
-                      BlocProvider.of<ConnectionCubit>(context).setUsername(text);
+
                     },
                   ),
                 ),
@@ -200,7 +228,6 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                       }
                     },
                     onSaved: (text){
-                      BlocProvider.of<ConnectionCubit>(context).setPassword(text);
                     },
                   ),
                 ),
@@ -222,6 +249,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                       hintText: 'Keep Alive',
 
                     ),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   ),
                 ),
                 SizedBox(width: 60,),
@@ -259,12 +287,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                         padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
                     ),
                     onPressed: (){
-                      formConnectionName.clear();
-                      formBrokerAddress.clear();
-                      formPort.clear();
-                      formUserName.clear();
-                      formPassword.clear();
-                      formConnectionID.clear();
+                    ClearText();
 
                     },
                     child:Text('Cancel')
@@ -276,7 +299,13 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                     ),
                     onPressed: (){
                       if(_formKey.currentState!.validate()){
-                        _formKey.currentState!.save();
+                        String protocol = BlocProvider.of<ProtocolCubit>(context).state.protocol;
+                        BlocProvider.of<ConnectionCubit>(context).setConnectionDetails(protocol,formConnectionName.text, formConnectionID.text,
+                            formBrokerAddress.text,int.parse(formPort.text),formUserName.text,formPassword.text);
+
+                       HiveConObject connection = HiveConObject(protocol , formConnectionName.text, formConnectionID.text,
+                           formBrokerAddress.text,  int.parse(formPort.text),formUserName.text, formPassword.text, 60);
+                        consBox.put(formConnectionName.text, connection);
                       }
                     },
                     child:Text('Save')

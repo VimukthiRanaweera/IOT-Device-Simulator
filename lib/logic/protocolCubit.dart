@@ -6,10 +6,12 @@ class ProtocolCubit extends Cubit<ProtocolState>{
 
   void SetProtocol(DropDownValue) =>emit(ProtocolState(protocol:DropDownValue));
 
+
 }
 
 class ProtocolState{
   late String protocol;
+
 
   ProtocolState({required this.protocol});
 }

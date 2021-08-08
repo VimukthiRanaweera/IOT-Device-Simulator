@@ -1,5 +1,10 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iot_device_simulator/logic/connectionCubit.dart';
+import 'package:iot_device_simulator/logic/mqttConnectionCubit.dart';
+import 'package:iot_device_simulator/logic/mqttSubscribeCubit.dart';
 
 class MqttSubscribe extends StatefulWidget {
   // const MqttSubscribe({Key key}) : super(key: key);
@@ -9,10 +14,15 @@ class MqttSubscribe extends StatefulWidget {
 }
 TextEditingController topic =TextEditingController();
 TextEditingController message = TextEditingController();
+
 class _MqttSubscribeState extends State<MqttSubscribe> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      BlocProvider.of<MqttSubscribeCubit>(context).setMessage(BlocProvider.of<MqttConnectionCubit>(context).state.mqttConnectionManager.subMessage,false);
+    });
+    message.text="Message\n";
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 50,vertical: 50),
       child: Column(
@@ -36,23 +46,54 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
               style:ElevatedButton.styleFrom(
                   padding:EdgeInsets.symmetric(horizontal:30,vertical:20)
               ),
-              onPressed: (){},
+              onPressed: (){
+                 BlocProvider.of<MqttConnectionCubit>(context).state.mqttConnectionManager.subscribe(topic.text);
+
+              },
               child:Text('Subscribe')
           ),
           SizedBox(height: 40,),
-          TextField(
-            maxLines: 5,
-            decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.black26,
-                border:OutlineInputBorder(
-                  borderSide:BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                hintText: 'Message'
-            ),
-            controller: message,
+          BlocBuilder<MqttSubscribeCubit,MqttSubscribeState>(
+            builder:(context,state) {
+
+                 return Text(
+                state.message
+                );
+
+
+
+             // return Container(
+             //    constraints: BoxConstraints(maxHeight: 400),
+             //    child: SingleChildScrollView(
+             //      child: TextField(
+             //        maxLines: null,
+             //        enabled: false,
+             //        decoration: InputDecoration(
+             //          filled: true,
+             //          fillColor: Colors.black12,
+             //          hintText: 'Message',
+             //          disabledBorder: OutlineInputBorder(
+             //            borderSide: BorderSide(
+             //                color: Colors.black38, width: 1.0),
+             //          ),
+             //        ),
+             //        controller: state.messageControl,
+             //      ),
+             //    ),
+             //  );
+            }
           ),
+          SizedBox(height: 20,),
+          ElevatedButton(
+              style:ElevatedButton.styleFrom(
+                  padding:EdgeInsets.symmetric(horizontal:20,vertical:10)
+              ),
+              onPressed: (){
+                print(BlocProvider.of<MqttConnectionCubit>(context).state.mqttConnectionManager.checkSubscribe);
+              },
+              child:Text('clear')
+          ),
+
         ],
       ),
     );

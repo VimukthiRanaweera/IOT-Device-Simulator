@@ -13,7 +13,7 @@ class AppRouter{
       case '/newConnection':
         return MaterialPageRoute(
             builder:(_)=>NewConnectionPage(
-              title: 'logic.MQTT',
+              title: 'MQTT',
             )
         );
     }

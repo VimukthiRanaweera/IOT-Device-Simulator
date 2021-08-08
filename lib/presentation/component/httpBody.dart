@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:iot_device_simulator/logic/connectionCubit.dart';
 
 class HttpBody extends StatefulWidget {
   // const HttpBody({Key key}) : super(key: key);
@@ -9,6 +11,7 @@ class HttpBody extends StatefulWidget {
 }
 
 class _HttpBodyState extends State<HttpBody> {
+
   @override
   Widget build(BuildContext context) {
     String dropdownValueHttp='POST';

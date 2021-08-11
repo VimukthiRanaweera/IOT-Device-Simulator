@@ -2,9 +2,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iot_device_simulator/logic/connectionCubit.dart';
-import 'package:iot_device_simulator/logic/mqttConnectionCubit.dart';
-import 'package:iot_device_simulator/logic/mqttSubscribeCubit.dart';
+import 'package:iot_device_simulator/logic/MQTT/mqttConCubit.dart';
+import 'package:iot_device_simulator/logic/MQTT/mqttSubscribeCubit.dart';
 
 class MqttSubscribe extends StatefulWidget {
   // const MqttSubscribe({Key key}) : super(key: key);
@@ -14,14 +13,13 @@ class MqttSubscribe extends StatefulWidget {
 }
 TextEditingController topic =TextEditingController();
 TextEditingController message = TextEditingController();
+int count=0;
 
 class _MqttSubscribeState extends State<MqttSubscribe> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      BlocProvider.of<MqttSubscribeCubit>(context).setMessage(BlocProvider.of<MqttConnectionCubit>(context).state.mqttConnectionManager.subMessage,false);
-    });
+
     message.text="Message\n";
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 50,vertical: 50),
@@ -47,20 +45,18 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                   padding:EdgeInsets.symmetric(horizontal:30,vertical:20)
               ),
               onPressed: (){
-                 BlocProvider.of<MqttConnectionCubit>(context).state.mqttConnectionManager.subscribe(topic.text);
+                 BlocProvider.of<MqttConCubit>(context).state.subscribe(topic.text);
 
               },
               child:Text('Subscribe')
           ),
           SizedBox(height: 40,),
-          BlocBuilder<MqttSubscribeCubit,MqttSubscribeState>(
+          BlocBuilder<MqttConCubit,MqttConState>(
             builder:(context,state) {
 
                  return Text(
-                state.message
+                state.subMessage
                 );
-
-
 
              // return Container(
              //    constraints: BoxConstraints(maxHeight: 400),
@@ -89,7 +85,8 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                   padding:EdgeInsets.symmetric(horizontal:20,vertical:10)
               ),
               onPressed: (){
-                print(BlocProvider.of<MqttConnectionCubit>(context).state.mqttConnectionManager.checkSubscribe);
+                count++;
+                BlocProvider.of<MqttSubscribeCubit>(context).setSub(count);
               },
               child:Text('clear')
           ),

@@ -301,7 +301,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                       if(_formKey.currentState!.validate()){
                         String protocol = BlocProvider.of<ProtocolCubit>(context).state.protocol;
                         BlocProvider.of<ConnectionCubit>(context).setConnectionDetails(protocol,formConnectionName.text, formConnectionID.text,
-                            formBrokerAddress.text,int.parse(formPort.text),formUserName.text,formPassword.text);
+                            formBrokerAddress.text,int.parse(formPort.text),formUserName.text,formPassword.text,60);
 
                        HiveConObject connection = HiveConObject(protocol , formConnectionName.text, formConnectionID.text,
                            formBrokerAddress.text,  int.parse(formPort.text),formUserName.text, formPassword.text, 60);

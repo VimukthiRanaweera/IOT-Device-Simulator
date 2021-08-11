@@ -1,22 +1,21 @@
-import 'dart:io';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iot_device_simulator/logic/mqttSubscribeCubit.dart';
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
+part of'mqttConCubit.dart';
 
-class MqttConnectionManager{
+class MqttConState{
 
   late final client;
-  late String brokerAddress;
-  late int port;
-  late String username;
-  late String password;
+   String brokerAddress;
+   int port;
+  String username;
+   String password;
+  int keepAlive;
 
-  bool checkSubscribe=false;
- String subMessage='';
 
-  MqttConnectionManager( this.brokerAddress, this.port,
-      this.username, this.password);
+  late  String subMessage="";
+
+  MqttConState({required this.brokerAddress, required this.port, required this.username, required this.password,
+      required this.keepAlive});
+
+
 
   Future<bool> connectDevice() async {
 
@@ -91,12 +90,12 @@ class MqttConnectionManager{
         'EXAMPLE::OnConnected client callback - Client connection was sucessful');
   }
 
-   int Publish(String pubTopic,String message){
+  int Publish(String pubTopic,String message){
     final builder = MqttClientPayloadBuilder();
     builder.addString(message);
     print('EXAMPLE::Publishing our topic');
-   var state=client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
-   print("in publish before");
+    var state=client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
+    print("in publish before");
     print(state);
     print("in publish after");
     return state;
@@ -127,7 +126,7 @@ class MqttConnectionManager{
       final recMess = c![0].payload as MqttPublishMessage;
       final pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
       print('EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
-        subMessage=pt;
+      subMessage=pt;
     });
 
     client.published!.listen((MqttPublishMessage message) {
@@ -144,7 +143,5 @@ class MqttConnectionManager{
   void pong() {
     print('EXAMPLE::Ping response client callback invoked');
   }
+
 }
-
-
-

@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iot_device_simulator/logic/MQTT/mqttConCubit.dart';
+import 'package:iot_device_simulator/logic/MQTT/randomDataCubit.dart';
 import 'package:iot_device_simulator/logic/automateCubit.dart';
-import 'package:iot_device_simulator/logic/checkConCubit.dart';
-import 'package:iot_device_simulator/logic/checkPublishCubit.dart';
-import 'package:iot_device_simulator/logic/mqttConnectionCubit.dart';
+import 'package:iot_device_simulator/logic/MQTT/checkPublishCubit.dart';
 import 'package:iot_device_simulator/presentation/Responsive.dart';
 import 'package:iot_device_simulator/presentation/component/automateSendData.dart';
-import 'package:mqtt_client/mqtt_client.dart';
+
 
 class MqttPublish extends StatefulWidget {
   // const MqttPublish({Key key}) : super(key: key);
@@ -95,9 +95,10 @@ class _MqttPublishState extends State<MqttPublish> {
                            if(state.isChecked) {
                              if(state.setAutoDetails()){
                                for (int i = 0; i < state.count; i++) {
-                                 await Future.delayed(Duration(seconds:state.time),(){
-                                   BlocProvider
-                                       .of<MqttConnectionCubit>(context).state.mqttConnectionManager.Publish(topic.text, message.text);
+                                 await Future.delayed(Duration(seconds:state.time),()  {
+                                   BlocProvider.of<RandomDataCubit>(context).setRandomValue(message.text);
+                                   BlocProvider.of<RandomDataCubit>(context).state.setData();
+                                   BlocProvider.of<MqttConCubit>(context).state.Publish(topic.text,BlocProvider.of<RandomDataCubit>(context).state.dataString);
                                    BlocProvider.of<CheckPublishCubit>(context).CheckPublish(true);
                                  });
 
@@ -107,9 +108,8 @@ class _MqttPublishState extends State<MqttPublish> {
                            }
                            else{
                              BlocProvider
-                                 .of<MqttConnectionCubit>(context)
+                                 .of<MqttConCubit>(context)
                                  .state
-                                 .mqttConnectionManager
                                  .Publish(topic.text, message.text);
                              BlocProvider.of<CheckPublishCubit>(context)
                                  .CheckPublish(true);

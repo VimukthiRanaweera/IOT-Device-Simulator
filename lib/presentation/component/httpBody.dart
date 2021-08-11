@@ -1,7 +1,7 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:iot_device_simulator/logic/connectionCubit.dart';
+
 
 class HttpBody extends StatefulWidget {
   // const HttpBody({Key key}) : super(key: key);
@@ -9,7 +9,7 @@ class HttpBody extends StatefulWidget {
   @override
   _HttpBodyState createState() => _HttpBodyState();
 }
-
+TextEditingController topic =TextEditingController();
 class _HttpBodyState extends State<HttpBody> {
 
   @override
@@ -65,6 +65,7 @@ class _HttpBodyState extends State<HttpBody> {
               ),
               hintText: 'Message',
             ),
+            controller:topic,
           ),
           SizedBox(height: 30,),
           ElevatedButton(

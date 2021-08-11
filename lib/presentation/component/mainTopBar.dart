@@ -1,10 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iot_device_simulator/logic/MQTT/mqttConnectionManager.dart';
+import 'package:iot_device_simulator/logic/MQTT/mqttConCubit.dart';
 import 'package:iot_device_simulator/logic/checkConCubit.dart';
 import 'package:iot_device_simulator/logic/connectionCubit.dart';
-import 'package:iot_device_simulator/logic/mqttConnectionCubit.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 
@@ -88,8 +87,8 @@ class _MainTopBarState extends State<MainTopBar> {
                 style:ElevatedButton.styleFrom(
                   primary:Colors.green,
                 ),
-                onPressed: () async {
-                 await BlocProvider.of<MqttConnectionCubit>(context).state.mqttConnectionManager.Disconnect();
+                onPressed: ()  {
+                  BlocProvider.of<MqttConCubit>(context).state.Disconnect();
                     BlocProvider.of<CheckConCubit>(context).CheckConnection(false);
 
                 },
@@ -102,16 +101,13 @@ class _MainTopBarState extends State<MainTopBar> {
                 ),
                 onPressed: () async {
 
-                  MqttConnectionManager con =MqttConnectionManager(BlocProvider.of<ConnectionCubit>(context).state.brokerAddress,
+                  BlocProvider.of<MqttConCubit>(context).setConnection(BlocProvider.of<ConnectionCubit>(context).state.brokerAddress,
                       BlocProvider.of<ConnectionCubit>(context).state.port, BlocProvider.of<ConnectionCubit>(context).state.username,
-                      BlocProvider.of<ConnectionCubit>(context).state.password);
-                  BlocProvider.of<MqttConnectionCubit>(context).setPublishDetails(con);
-                  await BlocProvider.of<MqttConnectionCubit>(context).state.mqttConnectionManager.connectDevice();
-                  if(BlocProvider.of<MqttConnectionCubit>(context).state.mqttConnectionManager.client.connectionStatus!.state ==MqttConnectionState.connected) {
+                      BlocProvider.of<ConnectionCubit>(context).state.password, BlocProvider.of<ConnectionCubit>(context).state.keepAlive);
+
+                  await BlocProvider.of<MqttConCubit>(context).state.connectDevice();
+                  if(BlocProvider.of<MqttConCubit>(context).state.client.connectionStatus!.state ==MqttConnectionState.connected) {
                     BlocProvider.of<CheckConCubit>(context).CheckConnection(true);
-                  }
-                  else{
-                    print('Not Connect');
                   }
 
                 },

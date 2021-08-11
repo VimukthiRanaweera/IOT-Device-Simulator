@@ -5,9 +5,9 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
+import 'package:iot_device_simulator/logic/MQTT/mqttConCubit.dart';
 import 'package:iot_device_simulator/logic/checkConCubit.dart';
 import 'package:iot_device_simulator/logic/connectionCubit.dart';
-import 'package:iot_device_simulator/logic/mqttConnectionCubit.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
 
 
@@ -35,7 +35,7 @@ class _drawerConListState extends State<drawerConList> {
         children: [
           SizedBox(height: 20.0),
              Text("Connections",
-                 style:TextStyle(color: Colors.white,fontSize:20,)
+                 style:TextStyle(color: Colors.black87,fontSize:20,)
              ),
           SizedBox(height: 20.0),
           Expanded(
@@ -68,7 +68,16 @@ class _drawerConListState extends State<drawerConList> {
                               },
                             ),
                             leading: Text(index.toString()),
-                            onTap: () {
+                            onTap: () async {
+                              if(BlocProvider.of<CheckConCubit>(context).state.isconnected) {
+                                BlocProvider
+                                    .of<MqttConCubit>(context)
+                                    .state
+                                    .Disconnect();
+                                BlocProvider.of<CheckConCubit>(context)
+                                    .CheckConnection(false);
+                              }
+
                               BlocProvider.of<ConnectionCubit>(context)
                                   .setConnectionDetails(
                                   hiveCon.protocol,
@@ -77,7 +86,9 @@ class _drawerConListState extends State<drawerConList> {
                                   hiveCon.brokerAddress,
                                   hiveCon.port,
                                   hiveCon.username,
-                                  hiveCon.password);
+                                  hiveCon.password,
+                                  hiveCon.keepAlive,
+                              );
                             },
 
                           ),
@@ -117,9 +128,9 @@ class _drawerConListState extends State<drawerConList> {
               onPressed: () {
                 consBox.delete(key);
                 if(BlocProvider.of<ConnectionCubit>(context).state.connectionName==conName){
-                  BlocProvider.of<MqttConnectionCubit>(context).state.mqttConnectionManager.Disconnect();
+                  BlocProvider.of<MqttConCubit>(context).state.Disconnect();
                   BlocProvider.of<CheckConCubit>(context).CheckConnection(false);
-                  BlocProvider.of<ConnectionCubit>(context).setConnectionDetails("", "IoT Client", "","", 0, "", "");
+                  BlocProvider.of<ConnectionCubit>(context).setConnectionDetails("", "IoT Client", "","", 0, "", "",60);
 
                 }
                 Navigator.of(context).pop();

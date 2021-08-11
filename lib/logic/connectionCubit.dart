@@ -2,10 +2,11 @@ import 'package:bloc/bloc.dart';
 
 class ConnectionCubit extends Cubit<ConState>{
   ConnectionCubit() : super(ConState(username: '', connectionName: 'Iot Client',
-      password: '', port:1896, brokerAddress: '', connectionID: '' ,protocol: ''));
+      password: '', port:1896, brokerAddress: '', connectionID: '' ,protocol: '', keepAlive: 60));
 
-  void setConnectionDetails(protocol,connectionName,connectionID,brokerAddress,port,username,password)=>
-      emit(ConState(protocol:protocol,connectionName:connectionName,connectionID:connectionID,brokerAddress:brokerAddress,port:port,username:username,password:password));
+  void setConnectionDetails(protocol,connectionName,connectionID,brokerAddress,port,username,password,keepAlive)=>
+      emit(ConState(protocol:protocol,connectionName:connectionName,connectionID:connectionID,brokerAddress:brokerAddress,
+          port:port,username:username,password:password, keepAlive:keepAlive));
 
 }
 
@@ -28,6 +29,7 @@ class ConState{
     required this.port,
     required this.username,
     required this.password,
+    required this.keepAlive,
   });
 
 

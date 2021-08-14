@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 
 class CheckPublishCubit extends Cubit<CheckPublishState>{
   CheckPublishCubit() : super(CheckPublishState(isPublished:false));
@@ -7,8 +8,14 @@ class CheckPublishCubit extends Cubit<CheckPublishState>{
 
 }
 
-class CheckPublishState{
-  late bool isPublished;
+class CheckPublishState extends Equatable{
+  final bool isPublished;
 
   CheckPublishState({required this.isPublished});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+    isPublished,
+  ];
 }

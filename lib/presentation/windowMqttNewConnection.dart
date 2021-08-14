@@ -24,7 +24,7 @@ TextEditingController formPort = new TextEditingController();
 TextEditingController formUserName = new TextEditingController();
 TextEditingController formPassword= new TextEditingController();
 
-void ClearText(){
+void clearText(){
   formConnectionName.clear();
   formBrokerAddress.clear();
   formPort.clear();
@@ -287,7 +287,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                         padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
                     ),
                     onPressed: (){
-                    ClearText();
+                    clearText();
 
                     },
                     child:Text('Cancel')

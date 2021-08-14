@@ -113,18 +113,19 @@ class _drawerConListState extends State<drawerConList> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Alert',style:TextStyle(color:Colors.red),),
+          title: Text('Alert',style:TextStyle(color:Colors.red,fontWeight:FontWeight.bold),),
           content: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                Text('Do you want to delete $conName? $key'),
+                Text('Do you want to delete $conName?'),
               ],
             ),
           ),
-          backgroundColor:Colors.white,
+          backgroundColor:primaryColor,
+
           actions: <Widget>[
             TextButton(
-              child: Text('Delete',style: TextStyle(fontWeight:FontWeight.bold)),
+              child: Text('Delete',style: TextStyle(color:Colors.black87,fontWeight:FontWeight.bold)),
               onPressed: () {
                 consBox.delete(key);
                 if(BlocProvider.of<ConnectionCubit>(context).state.connectionName==conName){
@@ -137,7 +138,7 @@ class _drawerConListState extends State<drawerConList> {
               },
             ),
             TextButton(
-              child: Text('Cancel',style: TextStyle(fontWeight:FontWeight.bold),),
+              child: Text('Cancel',style: TextStyle(color:Colors.black87,fontWeight:FontWeight.bold),),
               onPressed: () {
                 Navigator.of(context).pop();
               },

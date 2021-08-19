@@ -7,8 +7,6 @@ import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
-import 'package:iot_device_simulator/logic/MQTT/mqttConCubit.dart';
-import 'package:iot_device_simulator/logic/checkConCubit.dart';
 import 'package:iot_device_simulator/logic/connectionCubit.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
 

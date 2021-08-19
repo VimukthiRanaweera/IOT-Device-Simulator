@@ -4,11 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
-import 'package:iot_device_simulator/logic/MQTT/mqttConCubit.dart';
-import 'package:iot_device_simulator/logic/checkConCubit.dart';
 import 'package:iot_device_simulator/logic/connectionCubit.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
-import 'package:mqtt_client/mqtt_client.dart';
+
 
 
 import '../Responsive.dart';

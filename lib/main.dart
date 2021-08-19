@@ -10,14 +10,11 @@ import 'package:iot_device_simulator/logic/HTTP/httpBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttAPI.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/Repo/mqttRepo.dart';
-import 'package:iot_device_simulator/logic/MQTT/mqttConCubit.dart';
 import 'package:iot_device_simulator/logic/MQTT/randomDataCubit.dart';
 import 'package:iot_device_simulator/logic/automateCubit.dart';
-import 'package:iot_device_simulator/logic/MQTT/checkPublishCubit.dart';
 import 'package:iot_device_simulator/logic/MQTT/mqttSubscribeCubit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'constants/constants.dart';
-import 'logic/checkConCubit.dart';
 import 'logic/connectionCubit.dart';
 import 'logic/protocolCubit.dart';
 

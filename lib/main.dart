@@ -5,6 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:iot_device_simulator/Route/appRoute.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
+import 'package:iot_device_simulator/logic/HTTP/HttpRepo.dart';
+import 'package:iot_device_simulator/logic/HTTP/httpBloc.dart';
+import 'package:iot_device_simulator/logic/MQTT/MqttAPI.dart';
+import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
+import 'package:iot_device_simulator/logic/MQTT/Repo/mqttRepo.dart';
 import 'package:iot_device_simulator/logic/MQTT/mqttConCubit.dart';
 import 'package:iot_device_simulator/logic/MQTT/randomDataCubit.dart';
 import 'package:iot_device_simulator/logic/automateCubit.dart';
@@ -47,15 +52,6 @@ class _MyAppState extends State<MyApp> {
               create:(context) =>ConnectionCubit(),
           ),
           BlocProvider(
-              create:(context) =>MqttConCubit(),
-          ),
-          BlocProvider(
-              create:(context)=>CheckConCubit(),
-          ) ,
-          BlocProvider(
-              create:(context)=>CheckPublishCubit(),
-          ) ,
-          BlocProvider(
               create:(context)=>MqttSubscribeCubit(),
           ),
           BlocProvider(
@@ -63,6 +59,12 @@ class _MyAppState extends State<MyApp> {
           ) ,
           BlocProvider(
               create:(context)=>RandomDataCubit(),
+          ) ,
+          BlocProvider(
+              create:(context)=>HttpBloc(HttpRepo()),
+          ),
+          BlocProvider(
+              create:(context)=>MqttBloc(MqttRepo()),
           )
         ],
 

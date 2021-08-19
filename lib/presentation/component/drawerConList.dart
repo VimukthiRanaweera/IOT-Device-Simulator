@@ -5,6 +5,8 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
+import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
+import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
 import 'package:iot_device_simulator/logic/MQTT/mqttConCubit.dart';
 import 'package:iot_device_simulator/logic/checkConCubit.dart';
 import 'package:iot_device_simulator/logic/connectionCubit.dart';
@@ -69,14 +71,15 @@ class _drawerConListState extends State<drawerConList> {
                             ),
                             leading: Text(index.toString()),
                             onTap: () async {
-                              if(BlocProvider.of<CheckConCubit>(context).state.isconnected) {
-                                BlocProvider
-                                    .of<MqttConCubit>(context)
-                                    .state
-                                    .Disconnect();
-                                BlocProvider.of<CheckConCubit>(context)
-                                    .CheckConnection(false);
-                              }
+                              BlocProvider.of<MqttBloc>(context).add(MqttDisConnectEvent());
+                              // if(BlocProvider.of<CheckConCubit>(context).state.isconnected) {
+                              //   BlocProvider
+                              //       .of<MqttConCubit>(context)
+                              //       .state
+                              //       .Disconnect();
+                              //   BlocProvider.of<CheckConCubit>(context)
+                              //       .CheckConnection(false);
+                              // }
 
                               BlocProvider.of<ConnectionCubit>(context)
                                   .setConnectionDetails(
@@ -129,8 +132,9 @@ class _drawerConListState extends State<drawerConList> {
               onPressed: () {
                 consBox.delete(key);
                 if(BlocProvider.of<ConnectionCubit>(context).state.connectionName==conName){
-                  BlocProvider.of<MqttConCubit>(context).state.Disconnect();
-                  BlocProvider.of<CheckConCubit>(context).CheckConnection(false);
+                  BlocProvider.of<MqttBloc>(context).add(MqttDisConnectEvent());
+                  // BlocProvider.of<MqttConCubit>(context).state.Disconnect();
+                  // BlocProvider.of<CheckConCubit>(context).CheckConnection(false);
                   BlocProvider.of<ConnectionCubit>(context).setConnectionDetails("", "IoT Client", "","", 0, "", "",60);
 
                 }

@@ -91,20 +91,32 @@ class MqttConState{
   }
 
   int Publish(String pubTopic,String message){
-    final builder = MqttClientPayloadBuilder();
-    builder.addString(message);
-    print('EXAMPLE::Publishing our topic');
-    var state=client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
-    print("in publish before");
-    print(state);
-    print("in publish after");
-    return state;
+    try {
+      final builder = MqttClientPayloadBuilder();
+      builder.addString(message);
+      print('EXAMPLE::Publishing our topic');
+      var state = client.publishMessage(
+          pubTopic, MqttQos.exactlyOnce, builder.payload!);
+      print("in publish before");
+      print(state);
+      print("in publish after");
+      return state;
+    }catch(_){
+      print('Exception in the publish');
+      return-1;
+    }
   }
 
   Future<void> Disconnect() async {
-    await MqttUtilities.asyncSleep(2);
-    print('EXAMPLE::Disconnecting');
-    client.disconnect();
+    try {
+      await MqttUtilities.asyncSleep(2);
+      print('EXAMPLE::Disconnecting');
+      var code = client.disconnect();
+      print('in the Disconnection function $code');
+    }catch(_){
+      print('Disconnection Exception');
+    }
+
   }
 
   /// The unsolicited disconnect callback
@@ -113,6 +125,7 @@ class MqttConState{
     if (client.connectionStatus!.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
       print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
     }else{
+
     }
 
   }

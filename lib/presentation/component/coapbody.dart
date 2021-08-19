@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iot_device_simulator/presentation/component/automateSendData.dart';
 
+import '../Responsive.dart';
+
 class CoapBody extends StatefulWidget {
   // const CoapBody({Key key}) : super(key: key);
 
@@ -92,12 +94,14 @@ class _CoapBodyState extends State<CoapBody> {
                     },
                     child:Text('Send')
                 ),
-
+                SizedBox(height:20,),
+                if(Responsive.isMobile(context) && dropdownValueCOAP=='POST')
+                  AutomateSendData(),
               ],
             ),
           ),
 
-          if(dropdownValueCOAP=='POST')
+          if(!Responsive.isMobile(context) && dropdownValueCOAP=='POST')
           Expanded(
             flex: 2,
             child: AutomateSendData(),

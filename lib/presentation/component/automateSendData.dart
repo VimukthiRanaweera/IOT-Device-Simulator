@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/automateCubit.dart';
 
 class AutomateSendData extends StatefulWidget {
@@ -18,7 +19,8 @@ class _AutomateSendDataState extends State<AutomateSendData> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left:50,right: 40),
+      alignment:Alignment.topCenter,
+      padding: EdgeInsets.only(left:0,right: 0),
       child: BlocBuilder<AutomateCubit,AutomateState>(
         builder:(context,state) {
           return Form(
@@ -48,46 +50,21 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                 if(!state.isChecked)
                   SizedBox(height:157,),
                 if(state.isChecked)
-                  SizedBox(height: 25,),
-                if(state.isChecked)
-                  TextFormField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.black26,
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      hintText: 'Count',
-                    ),
-                    controller: state.formCount,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    validator: (text) {
-                      if (text!.isEmpty) {
-                        return 'Cannot be empty';
-                      }
-                    },
-                  ),
-                if(state.isChecked)
-                  SizedBox(height: 25,),
-                if(state.isChecked)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          maxLines: 1,
+                  Container(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 25,),
+                        TextFormField(
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.black26,
                             border: OutlineInputBorder(
                               borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(10)),
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
                             ),
-                            hintText: 'Time Interval',
+                            hintText: 'Count',
                           ),
-                          controller: state.formTime,
+                          controller: state.formCount,
                           keyboardType: TextInputType.number,
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           validator: (text) {
@@ -96,11 +73,38 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                             }
                           },
                         ),
-                      ),
-                      SizedBox(width: 20,),
-                      Text('Seconds'),
-
-                    ],
+                         SizedBox(height: 25,),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  maxLines: 1,
+                                  decoration: InputDecoration(
+                                    filled: true,
+                                    fillColor: Colors.black26,
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide.none,
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10)),
+                                    ),
+                                    hintText: 'Time Interval',
+                                  ),
+                                  controller: state.formTime,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  validator: (text) {
+                                    if (text!.isEmpty) {
+                                      return 'Cannot be empty';
+                                    }
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 20,),
+                              Text('Seconds'),
+                            ],
+                          ),
+                      ],
+                    ),
                   ),
                 SizedBox(height: 45,),
               ],
@@ -110,4 +114,7 @@ class _AutomateSendDataState extends State<AutomateSendData> {
       ),
     );
   }
+
+
 }
+

@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
+import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
+import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
 import 'package:iot_device_simulator/logic/MQTT/mqttConCubit.dart';
 import 'package:iot_device_simulator/logic/MQTT/randomDataCubit.dart';
 import 'package:iot_device_simulator/logic/automateCubit.dart';
@@ -29,15 +31,43 @@ void setPublishing(bool check){
 }
   @override
   Widget build(BuildContext context) {
-    return  BlocListener<CheckPublishCubit,CheckPublishState>(
-      listener:(context,state) {
-        if (state.isPublished) {
+  Future<void> _publishButton() async {
+    if (_formKey.currentState!.validate()) {
+      if (BlocProvider.of<AutomateCubit>(context).state.isChecked) {
+        if(BlocProvider.of<AutomateCubit>(context).state.setAutoDetails()) {
+          BlocProvider.of<MqttBloc>(context).add(MqttMultiplePublishEvent(count: BlocProvider.of<AutomateCubit>(context).state.count
+                  , time: BlocProvider
+                      .of<AutomateCubit>(context)
+                      .state
+                      .time, topic: topic.text, message: message.text));
+        }
 
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //     SnackBar(content: Text('Published!'),
-          //       duration: Duration(milliseconds: 500),
-          //     )
-          // );
+
+        // if(BlocProvider.of<AutomateCubit>(context).state.setAutoDetails()) {
+        //   for (int i = 0; i < BlocProvider.of<AutomateCubit>(context).state.count; i++) {
+        //     await Future.delayed(
+        //         Duration(seconds:BlocProvider.of<AutomateCubit>(context).state.time), () {
+        //       BlocProvider.of<RandomDataCubit>(context).setRandomValue(message.text);
+        //       BlocProvider.of<RandomDataCubit>(context).state.setData();
+        //       BlocProvider.of<MqttConCubit>(context).state.Publish(topic.text, BlocProvider.of<RandomDataCubit>(context).state.dataString);
+        //     });
+        //   }
+        // }
+      }
+      else{
+        BlocProvider.of<MqttBloc>(context).add(MqttPublishEvent(topic:topic.text, message:message.text));
+      }
+    }
+
+  }
+    return  BlocListener<MqttBloc,MqttState>(
+      listener:(context,state) {
+        if (state is MqttPublishedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Success!'),
+                duration: Duration(milliseconds: 500),
+              )
+          );
         }
       },
       child: Row(
@@ -95,9 +125,9 @@ void setPublishing(bool check){
                Row(
                  mainAxisAlignment:MainAxisAlignment.end,
                  children: [
-                   BlocBuilder<CheckPublishCubit,CheckPublishState>(
+                   BlocBuilder<MqttBloc,MqttState>(
                        builder:(context,state){
-                         if(state.isPublished){
+                         if(state is MqttPublishingState){
                            return Row(
                              children: [
                                Text("Publishing . . . ",style:TextStyle(fontSize:20,color:Colors.blueAccent),),
@@ -112,60 +142,14 @@ void setPublishing(bool check){
                        }
                    ),
 
-                   BlocBuilder<AutomateCubit,AutomateState>(
+                   BlocBuilder<MqttBloc,MqttState>(
                      builder:(context,state) {
                       return ElevatedButton(
                            style: ElevatedButton.styleFrom(
                                padding: EdgeInsets.symmetric(
                                    horizontal: 30, vertical: 20)
                            ),
-                           onPressed: () async {
-                             if (_formKey.currentState!.validate()) {
-                               if (BlocProvider
-                                   .of<CheckConCubit>(context)
-                                   .state
-                                   .isconnected) {
-                                 BlocProvider.of<CheckPublishCubit>(context)
-                                     .CheckPublish(true);
-                               if(state.isChecked) {
-                                 if(state.setAutoDetails()) {
-                                     for (int i = 0; i < state.count; i++) {
-                                       await Future.delayed(
-                                           Duration(seconds: state.time), () {
-                                         BlocProvider.of<RandomDataCubit>(
-                                             context).setRandomValue(
-                                             message.text);
-                                         BlocProvider
-                                             .of<RandomDataCubit>(context)
-                                             .state
-                                             .setData();
-                                         BlocProvider
-                                             .of<MqttConCubit>(context)
-                                             .state
-                                             .Publish(topic.text, BlocProvider
-                                             .of<RandomDataCubit>(context)
-                                             .state
-                                             .dataString);
-                                       });
-                                     }
-                                   }
-                                 }
-                               else{
-                                 BlocProvider
-                                     .of<MqttConCubit>(context)
-                                     .state
-                                     .Publish(topic.text, message.text);
-                                 BlocProvider.of<CheckPublishCubit>(context)
-                                     .CheckPublish(true);
-                               }
-                               }
-                               else
-                                 _showMyDialog("Client Is Not Connected !");
-
-                             }
-                             BlocProvider.of<CheckPublishCubit>(context).CheckPublish(false);
-
-                           },
+                           onPressed:state is MqttPublishingState? null:_publishButton,
                            child: Text('Publish')
 
                        );
@@ -183,6 +167,8 @@ void setPublishing(bool check){
           ),
         ),
       ),
+          if(!Responsive.isMobile(context))
+            SizedBox(width:40,),
           if(!Responsive.isMobile(context))
           Expanded(
             flex: 2,

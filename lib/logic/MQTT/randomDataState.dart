@@ -2,7 +2,6 @@ part of 'randomDataCubit.dart';
 
  class RandomDataState extends Equatable{
   late String dataString;
-  String message="";
   RandomDataState({required this.dataString});
 
   void setData(){

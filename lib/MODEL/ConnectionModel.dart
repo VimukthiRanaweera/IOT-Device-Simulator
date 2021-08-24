@@ -1,4 +1,4 @@
-class MqttModel{
+class ConnectionModel{
 
 
   late String protocol;
@@ -10,6 +10,6 @@ class MqttModel{
   late String password;
   late int keepAlive;
 
-  MqttModel({required this.protocol, required this.connectionName, required this.brokerAddress, required this.port,
+  ConnectionModel({required this.protocol, required this.connectionName, required this.brokerAddress, required this.port,
       required this.username, required this.password, required this.keepAlive});
 }

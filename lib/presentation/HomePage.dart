@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: drawerConList(),
+      drawer: !Responsive.isMobile(context)?null:drawerConList(),
       appBar:AppBar(
         title: Text("Dialog Iot Simulator"),
       ),

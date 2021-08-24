@@ -1,10 +1,18 @@
+import 'dart:async';
 import 'dart:io';
-
+import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class MqttAPI{
   late final client;
+
+
+  // final controller = StreamController<String>()
+  // ignore: close_sinks
+  static final StreamController<String> controller = StreamController<String>.broadcast();
+  Stream<String> get stream =>controller.stream;
+
   Future<bool> connectDevice(username,password,brokerAddress,port) async {
 
     client = MqttServerClient(brokerAddress, '');
@@ -96,34 +104,41 @@ class MqttAPI{
   }
 
   /// The unsolicited disconnect callback
-  void onDisconnected() {
+  void onDisconnected(){
     print('EXAMPLE::OnDisconnected client callback - Client disconnection');
     if (client.connectionStatus!.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
-
-    }else{
-
+      print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
     }
 
   }
 
-  Future<String> subscribe(subTopic) async {
-    String message='';
+  Future<void> subscribe(subTopic) async {
     print("in the subscribe function");
     const topic = '+/2270735/generic_brand_2921/generic_device/v7/sub'; // Not a wildcard topic
     await client.subscribe(subTopic, MqttQos.atMostOnce);
 
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
-      final recMess = c![0].payload as MqttPublishMessage;
-      final pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      final recMess =c![0].payload as MqttPublishMessage;
+      final pt =  MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
       print('EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
-       message=pt;
+      controller.sink.add(pt);
     });
-
     client.published!.listen((MqttPublishMessage message) {
       print('EXAMPLE::Published notification:: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}');
     });
-    return message;
 
+  }
+
+    void listenSubscribeMessage()  {
+
+
+
+  }
+
+  Future<void> unsubscribe(topic) async {
+    print('EXAMPLE::Unsubscribing');
+     client.unsubscribe(topic);
+     print("after unsubscribed");
   }
 
   void onSubscribed(String topic) {

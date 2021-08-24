@@ -18,15 +18,15 @@ class _AutomateSendDataState extends State<AutomateSendData> {
   bool isChecked=false;
   @override
   Widget build(BuildContext context) {
+
     return Container(
       alignment:Alignment.topCenter,
-      padding: EdgeInsets.only(left:0,right: 0),
+      padding: EdgeInsets.only(left:10,right:10),
       child: BlocBuilder<AutomateCubit,AutomateState>(
         builder:(context,state) {
           return Form(
             key: state.formKey,
             child: Column(
-
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -48,12 +48,12 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                   ],
                 ),
                 if(!state.isChecked)
-                  SizedBox(height:157,),
+                  SizedBox(height:170,),
                 if(state.isChecked)
                   Container(
                     child: Column(
                       children: [
-                        SizedBox(height: 25,),
+                        SizedBox(height: 5,),
                         TextFormField(
                           decoration: InputDecoration(
                             filled: true,
@@ -73,7 +73,7 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                             }
                           },
                         ),
-                         SizedBox(height: 25,),
+                         SizedBox(height: 15,),
                           Row(
                             children: [
                               Expanded(
@@ -99,14 +99,30 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                                   },
                                 ),
                               ),
-                              SizedBox(width: 20,),
-                              Text('Seconds'),
+                              SizedBox(width: 5,),
+                              Text('Seconds',style:TextStyle(color:Colors.black,fontWeight:FontWeight.bold)),
                             ],
                           ),
-                      ],
+                        SizedBox(height:10,),
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          color: primaryColor,
+                          child:Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("for integer/double values",style:TextStyle(color:Colors.black,fontWeight:FontWeight.bold),),
+                              Text("\$d\$decimalPoints\$minumumValue\$maximumValue\$"),
+                              Text("ex\: \$d\$2\$50\$100\$"),
+                              SizedBox(height:5,),
+                              Text("for string/boolean values",style:TextStyle(color:Colors.black,fontWeight:FontWeight.bold)),
+                              Text("ex\: \$s\${value1,value2...}\$"),
+                            ],
+                          ),
+                        )
+
+                        ]
                     ),
                   ),
-                SizedBox(height: 45,),
               ],
             ),
           );

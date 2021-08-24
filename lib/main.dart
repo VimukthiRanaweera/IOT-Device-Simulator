@@ -7,7 +7,6 @@ import 'package:iot_device_simulator/Route/appRoute.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
 import 'package:iot_device_simulator/logic/HTTP/HttpRepo.dart';
 import 'package:iot_device_simulator/logic/HTTP/httpBloc.dart';
-import 'package:iot_device_simulator/logic/MQTT/MqttAPI.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/Repo/mqttRepo.dart';
 import 'package:iot_device_simulator/logic/MQTT/randomDataCubit.dart';
@@ -15,6 +14,7 @@ import 'package:iot_device_simulator/logic/automateCubit.dart';
 import 'package:iot_device_simulator/logic/MQTT/mqttSubscribeCubit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'constants/constants.dart';
+import 'logic/connectionBloc.dart';
 import 'logic/connectionCubit.dart';
 import 'logic/protocolCubit.dart';
 
@@ -36,6 +36,8 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
+
+
 class _MyAppState extends State<MyApp> {
   final AppRouter _appRouter=AppRouter();
   @override
@@ -44,12 +46,6 @@ class _MyAppState extends State<MyApp> {
         providers:[
           BlocProvider(
               create:(context)=>ProtocolCubit(),
-          ),
-          BlocProvider(
-              create:(context) =>ConnectionCubit(),
-          ),
-          BlocProvider(
-              create:(context)=>MqttSubscribeCubit(),
           ),
           BlocProvider(
               create:(context)=>AutomateCubit(),
@@ -62,7 +58,10 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider(
               create:(context)=>MqttBloc(MqttRepo()),
-          )
+          ),
+          BlocProvider(
+              create:(context)=>ConnetionBloc(new HiveConObject("","","","",0,"","",60)),
+          ),
         ],
 
       child: MaterialApp(
@@ -79,6 +78,8 @@ class _MyAppState extends State<MyApp> {
 
             )
           ),
+              scrollbarTheme: ScrollbarThemeData().copyWith(
+    thumbColor: MaterialStateProperty.all(Colors.black38)),
           visualDensity:VisualDensity.adaptivePlatformDensity,
         ),
       ),

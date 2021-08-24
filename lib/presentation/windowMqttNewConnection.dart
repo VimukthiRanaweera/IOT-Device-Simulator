@@ -5,7 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
+import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
+import 'package:iot_device_simulator/logic/connectionBloc.dart';
 import 'package:iot_device_simulator/logic/connectionCubit.dart';
+import 'package:iot_device_simulator/logic/connectionEvents.dart';
+import 'package:iot_device_simulator/logic/connectionsState.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
 
 class WindowMqttNewConnection extends StatefulWidget {
@@ -17,22 +21,6 @@ class WindowMqttNewConnection extends StatefulWidget {
 
 
 final GlobalKey<FormState> _formKey = GlobalKey();
-TextEditingController formConnectionName = new TextEditingController();
-TextEditingController formConnectionID = new TextEditingController();
-TextEditingController formBrokerAddress = new TextEditingController();
-TextEditingController formPort = new TextEditingController();
-TextEditingController formUserName = new TextEditingController();
-TextEditingController formPassword= new TextEditingController();
-
-void clearText(){
-  formConnectionName.clear();
-  formBrokerAddress.clear();
-  formPort.clear();
-  formUserName.clear();
-  formPassword.clear();
-  formConnectionID.clear();
-}
-
 
 class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
   late Box<HiveConObject> consBox;
@@ -45,277 +33,334 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: 80,vertical:60),
-      child: Form(
-        key:_formKey,
-        child: Column(
-          children: [
-            Container(
-              alignment:Alignment.topRight,
-              child: ElevatedButton(
-                  style:ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
-                  ),
-                  onPressed: (){
-                      print(consBox.getAt(0));
-                  },
-                  child:Text('New Connection')
+
+    return BlocListener<ConnetionBloc,ConsState>(
+      listener:(context,state){
+        if(state is SaveConnectionState)
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Success!'),
+                duration: Duration(milliseconds: 500),
+              )
+          );
+      },
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 80,vertical:60),
+        child: Form(
+          key:_formKey,
+          child: Column(
+            children: [
+              Container(
+                alignment:Alignment.topRight,
+                child: ElevatedButton(
+                    style:ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                    ),
+                    onPressed: (){
+                        BlocProvider.of<ConnetionBloc>(context).add(CreateNewConnetionEvent(BlocProvider.of<ConnetionBloc>(context).state.superConModel));
+                    },
+                    child:Text('New Connection')
+                ),
               ),
-            ),
-            SizedBox(height: 50,),
-            TextFormField(
-              decoration: InputDecoration(
-                hintMaxLines: 1,
-                filled: true,
-                fillColor: Colors.black26,
-                border:OutlineInputBorder(
-                  borderSide:BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                hintText: 'Connection Name',
+              SizedBox(height: 50,),
+              _connectionName(),
+              SizedBox(height: 30,),
+              Row(
+                mainAxisAlignment:MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child:_clientId()
+                  ),
+                  SizedBox(width: 30,),
+                  ElevatedButton(
+                      style:ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal:20,vertical:20)
+                      ),
+                      onPressed: (){
+
+                      },
+                      child:Text('Generate ID')
+                  ),
+                  Expanded(flex:3,child:SizedBox(width: 10,))
+                ],
               ),
-              controller: formConnectionName,
-
-              validator: (text){
-                if(text!.isEmpty){
-                  return 'Cannot be empty';
-                }
-              },
-              onSaved: (text){
-
-              },
-            ),
-            SizedBox(height: 30,),
-            Row(
-              mainAxisAlignment:MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 4,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintMaxLines: 1,
-                      filled: true,
-                      fillColor: Colors.black26,
-                      border:OutlineInputBorder(
-                        borderSide:BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      hintText: 'Client ID',
-                    ),
-                    controller:formConnectionID,
-                    validator: (text){
-                      if(text!.isEmpty){
-                        return 'Cannot be empty';
-                      }
-                    },
-                    onSaved: (text){
-
-                    },
+              SizedBox(height: 30,),
+              Row(
+                children: [
+                  Expanded(
+                    child:_brokerAddres()
                   ),
-                ),
-                SizedBox(width: 30,),
-                ElevatedButton(
-                    style:ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal:20,vertical:20)
-                    ),
-                    onPressed: (){
-
-                    },
-                    child:Text('Generate ID')
-                ),
-                Expanded(flex:3,child:SizedBox(width: 10,))
-              ],
-            ),
-            SizedBox(height: 30,),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintMaxLines: 1,
-                      filled: true,
-                      fillColor: Colors.black26,
-                      border:OutlineInputBorder(
-                        borderSide:BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      hintText: 'Broker Address',
-                    ),
-                    controller: formBrokerAddress,
-                    validator: (text){
-                      if(text!.isEmpty){
-                        return 'Cannot be empty';
-                      }
-                    },
-                    onSaved: (text){
-
-                    },
+                  SizedBox(width: 60,),
+                  Expanded(
+                    child:_port()
                   ),
-                ),
-                SizedBox(width: 60,),
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintMaxLines: 1,
-                      filled: true,
-                      fillColor: Colors.black26,
-                      border:OutlineInputBorder(
-                        borderSide:BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      hintText: 'Port',
-                    ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    controller: formPort,
-                    validator: (text){
-                      if(text!.isEmpty){
-                        return 'Cannot be empty';
-                      }
-                    },
-                    onSaved: (text){
-
-                    },
+                ],
+              ),
+              SizedBox(height: 30,),
+              Row(
+                children: [
+                  Expanded(
+                    child:_username()
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 30,),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintMaxLines: 1,
-                      filled: true,
-                      fillColor: Colors.black26,
-                      border:OutlineInputBorder(
-                        borderSide:BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      hintText: 'Username',
-
-                    ),
-                    controller: formUserName,
-                    validator: (text){
-                      if(text!.isEmpty){
-                        return 'Cannot be empty';
-                      }
-                    },
-                    onSaved: (text){
-
-                    },
+                  SizedBox(width: 60,),
+                  Expanded(
+                    child: _password()
                   ),
-                ),
-                SizedBox(width: 60,),
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintMaxLines: 1,
-                      filled: true,
-                      fillColor: Colors.black26,
-                      border:OutlineInputBorder(
-                        borderSide:BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      hintText: 'Password',
-                    ),
-                    controller: formPassword,
-                    validator: (text){
-                      if(text!.isEmpty){
-                        return 'Cannot be empty';
-                      }
-                    },
-                    onSaved: (text){
-                    },
+                ],
+              ),
+              SizedBox(height: 30,),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: _keepAlive()
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 30,),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintMaxLines: 1,
-                      filled: true,
-                      fillColor: Colors.black26,
-                      border:OutlineInputBorder(
-                        borderSide:BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                  Expanded(
+                    flex: 4,
+                      child: SizedBox(width: 10,)),
+                ],
+              ),
+              SizedBox(height: 30,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+
+                  ElevatedButton(
+                      style:ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
                       ),
-                      hintText: 'Keep Alive',
+                      onPressed: (){
 
-                    ),
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      },
+                      child:Text('Cancel')
                   ),
-                ),
-                SizedBox(width: 60,),
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintMaxLines: 1,
-                      filled: true,
-                      fillColor: Colors.black26,
-                      border:OutlineInputBorder(
-                        borderSide:BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      hintText: 'Connection Timeout',
-                    ),
+                  SizedBox(width:40,),
+                  BlocBuilder<ConnetionBloc,ConsState>(
+                    builder:(context,state) {
+                      return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 20)
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              String protocol = BlocProvider
+                                  .of<ProtocolCubit>(context)
+                                  .state
+                                  .protocol;
+
+                              HiveConObject connection = HiveConObject(
+                                  protocol,
+                                  state.formConnectionName.text,
+                                  state.formConnectionID.text,
+                                  state.formBrokerAddress.text,
+                                  int.parse(state.formPort.text),
+                                  state.formUserName.text,
+                                  state. formPassword.text,
+                                  60);
+                              BlocProvider.of<ConnetionBloc>(context).add(ConnectionSaveEvent(connection));
+
+                            }
+                          },
+                          child: Text('Save')
+                      );
+                    }
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 30,),
-            Row(
-              children: [
-                ElevatedButton(
-                    style:ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
-                    ),
-                    onPressed: (){
 
-                    },
-                    child:Text('Delete')
-                ),
-                Spacer(),
-                ElevatedButton(
-                    style:ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
-                    ),
-                    onPressed: (){
-                    clearText();
-
-                    },
-                    child:Text('Cancel')
-                ),
-                SizedBox(width:40,),
-                ElevatedButton(
-                    style:ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
-                    ),
-                    onPressed: (){
-                      if(_formKey.currentState!.validate()){
-                        String protocol = BlocProvider.of<ProtocolCubit>(context).state.protocol;
-                        BlocProvider.of<ConnectionCubit>(context).setConnectionDetails(protocol,formConnectionName.text, formConnectionID.text,
-                            formBrokerAddress.text,int.parse(formPort.text),formUserName.text,formPassword.text,60);
-
-                       HiveConObject connection = HiveConObject(protocol , formConnectionName.text, formConnectionID.text,
-                           formBrokerAddress.text,  int.parse(formPort.text),formUserName.text, formPassword.text, 60);
-                        consBox.put(formConnectionName.text, connection);
-                      }
-                    },
-                    child:Text('Save')
-                ),
-
-              ],
-            )
-          ],
+                ],
+              )
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _connectionName(){
+
+    return BlocBuilder<ConnetionBloc,ConsState>(
+      builder:(context,state) {
+        return TextFormField(
+          decoration: InputDecoration(
+            hintMaxLines: 1,
+            filled: true,
+            fillColor: Colors.black26,
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            hintText: 'Connection Name',
+          ),
+          controller: state.formConnectionName,
+
+          validator: (text) {
+            if (text!.isEmpty) {
+              return 'Cannot be empty';
+            }
+          },
+          onSaved: (text) {
+
+          },
+        );
+      }
+    );
+  }
+
+  Widget _clientId(){
+    return BlocBuilder<ConnetionBloc,ConsState>(
+      builder:(context,state) {
+        return TextFormField(
+          decoration: InputDecoration(
+            hintMaxLines: 1,
+            filled: true,
+            fillColor: Colors.black26,
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            hintText: 'Client ID',
+          ),
+          controller:state.formConnectionID,
+          validator: (text) {
+            if (text!.isEmpty) {
+              return 'Cannot be empty';
+            }
+          },
+          onSaved: (text) {
+
+          },
+        );
+      }
+    );
+  }
+  Widget _brokerAddres(){
+    return BlocBuilder<ConnetionBloc,ConsState>(
+      builder:(context,state) {
+        return TextFormField(
+          decoration: InputDecoration(
+            hintMaxLines: 1,
+            filled: true,
+            fillColor: Colors.black26,
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            hintText: 'Broker Address',
+          ),
+          controller: state.formBrokerAddress,
+          validator: (text) {
+            if (text!.isEmpty) {
+              return 'Cannot be empty';
+            }
+          },
+          onSaved: (text) {
+
+          },
+        );
+      }
+    );
+  }
+  Widget _port(){
+    return  BlocBuilder<ConnetionBloc,ConsState>(
+      builder:(context,state) {
+        return TextFormField(
+          decoration: InputDecoration(
+            hintMaxLines: 1,
+            filled: true,
+            fillColor: Colors.black26,
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            hintText: 'Port',
+          ),
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          controller: state.formPort,
+          validator: (text) {
+            if (text!.isEmpty) {
+              return 'Cannot be empty';
+            }
+          },
+          onSaved: (text) {
+
+          },
+        );
+      }
+    );
+  }
+  Widget _username(){
+    return BlocBuilder<ConnetionBloc,ConsState>(
+      builder:(context,state){
+        return TextFormField(
+          decoration: InputDecoration(
+            hintMaxLines: 1,
+            filled: true,
+            fillColor: Colors.black26,
+            border:OutlineInputBorder(
+              borderSide:BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            hintText: 'Username',
+
+          ),
+          controller: state.formUserName,
+          validator: (text){
+            if(text!.isEmpty){
+              return 'Cannot be empty';
+            }
+          },
+          onSaved: (text){
+
+          },
+        );
+      },
+    );
+  }
+  Widget _password(){
+    return BlocBuilder<ConnetionBloc,ConsState>(
+      builder:(context,state){
+        return TextFormField(
+          decoration: InputDecoration(
+            hintMaxLines: 1,
+            filled: true,
+            fillColor: Colors.black26,
+            border:OutlineInputBorder(
+              borderSide:BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            hintText: 'Password',
+          ),
+          controller: state.formPassword,
+          validator: (text){
+            if(text!.isEmpty){
+              return 'Cannot be empty';
+            }
+          },
+          onSaved: (text){
+          },
+        );
+      },
+    );
+  }
+  Widget _keepAlive(){
+    return BlocBuilder<ConnetionBloc,ConsState>(
+      builder:(context,state) {
+        return TextFormField(
+          decoration: InputDecoration(
+            hintMaxLines: 1,
+            filled: true,
+            fillColor: Colors.black26,
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            hintText: 'Keep Alive',
+
+          ),
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        );
+      }
     );
   }
 }

@@ -1,14 +1,17 @@
 
-import 'package:iot_device_simulator/logic/MQTT/MqttAPI.dart';
+import 'dart:ffi';
+
+import 'package:iot_device_simulator/data/hiveConObject.dart';
+import 'package:iot_device_simulator/logic/MQTT/Data/MqttAPI.dart';
 
 import '../randomDataCubit.dart';
 
 class MqttRepo{
   late MqttAPI api;
 
-  Future<bool> connect(username, password, brokerAddress, port) async {
+  Future<bool> connect(HiveConObject connection) async {
     api=MqttAPI();
-    bool res=await api.connectDevice(username, password, brokerAddress, port);
+    bool res=await api.connectDevice(connection.username, connection.password, connection.brokerAddress,connection.port);
     return res;
   }
    Future<int> disconnect() async {
@@ -35,9 +38,15 @@ class MqttRepo{
      }
    }
 
-   Future<String> subscribe(subTopic) async {
-      String message=await api.subscribe(subTopic);
-      return message;
+   Future<void> subscribe(subTopic) async {
+      await api.subscribe(subTopic);
+   }
+   // Future<void> listenSubscribeMessage() async {
+   //   await api.listenSubscribeMessage();
+   // }
+
+   Future<void> Unsubscribe(subToic) async {
+    await api.unsubscribe(subToic);
    }
 
 }

@@ -5,6 +5,8 @@ import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
 import 'package:iot_device_simulator/logic/automateCubit.dart';
+import 'package:iot_device_simulator/logic/connectionBloc.dart';
+import 'package:iot_device_simulator/logic/connectionsState.dart';
 import 'package:iot_device_simulator/presentation/Responsive.dart';
 import 'package:iot_device_simulator/presentation/component/automateSendData.dart';
 
@@ -19,11 +21,9 @@ final GlobalKey<FormState> _formKey = GlobalKey();
 TextEditingController topic =TextEditingController();
 TextEditingController message = TextEditingController();
 class _MqttPublishState extends State<MqttPublish> {
-bool isPublishing=false;
-void setPublishing(bool check){
-  setState(() {
-    isPublishing=check;
-  });
+void clearText(){
+  topic.clear();
+  message.clear();
 }
   @override
   Widget build(BuildContext context) {
@@ -37,18 +37,6 @@ void setPublishing(bool check){
                       .state
                       .time, topic: topic.text, message: message.text));
         }
-
-
-        // if(BlocProvider.of<AutomateCubit>(context).state.setAutoDetails()) {
-        //   for (int i = 0; i < BlocProvider.of<AutomateCubit>(context).state.count; i++) {
-        //     await Future.delayed(
-        //         Duration(seconds:BlocProvider.of<AutomateCubit>(context).state.time), () {
-        //       BlocProvider.of<RandomDataCubit>(context).setRandomValue(message.text);
-        //       BlocProvider.of<RandomDataCubit>(context).state.setData();
-        //       BlocProvider.of<MqttConCubit>(context).state.Publish(topic.text, BlocProvider.of<RandomDataCubit>(context).state.dataString);
-        //     });
-        //   }
-        // }
       }
       else{
         BlocProvider.of<MqttBloc>(context).add(MqttPublishEvent(topic:topic.text, message:message.text));
@@ -56,16 +44,28 @@ void setPublishing(bool check){
     }
 
   }
-    return  BlocListener<MqttBloc,MqttState>(
-      listener:(context,state) {
-        if (state is MqttPublishedState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Success!'),
-                duration: Duration(milliseconds: 500),
-              )
-          );
-        }
-      },
+    return  MultiBlocListener(
+      listeners: [
+        BlocListener<MqttBloc,MqttState>(
+          listener:(context,state) {
+            if (state is MqttPublishedState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Success!'),
+                    duration: Duration(milliseconds: 500),
+                  )
+              );
+            }
+          },
+        ),
+        BlocListener<ConnetionBloc,ConsState>(
+            listener:(context,state){
+              if(state is ConnectionSelectedState) {
+                clearText();
+                BlocProvider.of<AutomateCubit>(context).checkBox(false);
+              }
+            }
+            ),
+      ],
       child: Row(
         children: [
       Expanded(
@@ -145,7 +145,7 @@ void setPublishing(bool check){
                                padding: EdgeInsets.symmetric(
                                    horizontal: 30, vertical: 20)
                            ),
-                           onPressed:state is MqttPublishingState? null:_publishButton,
+                           onPressed:state is MqttPublishingState || state is MqttDisconnectedState || state is MqttClientNotClickState? null:_publishButton,
                            child: Text('Publish')
 
                        );
@@ -155,7 +155,7 @@ void setPublishing(bool check){
 
                  ],
                ),
-               SizedBox(height:20,),
+               SizedBox(height:30,),
                if(Responsive.isMobile(context))
                  AutomateSendData(),
              ],
@@ -164,7 +164,7 @@ void setPublishing(bool check){
         ),
       ),
           if(!Responsive.isMobile(context))
-            SizedBox(width:40,),
+            SizedBox(width:25,),
           if(!Responsive.isMobile(context))
           Expanded(
             flex: 2,

@@ -7,7 +7,10 @@ import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
+import 'package:iot_device_simulator/logic/connectionBloc.dart';
 import 'package:iot_device_simulator/logic/connectionCubit.dart';
+import 'package:iot_device_simulator/logic/connectionEvents.dart';
+import 'package:iot_device_simulator/logic/connectionsState.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
 
 
@@ -17,94 +20,100 @@ class drawerConList extends StatefulWidget {
   @override
   _drawerConListState createState() => _drawerConListState();
 }
-var items =List<String>.generate(20, (index) => 'Item $index');
 class _drawerConListState extends State<drawerConList> {
   late Box<HiveConObject> consBox;
-  late String protocol='CoAP';
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     consBox=Hive.box<HiveConObject>( ConnectionsBoxName);
   }
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: Column(
-        children: [
-          SizedBox(height: 20.0),
-             Text("Connections",
-                 style:TextStyle(color: Colors.black87,fontSize:20,)
-             ),
-          SizedBox(height: 20.0),
-          Expanded(
-            child: ValueListenableBuilder(
-                  valueListenable: consBox.listenable(),
-                  builder: (context, Box<HiveConObject> cons, _) {
-                    // List<int> keys = cons.keys.cast<int>().toList();
-                   return BlocBuilder<ProtocolCubit,ProtocolState>(
-                    builder:(context,state) {
-                    List<String> keys = cons.keys.cast<String>().where((key) =>
-                    cons.get(key)!.protocol == BlocProvider
-                        .of<ProtocolCubit>(context)
-                        .state
-                        .protocol).toList();
+    return BlocBuilder<MqttBloc,MqttState>(
+      builder:(context,conState) {
+        return Container(
+          color:Colors.black38,
+          child: AbsorbPointer(
+            absorbing: !(conState is MqttDisconnectedState || conState is MqttClientNotClickState),
+            child: Drawer(
+              child: Column(
+                children: [
+                  SizedBox(height: 20.0),
+                  Text("Connections",
+                      style: TextStyle(color: Colors.black87, fontSize: 20,)
+                  ),
+                  SizedBox(height: 20.0),
+                  Expanded(
+                    child: ValueListenableBuilder(
+                        valueListenable: consBox.listenable(),
+                        builder: (context, Box<HiveConObject> cons, _) {
+                          // List<int> keys = cons.keys.cast<int>().toList();
+                          return BlocBuilder<ProtocolCubit, ProtocolState>(
+                            builder: (context, state) {
+                              List<String> keys = cons.keys.cast<String>().where((
+                                  key) =>
+                              cons.get(key)!.protocol == state.protocol).toList();
 
-                    return ListView.builder(
-                      itemBuilder: (_, index) {
-                        final String key = keys[index];
-                        final HiveConObject? hiveCon = cons.get(key);
-                        return Card(
-                          child: ListTile(
-                            tileColor: secondaryColor,
-                            title: Text(hiveCon!.connectionName),
-                            subtitle: Text(hiveCon.protocol,
-                              style: TextStyle(fontSize: 12.0),),
-                            trailing: IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                _showMyDialog(key, hiveCon.connectionName);
-                              },
-                            ),
-                            leading: Text(index.toString()),
-                            onTap: () async {
-                              BlocProvider.of<MqttBloc>(context).add(MqttDisConnectEvent());
-                              // if(BlocProvider.of<CheckConCubit>(context).state.isconnected) {
-                              //   BlocProvider
-                              //       .of<MqttConCubit>(context)
-                              //       .state
-                              //       .Disconnect();
-                              //   BlocProvider.of<CheckConCubit>(context)
-                              //       .CheckConnection(false);
-                              // }
+                              return ListView.builder(
+                                itemBuilder: (_, index) {
+                                  final String key = keys[index];
+                                  final HiveConObject? hiveCon = cons.get(key);
+                                  return BlocBuilder<ConnetionBloc,ConsState>(
+                                      builder:(context,constate) {
+                                        return Card(
+                                          color: (constate.superConModel
+                                              .connectionName ==
+                                              hiveCon!.connectionName) ?
+                                          Colors.white10:secondaryColor,
+                                            child: ListTile(
+                                              title: Text(
+                                                  hiveCon.connectionName),
+                                              subtitle: Text(hiveCon.protocol,
+                                                style: TextStyle(
+                                                    fontSize: 12.0),),
+                                              trailing: IconButton(
+                                                icon: Icon(Icons.delete),
+                                                onPressed: () {
+                                                  _showMyDialog(
+                                                      key,
+                                                      hiveCon.connectionName);
+                                                },
+                                              ),
+                                              leading: Text(index.toString()),
+                                              onTap: () async {
+                                                if (state.protocol == "MQTT")
+                                                  BlocProvider.of<MqttBloc>(
+                                                      context).add(
+                                                      MqttClientClickedEvent());
+                                                else
+                                                  BlocProvider.of<MqttBloc>(
+                                                      context).add(
+                                                      MqttUnselectedEvent());
+                                                BlocProvider.of<ConnetionBloc>(
+                                                    context).add(
+                                                    SelectConnectionEvent(
+                                                        hiveCon));
+                                              },
 
-                              BlocProvider.of<ConnectionCubit>(context)
-                                  .setConnectionDetails(
-                                  hiveCon.protocol,
-                                  hiveCon.connectionName,
-                                  hiveCon.connectionID,
-                                  hiveCon.brokerAddress,
-                                  hiveCon.port,
-                                  hiveCon.username,
-                                  hiveCon.password,
-                                  hiveCon.keepAlive,
+                                            )
+                                        );
+                                      }
+                                  );
+                                },
+                                itemCount: keys.length,
                               );
                             },
 
-                          ),
-                        );
-                      },
-                      itemCount: keys.length,
-                    );
-                  },
-
-                );
-              }
+                          );
+                        }
+                    ),
+                  ),
+                ],
+              ),
             ),
-            ),
-        ],
-      ),
+          ),
+        );
+      }
     );
   }
 
@@ -125,19 +134,17 @@ class _drawerConListState extends State<drawerConList> {
           backgroundColor:primaryColor,
 
           actions: <Widget>[
-            TextButton(
-              child: Text('Delete',style: TextStyle(color:Colors.black87,fontWeight:FontWeight.bold)),
-              onPressed: () {
-                consBox.delete(key);
-                if(BlocProvider.of<ConnectionCubit>(context).state.connectionName==conName){
-                  BlocProvider.of<MqttBloc>(context).add(MqttDisConnectEvent());
-                  // BlocProvider.of<MqttConCubit>(context).state.Disconnect();
-                  // BlocProvider.of<CheckConCubit>(context).CheckConnection(false);
-                  BlocProvider.of<ConnectionCubit>(context).setConnectionDetails("", "IoT Client", "","", 0, "", "",60);
-
-                }
-                Navigator.of(context).pop();
-              },
+            BlocBuilder<ConnetionBloc,ConsState>(
+              builder:(context,state) {
+                return TextButton(
+                  child: Text('Delete', style: TextStyle(
+                      color: Colors.black87, fontWeight: FontWeight.bold)),
+                  onPressed: () {
+                    BlocProvider.of<ConnetionBloc>(context).add(DeleteConnectionEvent(key,conName,state.superConModel));
+                    Navigator.of(context).pop();
+                  },
+                );
+              }
             ),
             TextButton(
               child: Text('Cancel',style: TextStyle(color:Colors.black87,fontWeight:FontWeight.bold),),

@@ -4,7 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
+import 'package:iot_device_simulator/logic/connectionBloc.dart';
 import 'package:iot_device_simulator/logic/connectionCubit.dart';
+import 'package:iot_device_simulator/logic/connectionEvents.dart';
+import 'package:iot_device_simulator/logic/connectionsState.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
 
 
@@ -27,12 +30,6 @@ class _MainTopBarState extends State<MainTopBar> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (!Responsive.isDesktop(context))
-            IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: (){
-              }
-            ),
           if(!Responsive.isMobile(context))
           SizedBox(width: 20,),
           Container(
@@ -58,8 +55,8 @@ class _MainTopBarState extends State<MainTopBar> {
             ),
           ),
           BlocBuilder<ProtocolCubit,ProtocolState>(
-              builder:(context,state){
-                if(state.protocol!="HTTP")
+              builder:(context,protocolState){
+
                   return Expanded(
                     child: Row(
                       children: [
@@ -67,83 +64,106 @@ class _MainTopBarState extends State<MainTopBar> {
                           SizedBox(width: 20,),
                         if(Responsive.isMobile(context))
                           SizedBox(width: 5,),
-                        BlocBuilder<ConnectionCubit,ConState>(
-                            builder:(context,state){
-                              return Expanded(
-                                child: Text(state.connectionName,
+                        BlocBuilder<ConnetionBloc,ConsState>(
+                            builder:(context,Connectionstate){
+                              if(protocolState.protocol==Connectionstate.superConModel.protocol)
+                              return Container(
+                                padding: EdgeInsets.all(10),
+                                decoration:BoxDecoration(border: Border.all(color:Colors.black38),color:secondaryColor,borderRadius:BorderRadius.circular(15)),
+                                child: Text(Connectionstate.superConModel.connectionName,
                                     style: Theme
                                         .of(context)
-                                        .textTheme.headline6
+                                        .textTheme.bodyText1
                                 ),
                               );
+                              else{
+                                return Text("${protocolState.protocol} Client");
+                              }
                             }
                         ),
-
+                        Expanded(child: Container()),
                         if(!Responsive.isMobile(context))
                           SizedBox(width: 20,),
-                        IconButton(
-                          iconSize: 30,
-                          icon:Icon(Icons.settings,
-                          ),
-                          onPressed: (){
-                            Navigator.of(context).pushNamed('/newConnection');
-                          },
+                        if(protocolState.protocol!="HTTP")
+                        BlocBuilder<MqttBloc,MqttState>(
+                          builder:(cotext,state) {
+                            return AbsorbPointer(
+                              absorbing: state is MqttConnectedState,
+                              child: IconButton(
+                                iconSize: 30,
+                                icon: Icon(Icons.settings,
+                                ),
+                                onPressed: () {
+                                  BlocProvider.of<ConnetionBloc>(context).add(
+                                      ClickedSettingEvent(BlocProvider
+                                          .of<ConnetionBloc>(context)
+                                          .state
+                                          .superConModel));
+                                  Navigator.of(context).pushNamed(
+                                      '/newConnection');
+                                },
+                              ),
+                            );
+                          }
                         ),
                         if(!Responsive.isMobile(context))
                           SizedBox(width: 20,),
 
                         if(Responsive.isMobile(context))
                           SizedBox(width: 3,),
-                        BlocBuilder<MqttBloc,MqttState>
-                          (builder:(context,state){
-                          if (state is MqttDisconnectedState)
-                            return ElevatedButton(
-                              style:ElevatedButton.styleFrom(
-                                primary: Colors.red,
-                              ),
-                              onPressed: () async {
 
-                                BlocProvider.of<MqttBloc>(context).add(MqttConnetEvent(brokerAddress: BlocProvider.of<ConnectionCubit>(context).state.brokerAddress,
-                                    port:BlocProvider.of<ConnectionCubit>(context).state.port, username: BlocProvider.of<ConnectionCubit>(context).state.username,
-                                    password: BlocProvider.of<ConnectionCubit>(context).state.password));
-
-
-                                // BlocProvider.of<MqttConCubit>(context).setConnection(BlocProvider.of<ConnectionCubit>(context).state.brokerAddress,
-                                //     BlocProvider.of<ConnectionCubit>(context).state.port, BlocProvider.of<ConnectionCubit>(context).state.username,
-                                //     BlocProvider.of<ConnectionCubit>(context).state.password, BlocProvider.of<ConnectionCubit>(context).state.keepAlive);
-
-                                // await BlocProvider.of<MqttConCubit>(context).state.connectDevice();
-                                // if(BlocProvider.of<MqttConCubit>(context).state.client.connectionStatus!.state ==MqttConnectionState.connected) {
-                                //   BlocProvider.of<CheckConCubit>(context).CheckConnection(true);
-                                // }
-                              },
-                              child: Text('Connect'),
+                        BlocBuilder<ProtocolCubit,ProtocolState>(
+                          builder:(context,protocolState) {
+                            if(protocolState.protocol!='HTTP')
+                            return BlocBuilder<MqttBloc, MqttState>
+                              (builder: (context, state) {
+                              if (state is MqttClientNotClickState ) {
+                                return ElevatedButton(
+                                  onPressed: null,
+                                  child: Text('Connect'),
+                                );
+                              }
+                              else if (state is MqttDisconnectedState ||
+                                  state is MqttClientClickedState)
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.red,
+                                  ),
+                                  onPressed: () async {
+                                    BlocProvider.of<MqttBloc>(context).add(
+                                        MqttConnetEvent(BlocProvider
+                                            .of<ConnetionBloc>(context)
+                                            .state
+                                            .superConModel));
+                                  },
+                                  child: Text('Connect'),
+                                );
+                              else if (state is MqttConnectingState) {
+                                return CircularProgressIndicator();
+                              }
+                              else {
+                                return ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.green,
+                                  ),
+                                  onPressed: () async {
+                                    BlocProvider.of<MqttBloc>(context).add(
+                                        MqttDisConnectEvent());
+                                  },
+                                  child: Text('Disconnect'),
+                                );
+                              }
+                            },
                             );
-                          else {
-                            return ElevatedButton(
-                              style:ElevatedButton.styleFrom(
-                                primary:Colors.green,
-                              ),
-                              onPressed: ()  async {
-                                BlocProvider.of<MqttBloc>(context).add(MqttDisConnectEvent());
-                                // await BlocProvider.of<MqttConCubit>(context).state.Disconnect();
-                                // BlocProvider.of<CheckConCubit>(context).CheckConnection(false);
-                                // print("Disconnected code is");
-
-                              },
-                              child: Text('Disconnect'),
-                            );
-
+                            else
+                              return Container();
                           }
-
-                        },
                         ),
 
                       ],
                     ),
                   );
-                else
-                  return Container();
+
               },
 
           ),

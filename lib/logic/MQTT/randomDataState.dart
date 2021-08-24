@@ -65,7 +65,9 @@ part of 'randomDataCubit.dart';
     String valuesPattern=words[2];
     String values=valuesPattern.substring(1,valuesPattern.length-1);
     List valueList=values.split(',');
+    print(valueList);
     String randomValue=generateRandomString(valueList);
+    print(randomValue);
     createStringMessage(randomValue,pattern);
 
   }

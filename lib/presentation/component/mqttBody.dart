@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:iot_device_simulator/presentation/component/mqttPublish.dart';
-import 'package:iot_device_simulator/presentation/component/mqttSbuscribe.dart';
+import 'package:iot_device_simulator/presentation/component/mqttSubuscribe.dart';
 
 import '../../constants/constants.dart';
 

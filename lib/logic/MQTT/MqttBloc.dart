@@ -15,16 +15,14 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
   final MqttRepo mqttRepo;
   late StreamSubscription subscription;
   late String response;
+  late String responseTopic;
   MqttBloc(this.mqttRepo) : super(MqttClientNotClickState()) {
 
     subscription = MqttAPI.responeTopicController.stream.listen((data) {
 
       List words = data.split('/');
-      words[words.length-1]="pub";
-      String pubTopic=words[0];
-      for(int i=1;i<words.length;i++){
-        pubTopic="$pubTopic/${words[i]}";
-      }
+     String id=words[0];
+     String pubTopic=responseTopic.replaceAll("+",id);
      mqttRepo.api.Publish(pubTopic,response);
     responseSend();
       print('mqtttsubresponse...............');
@@ -81,6 +79,7 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
     }
     if(event is MqttSubscribeAndResponseEvent){
       response=event.response;
+      responseTopic = event.responseTopic;
       await mqttRepo.subscribe(event.topic,true);
       yield MqttSubscribeTopicState();
 

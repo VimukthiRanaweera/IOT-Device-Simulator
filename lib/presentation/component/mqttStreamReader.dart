@@ -55,9 +55,11 @@ class _StreamReaderState extends State<StreamReader> {
                               fit: BoxFit.fill,
                               child: Row(
                                 children: [
-                                  Text("Response",style: TextStyle(color: Colors.green,fontWeight: FontWeight.w600),),
-                                  SizedBox(width: 5,),
                                   Icon(Icons.done,color:Colors.green,size:20,),
+                                  SizedBox(width: 5,),
+                                  Text("Response Published",style: TextStyle(color: Colors.green,fontWeight: FontWeight.w600),),
+
+
                                 ],
                               ),
                             ):null,

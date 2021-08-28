@@ -19,6 +19,7 @@ class MqttSubscribe extends StatefulWidget {
 TextEditingController topic =TextEditingController();
 TextEditingController message = TextEditingController();
 TextEditingController responseMessage = TextEditingController();
+TextEditingController responseTopic = TextEditingController();
 final _formTopicKey = GlobalKey<FormFieldState>();
 final GlobalKey<FormState> _formKey = GlobalKey();
 
@@ -65,7 +66,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
               SizedBox(height: 20,),
               Row(
                 children: [
-                  Text("Response",style:TextStyle(fontWeight: FontWeight.bold),),
+                  Text("Action Response",style:TextStyle(fontWeight: FontWeight.bold),),
                   Checkbox(
                     checkColor: Colors.white,
                     // fillColor: MaterialStateProperty.resolveWith(getColor),
@@ -79,26 +80,52 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                 ],
               ),
               if(isChecked)
-              SizedBox(height: 20,),
-              if(isChecked)
-                TextFormField(
-                  maxLines: 2,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.black26,
-                    border:OutlineInputBorder(
-                      borderSide:BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
+              Container(
+                child: Column(
+                  children: [
+
+                      SizedBox(height: 20,),
+                      TextFormField(
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.black26,
+                          border:OutlineInputBorder(
+                            borderSide:BorderSide.none,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          hintText: 'Action Response Topic',
+                        ),
+                        controller: responseTopic,
+                        validator: (text) {
+                          if (text!.isEmpty) {
+                            return 'Cannot be empty';
+                          }
+                        },
+                      ),
+                    SizedBox(height: 20,),
+                    TextFormField(
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.black26,
+                        border:OutlineInputBorder(
+                          borderSide:BorderSide.none,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        hintText: 'Action Response Message',
+                      ),
+                      controller: responseMessage,
+                      validator: (text) {
+                        if (text!.isEmpty) {
+                          return 'Cannot be empty';
+                        }
+                      },
                     ),
-                    hintText: 'Response Message',
-                  ),
-                  controller: responseMessage,
-                  validator: (text) {
-                    if (text!.isEmpty) {
-                      return 'Cannot be empty';
-                    }
-                  },
+                  ],
                 ),
+              ),
+
               SizedBox(height: 20,),
               BlocBuilder<MqttBloc,MqttState>(
                   builder:(context,state){
@@ -134,7 +161,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                               if(_formKey.currentState!.validate())
                               BlocProvider.of<MqttBloc>(context).add(
                                   MqttSubscribeAndResponseEvent(
-                                      topic.text,responseMessage.text));
+                                      topic.text,responseMessage.text,responseTopic.text));
                               }
                             else{
                               if(_formTopicKey.currentState!.validate())

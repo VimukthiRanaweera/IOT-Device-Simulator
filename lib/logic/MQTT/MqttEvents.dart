@@ -67,10 +67,13 @@ class MqttSubscribeEvent extends MqttEvents{
 class MqttSubscribeAndResponseEvent extends MqttEvents{
   late final String topic;
   late final String response;
+  late final String responseTopic;
 
-  MqttSubscribeAndResponseEvent(this.topic, this.response);
+  MqttSubscribeAndResponseEvent(this.topic, this.response,this.responseTopic);
   List<Object?> get props =>[
     topic,
+    response,
+    responseTopic
   ];
 }
 

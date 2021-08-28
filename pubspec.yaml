@@ -31,6 +31,9 @@ dependencies:
   hive_flutter: ^1.1.0
   equatable: ^2.0.3
   http: ^0.13.3
+  csv: ^5.0.0
+  url_launcher: ^6.0.9
+  date_time_picker: ^2.1.0
 
 
   # The following adds the Cupertino Icons font to your application.

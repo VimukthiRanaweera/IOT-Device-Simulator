@@ -64,3 +64,8 @@ class ConnectionDeleteState extends ConsState{
   ConnectionDeleteState(HiveConObject superConModel) : super(superConModel);
 
 }
+
+class SelectedConnectionDeleteState extends ConsState{
+  SelectedConnectionDeleteState(HiveConObject superConModel) : super(superConModel);
+
+}

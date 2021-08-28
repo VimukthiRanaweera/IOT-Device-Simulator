@@ -24,8 +24,8 @@ class MqttConnetEvent extends MqttEvents{
 class MqttDisConnectEvent extends MqttEvents{}
 
 class MqttPublishEvent extends MqttEvents{
-  late String topic;
-  late String message;
+  late final String topic;
+  late final String message;
 
 
   MqttPublishEvent({required this.topic, required this.message});
@@ -37,10 +37,10 @@ class MqttPublishEvent extends MqttEvents{
 }
 
 class MqttMultiplePublishEvent extends MqttEvents{
-  late int count;
-  late int time;
-  late String topic;
-  late String message;
+  late final int count;
+  late final int time;
+  late final String topic;
+  late final String message;
 
 
   MqttMultiplePublishEvent({required this.count, required this.time, required this.topic, required this.message});
@@ -54,7 +54,7 @@ class MqttMultiplePublishEvent extends MqttEvents{
 }
 
 class MqttSubscribeEvent extends MqttEvents{
-  late String topic;
+  late final String topic;
 
 
   MqttSubscribeEvent(this.topic);
@@ -64,13 +64,32 @@ class MqttSubscribeEvent extends MqttEvents{
   ];
 
 }
+class MqttSubscribeAndResponseEvent extends MqttEvents{
+  late final String topic;
+  late final String response;
+
+  MqttSubscribeAndResponseEvent(this.topic, this.response);
+  List<Object?> get props =>[
+    topic,
+  ];
+}
 
 class MqttUnsubscribeEvent extends MqttEvents{
 
-  late String topic;
+  late final String topic;
 
   MqttUnsubscribeEvent(this.topic);
   List<Object?> get props =>[
     topic,
+  ];
+}
+
+class MqttClientDeleteEvent extends MqttEvents{
+  late final HiveConObject connection;
+  late final String conName;
+
+  MqttClientDeleteEvent(this.connection, this.conName);
+  List<Object?> get props =>[
+    conName,connection
   ];
 }

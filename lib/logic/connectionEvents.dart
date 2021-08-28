@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:iot_device_simulator/MODEL/ConnectionModel.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
 
 

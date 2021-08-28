@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
 class MqttAPI{
   late final client;
 
-
-  // final controller = StreamController<String>()
   // ignore: close_sinks
   static final StreamController<String> controller = StreamController<String>.broadcast();
+  // ignore: close_sinks
+  static final StreamController<String> responeTopicController = StreamController<String>.broadcast();
   Stream<String> get stream =>controller.stream;
 
   Future<bool> connectDevice(username,password,brokerAddress,port) async {
@@ -86,15 +85,14 @@ class MqttAPI{
         'EXAMPLE::OnConnected client callback - Client connection was sucessful');
   }
 
-  int Publish(String pubTopic,String message){
+  Future<void> Publish(String pubTopic,String message)async {
     final builder = MqttClientPayloadBuilder();
     builder.addString(message);
-    print('EXAMPLE::Publishing our topic');
+    print('EXAMPLE::Publishing our topic $message $pubTopic');
     var state=client.publishMessage(pubTopic, MqttQos.exactlyOnce, builder.payload!);
     print("in publish before");
     print(state);
     print("in publish after");
-    return state;
   }
 
   Future<void> Disconnect() async {
@@ -112,7 +110,7 @@ class MqttAPI{
 
   }
 
-  Future<void> subscribe(subTopic) async {
+  Future<void> subscribe(String subTopic,bool isResponse) async {
     print("in the subscribe function");
     const topic = '+/2270735/generic_brand_2921/generic_device/v7/sub'; // Not a wildcard topic
     await client.subscribe(subTopic, MqttQos.atMostOnce);
@@ -122,23 +120,23 @@ class MqttAPI{
       final pt =  MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
       print('EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
       controller.sink.add(pt);
+      if(isResponse)
+        responeTopicController.sink.add(c[0].topic);
     });
     client.published!.listen((MqttPublishMessage message) {
       print('EXAMPLE::Published notification:: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}');
+
     });
 
   }
 
-    void listenSubscribeMessage()  {
 
-
-
-  }
 
   Future<void> unsubscribe(topic) async {
     print('EXAMPLE::Unsubscribing');
      client.unsubscribe(topic);
      print("after unsubscribed");
+
   }
 
   void onSubscribed(String topic) {

@@ -40,8 +40,6 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                       onChanged: (bool? value) {
                         setState(() {
                           state.isChecked = value!;
-                          // BlocProvider.of<AutomateCubit>(context).checkBox(
-                          //     isChecked);
                         });
                       },
                     ),

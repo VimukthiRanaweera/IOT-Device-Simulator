@@ -1,10 +1,11 @@
 
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iot_device_simulator/MODEL/SubscribeMessage.dart';
 import 'package:iot_device_simulator/logic/MQTT/Data/MqttAPI.dart';
+import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 
 class StreamReader extends StatefulWidget {
 
@@ -22,7 +23,6 @@ class _StreamReaderState extends State<StreamReader> {
     super.initState();
     _subscription = MqttAPI.controller.stream.listen((data) {
       setState(() {
-        // SubscribeMessage.messages.add(data);
         SubscribeMessage.messages.insert(0, data);
       });
     });
@@ -46,9 +46,24 @@ class _StreamReaderState extends State<StreamReader> {
                   itemCount: SubscribeMessage.messages.length,
                   itemBuilder: (context, index) {
                     return Card(
-                      child: ListTile(
-                        title: Text(SubscribeMessage.messages[index]),
-                        tileColor: Colors.black26,
+                      child: BlocBuilder<MqttBloc,MqttState>(
+                        builder:(context,state){
+                          return ListTile(
+                            title: Text(SubscribeMessage.messages[index]),
+                            tileColor: Colors.black26,
+                            trailing: state is MqttSubscribeResponsedState?FittedBox(
+                              fit: BoxFit.fill,
+                              child: Row(
+                                children: [
+                                  Text("Response",style: TextStyle(color: Colors.green,fontWeight: FontWeight.w600),),
+                                  SizedBox(width: 5,),
+                                  Icon(Icons.done,color:Colors.green,size:20,),
+                                ],
+                              ),
+                            ):null,
+
+                          );
+                        },
                       ),
                     );
                   }

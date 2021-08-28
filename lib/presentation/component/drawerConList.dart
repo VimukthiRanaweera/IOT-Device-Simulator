@@ -140,7 +140,10 @@ class _drawerConListState extends State<drawerConList> {
                   child: Text('Delete', style: TextStyle(
                       color: Colors.black87, fontWeight: FontWeight.bold)),
                   onPressed: () {
+                    BlocProvider.of<MqttBloc>(context).add(MqttClientDeleteEvent(state.superConModel,conName));
                     BlocProvider.of<ConnetionBloc>(context).add(DeleteConnectionEvent(key,conName,state.superConModel));
+
+
                     Navigator.of(context).pop();
                   },
                 );

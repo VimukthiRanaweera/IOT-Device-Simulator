@@ -6,8 +6,8 @@ import 'package:hive/hive.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
+import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
 import 'package:iot_device_simulator/logic/connectionBloc.dart';
-import 'package:iot_device_simulator/logic/connectionCubit.dart';
 import 'package:iot_device_simulator/logic/connectionEvents.dart';
 import 'package:iot_device_simulator/logic/connectionsState.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
@@ -159,6 +159,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                                   state. formPassword.text,
                                   60);
                               BlocProvider.of<ConnetionBloc>(context).add(ConnectionSaveEvent(connection));
+                              BlocProvider.of<MqttBloc>(context).add(MqttClientClickedEvent());
 
                             }
                           },

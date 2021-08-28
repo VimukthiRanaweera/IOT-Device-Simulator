@@ -23,8 +23,8 @@ class MqttRepo{
     return 0;
    }
 
-   void publish(pubTopic, message){
-    api.Publish(pubTopic, message);
+   Future<void> publish(pubTopic, message) async {
+    await api.Publish(pubTopic, message);
    }
 
    Future<void> multiplePublish(count,time,pubTopic, message) async {
@@ -38,8 +38,8 @@ class MqttRepo{
      }
    }
 
-   Future<void> subscribe(subTopic) async {
-      await api.subscribe(subTopic);
+   Future<void> subscribe(subTopic,isResponse) async {
+      await api.subscribe(subTopic,isResponse);
    }
    // Future<void> listenSubscribeMessage() async {
    //   await api.listenSubscribeMessage();

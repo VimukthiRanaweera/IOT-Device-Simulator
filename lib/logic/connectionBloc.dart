@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
+import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/connectionEvents.dart';
 import 'package:iot_device_simulator/logic/connectionsState.dart';
 

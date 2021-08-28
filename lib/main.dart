@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:iot_device_simulator/Route/appRoute.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
+import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateBloc.dart';
+import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateRepo.dart';
 import 'package:iot_device_simulator/logic/HTTP/HttpRepo.dart';
 import 'package:iot_device_simulator/logic/HTTP/httpBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
@@ -61,6 +63,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider(
               create:(context)=>ConnetionBloc(new HiveConObject("","","","",0,"","",60)),
+          ),
+          BlocProvider(
+              create:(context)=>ApiAutomateBloc(ApiAutomateRepo()),
           ),
         ],
 

@@ -33,4 +33,10 @@ class MqttSubscribedState extends MqttState{
   }
 }
 
+class MqttSubscribeResponsedState extends MqttState{}
+
+class MqttSubscribeNotResponsedState extends MqttState{}
+
 class MqttUnSubscribedState extends MqttState{}
+
+

@@ -25,11 +25,10 @@ class HttpBody extends StatefulWidget {
 }
 
 TextEditingController message =TextEditingController();
-TextEditingController topic =TextEditingController();
 TextEditingController connectionName=TextEditingController();
 final GlobalKey<FormState> _formKey = GlobalKey();
 final GlobalKey<FormState> _formkeySaveCon = GlobalKey();
-
+bool isChecked=false;
 
 class _HttpBodyState extends State<HttpBody> {
   final _formFieldKey = GlobalKey<FormFieldState>();
@@ -45,13 +44,14 @@ class _HttpBodyState extends State<HttpBody> {
     String dropdownValueHttp='POST';
     void sendButtonClick(){
       if(_formKey.currentState!.validate()){
-        if(BlocProvider.of<AutomateCubit>(context).state.isChecked) {
+        if(isChecked) {
           if(BlocProvider.of<AutomateCubit>(context).state.setAutoDetails()) {
-            BlocProvider.of<HttpBloc>(context).add(MultipleHttpPost(message.text,topic.text,BlocProvider.of<AutomateCubit>(context).state.count,
+            BlocProvider.of<HttpBloc>(context).add(MultipleHttpPost(message.text,BlocProvider.of<ConnetionBloc>(context).state.formHttpAddress.text
+                ,BlocProvider.of<AutomateCubit>(context).state.count,
                 BlocProvider.of<AutomateCubit>(context).state.time));
           }
         }else
-          BlocProvider.of<HttpBloc>(context).add(HttpPost(message.text,topic.text));
+          BlocProvider.of<HttpBloc>(context).add(HttpPost(message.text,BlocProvider.of<ConnetionBloc>(context).state.formHttpAddress.text));
       }
     }
 
@@ -110,7 +110,7 @@ class _HttpBodyState extends State<HttpBody> {
                                   ),
                                   hintText: 'URL',
                                 ),
-                                controller: state.formBrokerAddress,
+                                controller: state.formHttpAddress,
                                 validator: (text) {
                                   if (text!.isEmpty) {
                                     return 'Cannot be empty';
@@ -131,7 +131,7 @@ class _HttpBodyState extends State<HttpBody> {
                           ),
                           onPressed:(){
                             if(_formFieldKey.currentState!.validate()) {
-                              _showMyDialog(state.formBrokerAddress.text);
+                              _showMyDialog(state.formHttpAddress.text);
                             }
                           },
                           child:Text('Save')
@@ -160,14 +160,36 @@ class _HttpBodyState extends State<HttpBody> {
                         }
                       },
                     ),
-
-                    SizedBox(height: 30,),
+                    if(Responsive.isMobile(context))
+                      Container(
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text("Auto"),
+                                SizedBox(width: 20,),
+                                Checkbox(
+                                  checkColor: Colors.white,
+                                  // fillColor: MaterialStateProperty.resolveWith(getColor),
+                                  value:isChecked,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      isChecked = value!;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            if(isChecked)
+                              AutomateSendData(),
+                            SizedBox(height:20),
+                          ],
+                        ),
+                      ),
+                    SizedBox(height: 10,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-
-                        if(Responsive.isMobile(context))
-                          Expanded(child: AutomateSendData()),
                         BlocBuilder<HttpBloc,HttpState>(
                             builder:(context,state){
                               if(state is HttpMultiplePosting)
@@ -201,12 +223,36 @@ class _HttpBodyState extends State<HttpBody> {
                 ),
               ),
               if(!Responsive.isMobile(context))
-              SizedBox(width:30,),
-              if(!Responsive.isMobile(context))
-                Expanded(
-                  flex: 2,
-                    child: AutomateSendData()
+              Expanded(
+                flex: isChecked?2:1,
+                child: Container(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Auto"),
+                          SizedBox(width: 20,),
+                          Checkbox(
+                            checkColor: Colors.white,
+                            // fillColor: MaterialStateProperty.resolveWith(getColor),
+                            value:isChecked,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isChecked = value!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      if(isChecked)
+                        AutomateSendData(),
+                      SizedBox(height:20),
+                    ],
+                  ),
                 ),
+              ),
             ],
           ),
         ),

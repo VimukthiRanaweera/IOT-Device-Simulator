@@ -26,6 +26,7 @@ class _drawerConListState extends State<drawerConList> {
   void initState() {
     super.initState();
     consBox=Hive.box<HiveConObject>( ConnectionsBoxName);
+
   }
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class _drawerConListState extends State<drawerConList> {
         return Container(
           color:Colors.black38,
           child: AbsorbPointer(
-            absorbing: !(conState is MqttDisconnectedState || conState is MqttClientNotClickState),
+            absorbing: !( conState is MqttClientNotClickState || conState is MqttClientClickedState || conState is MqttDisconnectedState),
             child: Drawer(
               child: Column(
                 children: [

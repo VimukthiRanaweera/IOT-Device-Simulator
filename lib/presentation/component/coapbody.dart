@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iot_device_simulator/logic/COAP/coapApi.dart';
 import 'package:iot_device_simulator/presentation/component/automateSendData.dart';
 
 import '../Responsive.dart';
@@ -10,7 +11,7 @@ class CoapBody extends StatefulWidget {
   @override
   _CoapBodyState createState() => _CoapBodyState();
 }
-
+CoapApi api = CoapApi();
 class _CoapBodyState extends State<CoapBody> {
   late String dropdownValueCOAP='GET';
   @override
@@ -90,10 +91,13 @@ class _CoapBodyState extends State<CoapBody> {
                         padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
                     ),
                     onPressed: (){
+                      print('Connect');
 
+                      api.connect("127.0.0.1",8890,'{"eventName":"action01","status":"online","para":"111","id":"20210902"}');
                     },
                     child:Text('Send')
                 ),
+                SizedBox(height:20,),
                 SizedBox(height:20,),
                 if(Responsive.isMobile(context) && dropdownValueCOAP=='POST')
                   AutomateSendData(),

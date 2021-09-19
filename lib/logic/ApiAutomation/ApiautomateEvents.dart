@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:iot_device_simulator/MODEL/apiParaControllers.dart';
 
 class ApiAutomateEvents extends Equatable{
   @override
@@ -32,5 +33,30 @@ class ExportButtonClickedEvent extends ApiAutomateEvents{
       required this.noOfEvents});
 
   List<Object?> get props => [xSecret];
+
+}class ActionExportButtonClickedEvent extends ApiAutomateEvents{
+  late final String xSecret;
+  late final String username;
+  late final String password;
+  late final String actionName;
+  late final String deviceId;
+  late final int noOfActions;
+  late final int time;
+  late final List<ApiParaControllers> paraList;
+  late final bool isLogWrite;
+
+
+  ActionExportButtonClickedEvent(this.xSecret, this.username, this.password,
+      this.actionName, this.deviceId, this.noOfActions,this.time, this.paraList,this.isLogWrite);
+
+  List<Object?> get props => [
+    xSecret,
+    username,
+    password,
+    actionName,
+    noOfActions,
+    paraList,
+    time,
+  ];
 
 }

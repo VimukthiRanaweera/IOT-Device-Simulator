@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:csv/csv.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
 
@@ -9,8 +10,9 @@ class CreateCSVFile{
   var body;
   String params;
   String devicesIds;
+  String eventName;
 
-  CreateCSVFile(this.body, this.params, this.devicesIds);
+  CreateCSVFile(this.body, this.params, this.devicesIds,this.eventName);
 
   void createList(){
     List paramsList =seperateStrings(params);
@@ -68,13 +70,14 @@ class CreateCSVFile{
 
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
-
     return directory.path;
   }
   Future<File> get _localFile async {
     final path = await _localPath;
-    print(path);
-    return File('$path/data.csv',);
+    print("File path "+path.toString());
+    var inputFormat =  DateFormat("yyyyMMdd-HHmmss");
+    String time=inputFormat.format(DateTime.now()).toString();
+    return File('$path\\$eventName-$time.csv');
   }
   Future<File> writeCounter(csv) async {
     final file = await _localFile;

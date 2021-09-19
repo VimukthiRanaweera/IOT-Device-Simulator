@@ -1,6 +1,4 @@
 
-import 'dart:ffi';
-
 import 'package:iot_device_simulator/data/hiveConObject.dart';
 import 'package:iot_device_simulator/logic/MQTT/Data/MqttAPI.dart';
 
@@ -24,7 +22,9 @@ class MqttRepo{
    }
 
    Future<void> publish(pubTopic, message) async {
-    await api.Publish(pubTopic, message);
+     final randomData=new RandomDataState(dataString:message);
+     randomData.setData();
+      await api.Publish(pubTopic, randomData.dataString);
    }
 
    Future<void> multiplePublish(count,time,pubTopic, message) async {
@@ -41,12 +41,9 @@ class MqttRepo{
    Future<void> subscribe(subTopic,isResponse) async {
       await api.subscribe(subTopic,isResponse);
    }
-   // Future<void> listenSubscribeMessage() async {
-   //   await api.listenSubscribeMessage();
-   // }
 
-   Future<void> Unsubscribe(subToic) async {
-    await api.unsubscribe(subToic);
+   Future<void> Unsubscribe(subTopic) async {
+    await api.unsubscribe(subTopic);
    }
 
 }

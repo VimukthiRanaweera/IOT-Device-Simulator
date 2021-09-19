@@ -8,3 +8,5 @@ const appbarColor = Color(0xFF4a4e69);
 const clickedListTileColor = Color(0xFFD7DBDD);
 
 const String ConnectionsBoxName="CONNECTIONS";
+
+enum SingingCharacter { event, action }

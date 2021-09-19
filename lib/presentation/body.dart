@@ -6,6 +6,7 @@ import 'package:iot_device_simulator/presentation/component/coapbody.dart';
 import 'package:iot_device_simulator/presentation/component/httpBody.dart';
 import 'component/mainTopBar.dart';
 import 'component/mqttBody.dart';
+import 'component/tcp.dart';
 
 class PageBody extends StatefulWidget {
   // const Body({Key key}) : super(key: key);
@@ -31,8 +32,11 @@ class _PageBodyState extends State<PageBody> {
                      return HttpBody();
                    else if(state.protocol=='CoAP')
                      return CoapBody();
+                   else if(state.protocol=="TCP")
+                     return TcpBody();
                    else
                      return MqttBody();
+
                  }
                )
 

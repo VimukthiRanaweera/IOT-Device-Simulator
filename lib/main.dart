@@ -7,17 +7,19 @@ import 'package:iot_device_simulator/Route/appRoute.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateBloc.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateRepo.dart';
+import 'package:iot_device_simulator/logic/ApiAutomation/writeActionFileCubit.dart';
 import 'package:iot_device_simulator/logic/HTTP/HttpRepo.dart';
 import 'package:iot_device_simulator/logic/HTTP/httpBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/Repo/mqttRepo.dart';
 import 'package:iot_device_simulator/logic/MQTT/randomDataCubit.dart';
+import 'package:iot_device_simulator/logic/TCP/counterCubit.dart';
+import 'package:iot_device_simulator/logic/TCP/tcpBloc.dart';
 import 'package:iot_device_simulator/logic/automateCubit.dart';
-import 'package:iot_device_simulator/logic/MQTT/mqttSubscribeCubit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'constants/constants.dart';
+import 'logic/MQTT/writeSubscribeLogFileCubit.dart';
 import 'logic/connectionBloc.dart';
-import 'logic/connectionCubit.dart';
 import 'logic/protocolCubit.dart';
 
 
@@ -67,6 +69,19 @@ class _MyAppState extends State<MyApp> {
           BlocProvider(
               create:(context)=>ApiAutomateBloc(ApiAutomateRepo()),
           ),
+          BlocProvider(
+              create:(context)=>TcpBloc(),
+          ),
+          BlocProvider(
+              create:(context)=>CounterCubit(),
+          ),
+          BlocProvider(
+              create:(context)=>WriteSubscribeLogFileCubit(),
+          ),
+          BlocProvider(
+              create:(context)=>WriteActionFileCubit(),
+          ),
+
         ],
 
       child: MaterialApp(
@@ -84,7 +99,7 @@ class _MyAppState extends State<MyApp> {
             )
           ),
               scrollbarTheme: ScrollbarThemeData().copyWith(
-    thumbColor: MaterialStateProperty.all(Colors.black38)),
+    thumbColor: MaterialStateProperty.all(Colors.black26)),
           visualDensity:VisualDensity.adaptivePlatformDensity,
         ),
       ),

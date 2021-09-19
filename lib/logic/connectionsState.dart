@@ -1,27 +1,45 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:iot_device_simulator/MODEL/ConnectionModel.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
 
 class ConsState extends Equatable{
   late final HiveConObject superConModel;
-  final TextEditingController formConnectionName = new TextEditingController();
+  final TextEditingController formMqttConnectionName = new TextEditingController();
   final TextEditingController formConnectionID = new TextEditingController();
   final TextEditingController formBrokerAddress = new TextEditingController();
   final  TextEditingController formPort = new TextEditingController();
   final TextEditingController formUserName = new TextEditingController();
   final TextEditingController formPassword= new TextEditingController();
 
+  final TextEditingController formHttpConnectionName = new TextEditingController();
+  final TextEditingController formHttpAddress = new TextEditingController();
+
+  final TextEditingController formTcpProfileName = new TextEditingController();
+  final TextEditingController formTcpHostAddress = new TextEditingController();
+  final TextEditingController formTcpHostPort = new TextEditingController();
+
 
   ConsState(this.superConModel);
 
-  ConsState.setDetails(this.superConModel){
-    formConnectionName.text = superConModel.connectionName;
+  ConsState.setMqttDetails(this.superConModel){
+    formMqttConnectionName.text = superConModel.connectionName;
     formBrokerAddress.text = superConModel.brokerAddress;
     formPort.text = superConModel.port.toString();
     formUserName.text = superConModel.username;
     formPassword.text = superConModel.password;
     formConnectionID.text = superConModel.connectionID;
+  }
+  
+  ConsState.setHttpDetails(this.superConModel){
+   formHttpConnectionName.text = superConModel.connectionName;
+   formHttpAddress.text = superConModel.brokerAddress;
+  }
+
+
+  ConsState.setTcpDetails(this.superConModel){
+    formTcpProfileName.text = superConModel.connectionName;
+    formTcpHostAddress.text = superConModel.brokerAddress;
+    formTcpHostPort.text = superConModel.port.toString();
   }
 
   ConsState.newConnection();
@@ -35,8 +53,6 @@ class ConsState extends Equatable{
 
 class ConnectionNotSelectedState extends ConsState{
   ConnectionNotSelectedState(HiveConObject superConModel) : super(superConModel);
-
-
 }
 
 
@@ -45,9 +61,18 @@ class ConnectionSelectedState extends ConsState{
 
 }
 
-class SetConnectionDetailsState extends ConsState{
-  SetConnectionDetailsState.setDetails(HiveConObject superConModel) : super.setDetails(superConModel);
+class SetMqttConnectionDetailsState extends ConsState{
+  SetMqttConnectionDetailsState.setMqttDetails(HiveConObject superConModel) : super.setMqttDetails(superConModel);
 
+}
+
+class SetHttpConnectionDetails extends ConsState{
+  SetHttpConnectionDetails.setHttpDetails(HiveConObject superConModel) : super.setHttpDetails(superConModel);
+
+}
+
+class SetTcpConnectionDetails extends ConsState{
+  SetTcpConnectionDetails.setTcpDetails(HiveConObject superConModel) : super.setTcpDetails(superConModel);
 
 }
 

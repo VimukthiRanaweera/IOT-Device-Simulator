@@ -11,6 +11,7 @@ import 'package:iot_device_simulator/logic/connectionBloc.dart';
 import 'package:iot_device_simulator/logic/connectionEvents.dart';
 import 'package:iot_device_simulator/logic/connectionsState.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
+import 'package:iot_device_simulator/presentation/Responsive.dart';
 
 class WindowMqttNewConnection extends StatefulWidget {
   // const WindowMqttNewConnection({Key key}) : super(key: key);
@@ -44,7 +45,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
           );
       },
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 80,vertical:60),
+        padding: EdgeInsets.symmetric(horizontal: Responsive.isMobile(context)?30:80,vertical:Responsive.isMobile(context)?20:60),
         child: Form(
           key:_formKey,
           child: Column(
@@ -53,7 +54,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                 alignment:Alignment.topRight,
                 child: ElevatedButton(
                     style:ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                        padding: EdgeInsets.symmetric(horizontal:Responsive.isMobile(context)?15:30,vertical:Responsive.isMobile(context)?10:20)
                     ),
                     onPressed: (){
                         BlocProvider.of<ConnetionBloc>(context).add(CreateNewConnetionEvent(BlocProvider.of<ConnetionBloc>(context).state.superConModel));
@@ -64,27 +65,29 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
               SizedBox(height: 50,),
               _connectionName(),
               SizedBox(height: 30,),
+
               Row(
                 mainAxisAlignment:MainAxisAlignment.start,
                 children: [
                   Expanded(
-                    flex: 4,
+                    flex: Responsive.isMobile(context)?5:4,
                     child:_clientId()
                   ),
                   SizedBox(width: 30,),
                   ElevatedButton(
                       style:ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal:20,vertical:20)
+                          padding: EdgeInsets.symmetric(horizontal:Responsive.isMobile(context)?15:20,vertical:Responsive.isMobile(context)?17:20)
                       ),
                       onPressed: (){
 
                       },
                       child:Text('Generate ID')
                   ),
-                  Expanded(flex:3,child:SizedBox(width: 10,))
+                  Expanded(flex:Responsive.isMobile(context)?1:3,child:SizedBox(width: 10,))
                 ],
               ),
               SizedBox(height: 30,),
+              if(!Responsive.isMobile(context))
               Row(
                 children: [
                   Expanded(
@@ -96,7 +99,14 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                   ),
                 ],
               ),
+              if(Responsive.isMobile(context))
+                _brokerAddres(),
+              if(Responsive.isMobile(context))
+                SizedBox(height: 30,),
+              if(Responsive.isMobile(context))
+                _port(),
               SizedBox(height: 30,),
+              if(!Responsive.isMobile(context))
               Row(
                 children: [
                   Expanded(
@@ -108,7 +118,14 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                   ),
                 ],
               ),
+              if(Responsive.isMobile(context))
+                _username(),
+              if(Responsive.isMobile(context))
               SizedBox(height: 30,),
+              if(Responsive.isMobile(context))
+              _password(),
+              SizedBox(height: 30,),
+              if(!Responsive.isMobile(context))
               Row(
                 children: [
                   Expanded(
@@ -151,7 +168,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
 
                               HiveConObject connection = HiveConObject(
                                   protocol,
-                                  state.formConnectionName.text,
+                                  state.formMqttConnectionName.text,
                                   state.formConnectionID.text,
                                   state.formBrokerAddress.text,
                                   int.parse(state.formPort.text),
@@ -192,7 +209,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
             ),
             hintText: 'Connection Name',
           ),
-          controller: state.formConnectionName,
+          controller: state.formMqttConnectionName,
 
           validator: (text) {
             if (text!.isEmpty) {

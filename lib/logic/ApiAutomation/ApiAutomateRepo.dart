@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+
+import 'package:iot_device_simulator/MODEL/apiParaControllers.dart';
 class ApiAutomateRepo{
 
   Future<Map<String, dynamic>> apiManagement(String xSecret) async {
@@ -15,7 +17,7 @@ class ApiAutomateRepo{
       request.headers.addAll(headers);
 
       http.StreamedResponse response = await request.send();
-
+      print("in the Api management");
       if (response.statusCode == 200) {
         // print(await response.stream.bytesToString());
         var responseBody=convert.jsonDecode(await response.stream.bytesToString());
@@ -44,7 +46,7 @@ class ApiAutomateRepo{
         "password": password
       });
       request.headers.addAll(headers);
-
+      print("in the usermanagement");
       http.StreamedResponse response = await request.send();
       if (response.statusCode == 200) {
         var responseBody=convert.jsonDecode(await response.stream.bytesToString());
@@ -82,14 +84,48 @@ class ApiAutomateRepo{
     }
   }
 
+  Future<String> executeAction({required String tokenType,required String accessToken,required String XIotJwt,required int deviceId,
+    required String actionName,required int userID,required List<ApiParaControllers> paramList}) async {
+
+    var headers = {
+      'Authorization':  '$tokenType $accessToken',
+      'X-IoT-JWT':'$XIotJwt',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    };
+
+    print("in the execute ????");
+
+    var request = http.Request('POST', Uri.parse('https://iot.dialog.lk/developer/api/userdevicecontrol/v1/devices/executeaction?deviceId&actionName&userId'));
+    request.body = json.encode({
+      "operation": "deviceControl",
+      "deviceId": deviceId,
+      "actionName": actionName,
+      "userId": userID,
+      "actionParameters": {
+        for(var item in paramList)
+          "${item.para.text}": "${item.value.text}"
+      }
+    });
+    print(deviceId);
+    print(actionName);
+    print(userID);
+    print("in the execute action");
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print("success" );
+    }
+    else {
+      print("in the execute action else......");
+    print(response.reasonPhrase);
+    }
+    var responseBody= await response.stream.bytesToString();
+    return responseBody;
+
+  }
+
 
 }
-
-// var url = Uri.parse(
-//     'https://iot.dialog.lk/developer/api/applicationmgt/authenticate');
-// var response = await http.get(
-//     url, headers: {'X-Secret': xSecret, 'accept': 'application/json'});
-// var jsonResponse = convert.jsonDecode(response.body) as Map<String, dynamic>;
-// print(response.body);
-// print(jsonResponse['access_token']);
-// return jsonResponse;

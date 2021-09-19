@@ -20,6 +20,7 @@ class MqttPublish extends StatefulWidget {
 final GlobalKey<FormState> _formKey = GlobalKey();
 TextEditingController topic =TextEditingController();
 TextEditingController message = TextEditingController();
+bool isChecked = false;
 class _MqttPublishState extends State<MqttPublish> {
 void clearText(){
   topic.clear();
@@ -29,7 +30,7 @@ void clearText(){
   Widget build(BuildContext context) {
   Future<void> _publishButton() async {
     if (_formKey.currentState!.validate()) {
-      if (BlocProvider.of<AutomateCubit>(context).state.isChecked) {
+      if (isChecked) {
         if(BlocProvider.of<AutomateCubit>(context).state.setAutoDetails()) {
           BlocProvider.of<MqttBloc>(context).add(MqttMultiplePublishEvent(count: BlocProvider.of<AutomateCubit>(context).state.count
                   , time: BlocProvider
@@ -61,7 +62,9 @@ void clearText(){
             listener:(context,state){
               if(state is ConnectionSelectedState) {
                 clearText();
-                BlocProvider.of<AutomateCubit>(context).checkBox(false);
+                setState(() {
+                  isChecked=false;
+                });
               }
             }
             ),
@@ -73,11 +76,10 @@ void clearText(){
         child: Form(
           key: _formKey,
           child: Container(
-
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
              children: [
-               SizedBox(height:70),
+               SizedBox(height:Responsive.isMobile(context)?20:20),
                TextFormField(
                   decoration: InputDecoration(
                     hintMaxLines: 2,
@@ -97,7 +99,6 @@ void clearText(){
                    }
                  },
                 ),
-
                SizedBox(height: 40,),
                   TextFormField(
                     maxLines: 2,
@@ -117,6 +118,32 @@ void clearText(){
                       }
                     },
                   ),
+               if(Responsive.isMobile(context))
+               Container(
+                 child: Column(
+                   children: [
+                     SizedBox(height: 20,),
+                     Row(
+                       children: [
+                         Text("Auto"),
+                         SizedBox(width: 20,),
+                         Checkbox(
+                           checkColor: Colors.white,
+                           value:isChecked,
+                           onChanged: (bool? value) {
+                             setState(() {
+                               isChecked = value!;
+                             });
+                           },
+                         ),
+                       ],
+                     ),
+                       if(isChecked)
+                       AutomateSendData(),
+                     SizedBox(height:20),
+                   ],
+                 ),
+               ),
                SizedBox(height:20),
                Row(
                  mainAxisAlignment:MainAxisAlignment.end,
@@ -137,7 +164,6 @@ void clearText(){
                          return SizedBox(width:10,);
                        }
                    ),
-
                    BlocBuilder<MqttBloc,MqttState>(
                      builder:(context,state) {
                       return ElevatedButton(
@@ -145,7 +171,7 @@ void clearText(){
                                padding: EdgeInsets.symmetric(
                                    horizontal: 30, vertical: 20)
                            ),
-                           onPressed:state is MqttPublishingState || state is MqttDisconnectedState || state is MqttClientNotClickState? null:_publishButton,
+                           onPressed:(state is MqttPublishingState || state is MqttConnectingState || state is MqttDisconnectedState || state is MqttClientNotClickState || state is MqttClientClickedState)? null:_publishButton,
                            child: Text('Publish')
 
                        );
@@ -155,20 +181,42 @@ void clearText(){
 
                  ],
                ),
-               SizedBox(height:30,),
-               if(Responsive.isMobile(context))
-                 AutomateSendData(),
+
              ],
             ),
           ),
         ),
       ),
           if(!Responsive.isMobile(context))
-            SizedBox(width:25,),
-          if(!Responsive.isMobile(context))
           Expanded(
-            flex: 2,
-            child: AutomateSendData(),
+            flex: isChecked?2:1,
+            child: Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Auto"),
+                      SizedBox(width: 20,),
+                      Checkbox(
+                        checkColor: Colors.white,
+                        // fillColor: MaterialStateProperty.resolveWith(getColor),
+                        value:isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isChecked = value!;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height:20),
+                  if(isChecked)
+                    AutomateSendData(),
+                ],
+              ),
+            ),
           ),
        ]
       ),
@@ -196,7 +244,6 @@ void clearText(){
           TextButton(
               onPressed:(){
                 Navigator.of(context).pop();
-
               },
               child:Text("OK",style:TextStyle(fontSize:14,color: Colors.black,fontWeight:FontWeight.bold),)
           ),

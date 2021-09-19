@@ -10,10 +10,11 @@ class MqttAPI{
   static final StreamController<String> controller = StreamController<String>.broadcast();
   // ignore: close_sinks
   static final StreamController<String> responeTopicController = StreamController<String>.broadcast();
+  // ignore: close_sinks
+  static final StreamController<String> connectionController =StreamController<String>.broadcast();
   Stream<String> get stream =>controller.stream;
 
   Future<bool> connectDevice(username,password,brokerAddress,port) async {
-
     client = MqttServerClient(brokerAddress, '');
     client.logging(on: false);
     client.port = port;
@@ -22,7 +23,8 @@ class MqttAPI{
     client.keepAlivePeriod = 20;
 
     /// Add the unsolicited disconnection callback
-    client.onDisconnected = onDisconnected;
+      client.onDisconnected = onDisconnected;
+
 
     /// Add the successful connection callback
     client.onConnected = onConnected;
@@ -36,6 +38,7 @@ class MqttAPI{
     /// Set a ping received callback if needed, called whenever a ping response(pong) is received
     /// from the broker.
     client.pongCallback = pong;
+
 
     /// Create a connection message to use or use the default one. The default one sets the
     /// client identifier, any supplied username/password and clean session,
@@ -103,9 +106,13 @@ class MqttAPI{
 
   /// The unsolicited disconnect callback
   void onDisconnected(){
+
     print('EXAMPLE::OnDisconnected client callback - Client disconnection');
     if (client.connectionStatus!.disconnectionOrigin == MqttDisconnectionOrigin.solicited) {
       print('EXAMPLE::OnDisconnected callback is solicited, this is correct');
+    }else{
+      print('EXAMPLE::OnDisconnected callback is Unsolicited, this is correct');
+      connectionController.sink.add("Disconnected");
     }
 
   }
@@ -133,10 +140,17 @@ class MqttAPI{
 
 
   Future<void> unsubscribe(topic) async {
-    print('EXAMPLE::Unsubscribing');
-     client.unsubscribe(topic);
-     print("after unsubscribed");
+    try {
+      print('EXAMPLE::Unsubscribing');
+      client.unsubscribe(topic);
+      print("after unsubscribed");
+    }catch(e){
+      print(e);
+    }
 
+  }
+  void onUnsubscribe(String topic){
+    print("<<<<<<<<<<Unsubscribed the topic  $topic>>>>>>>>>");
   }
 
   void onSubscribed(String topic) {

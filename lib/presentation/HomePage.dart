@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iot_device_simulator/MODEL/SubscribeMessage.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/presentation/ApiAutomation.dart';
 import 'package:iot_device_simulator/presentation/Responsive.dart';
 
 import 'Simmulator.dart';
-import 'body.dart';
 import 'component/drawerConList.dart';
 
 class HomePage extends StatefulWidget {
@@ -68,5 +68,11 @@ class _HomePageState extends State<HomePage> {
       body:(isSelected[0])?Simulator():ApiAitomation(),
 
     );
+  }
+  @override
+  void dispose() {
+
+    print('dispose Home page///////');
+    super.dispose();
   }
 }

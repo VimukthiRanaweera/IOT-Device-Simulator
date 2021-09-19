@@ -15,61 +15,50 @@ TextEditingController count = new TextEditingController();
 TextEditingController time= new TextEditingController();
 
 class _AutomateSendDataState extends State<AutomateSendData> {
-  bool isChecked=false;
   @override
   Widget build(BuildContext context) {
 
     return Container(
       alignment:Alignment.topCenter,
-      padding: EdgeInsets.only(left:10,right:10),
+      padding: EdgeInsets.only(left:30,right:10),
       child: BlocBuilder<AutomateCubit,AutomateState>(
         builder:(context,state) {
           return Form(
             key: state.formKey,
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Auto'),
-                    SizedBox(width: 30,),
-                    Checkbox(
-                      checkColor: Colors.white,
-                      // fillColor: MaterialStateProperty.resolveWith(getColor),
-                      value: state.isChecked,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          state.isChecked = value!;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                if(!state.isChecked)
-                  SizedBox(height:170,),
-                if(state.isChecked)
                   Container(
                     child: Column(
                       children: [
                         SizedBox(height: 5,),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.black26,
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide.none,
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.black26,
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide.none,
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                  hintText: 'Count',
+                                ),
+                                controller: state.formCount,
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                validator: (text) {
+                                  if (text!.isEmpty) {
+                                    return 'Cannot be empty';
+                                  }
+                                },
+                              ),
                             ),
-                            hintText: 'Count',
-                          ),
-                          controller: state.formCount,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                          validator: (text) {
-                            if (text!.isEmpty) {
-                              return 'Cannot be empty';
-                            }
-                          },
+                            Expanded(
+                                flex:1,
+                                child: Container()),
+                          ],
                         ),
                          SizedBox(height: 15,),
                           Row(
@@ -104,6 +93,7 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                         SizedBox(height:10,),
                         Container(
                           padding: EdgeInsets.all(10),
+                          alignment: Alignment.topLeft,
                           color: primaryColor,
                           child:Column(
                             crossAxisAlignment: CrossAxisAlignment.start,

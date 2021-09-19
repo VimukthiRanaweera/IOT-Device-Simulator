@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/services.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
 import 'package:iot_device_simulator/logic/MQTT/Repo/mqttRepo.dart';
 
@@ -14,18 +13,29 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
 
   final MqttRepo mqttRepo;
   late StreamSubscription subscription;
+  late StreamSubscription connectionSubscription;
   late String response;
   late String responseTopic;
+  bool isLogWrite = false;
   MqttBloc(this.mqttRepo) : super(MqttClientNotClickState()) {
 
     subscription = MqttAPI.responeTopicController.stream.listen((data) {
+      if(isLogWrite){
 
+      }
       List words = data.split('/');
      String id=words[0];
      String pubTopic=responseTopic.replaceAll("+",id);
-     mqttRepo.api.Publish(pubTopic,response);
+     mqttRepo.publish(pubTopic,response);
     responseSend();
       print('mqtttsubresponse...............');
+
+    });
+    connectionSubscription = MqttAPI.connectionController.stream.listen((event) {
+      if(event.toString() =="Disconnected"){
+        print("diconnected>>>>>>>>>>>>");
+        disconnected();
+      }
 
     });
 
@@ -33,6 +43,10 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
 
   void responseSend() {
     emit(MqttSubscribeResponsedState());
+  }
+
+  void disconnected(){
+    emit(MqttDisconnectedState());
   }
 
   @override
@@ -92,7 +106,7 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
     }
     if(event is MqttClientDeleteEvent){
       if(event.connection.protocol=="MQTT")
-        if(event.connection.protocol==event.conName)
+        if(event.connection.connectionName==event.conName)
              yield MqttClientNotClickState();
     }
 
@@ -101,6 +115,7 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
   @override
   Future<void> close() {
     subscription.cancel();
+    connectionSubscription.cancel();
     return super.close();
   }
 

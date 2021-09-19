@@ -5,9 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iot_device_simulator/MODEL/SubscribeMessage.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
+import 'package:iot_device_simulator/logic/MQTT/writeSubscribeLogFileCubit.dart';
 import 'package:iot_device_simulator/logic/connectionBloc.dart';
 import 'package:iot_device_simulator/logic/connectionsState.dart';
 import 'package:iot_device_simulator/presentation/component/mqttStreamReader.dart';
+
+import '../Responsive.dart';
 
 
 class MqttSubscribe extends StatefulWidget {
@@ -23,7 +26,8 @@ TextEditingController responseTopic = TextEditingController();
 final _formTopicKey = GlobalKey<FormFieldState>();
 final GlobalKey<FormState> _formKey = GlobalKey();
 
-bool isChecked=false;
+bool isCheckedAction=false;
+bool isCheckedLogWrite=false;
 class _MqttSubscribeState extends State<MqttSubscribe> {
 
   @override
@@ -39,7 +43,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
         }
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 50,vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal:Responsive.isMobile(context)?5:50,vertical: 10),
         child: Form(
           key: _formKey,
           child: Column(
@@ -65,21 +69,46 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
               ),
               SizedBox(height: 20,),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Action Response",style:TextStyle(fontWeight: FontWeight.bold),),
-                  Checkbox(
-                    checkColor: Colors.white,
-                    // fillColor: MaterialStateProperty.resolveWith(getColor),
-                    value:isChecked,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        isChecked = value!;
-                      });
-                    },
+                  Row(
+                    children: [
+                      Text("Action Response",style:TextStyle(fontWeight: FontWeight.bold),),
+                      Checkbox(
+                        checkColor: Colors.white,
+                        // fillColor: MaterialStateProperty.resolveWith(getColor),
+                        value:isCheckedAction,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isCheckedAction = value!;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 20,),
+                  Row(
+                    children: [
+                      Text("Log Write",style:TextStyle(fontWeight: FontWeight.bold),),
+                      BlocBuilder<WriteSubscribeLogFileCubit,WriteSubscribeLogFileState>(
+                        builder:(context,state) {
+                          return Checkbox(
+                            checkColor: Colors.white,
+                            // fillColor: MaterialStateProperty.resolveWith(getColor),
+                            value:state.isLogWrite,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                state.isLogWrite = value!;
+                              });
+                            },
+                          );
+                        }
+                      ),
+                    ],
                   ),
                 ],
               ),
-              if(isChecked)
+              if(isCheckedAction)
               Container(
                 child: Column(
                   children: [
@@ -139,11 +168,10 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                             setState(() {
                               SubscribeMessage.messages.clear();
                             });
-
                           },
                           child:Text('Unsubscribe')
                       );
-                    else if(state is MqttDisconnectedState|| state is MqttClientNotClickState)
+                    else if(state is MqttDisconnectedState|| state is MqttClientNotClickState || state is MqttClientClickedState || state is MqttConnectingState)
                       return ElevatedButton(
                           style:ElevatedButton.styleFrom(
                               padding:EdgeInsets.symmetric(horizontal:30,vertical:20)
@@ -157,18 +185,17 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                               padding:EdgeInsets.symmetric(horizontal:30,vertical:20)
                           ),
                           onPressed: (){
-                            if(isChecked) {
+                            if(isCheckedAction) {
                               if(_formKey.currentState!.validate())
                               BlocProvider.of<MqttBloc>(context).add(
                                   MqttSubscribeAndResponseEvent(
                                       topic.text,responseMessage.text,responseTopic.text));
+                              BlocProvider.of<WriteSubscribeLogFileCubit>(context).setResponse(true,responseMessage.text);
                               }
                             else{
                               if(_formTopicKey.currentState!.validate())
                                 BlocProvider.of<MqttBloc>(context).add(MqttSubscribeEvent(topic.text));
                             }
-
-
                           },
                           child:Text('Subscribe')
                       );
@@ -189,11 +216,9 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                     setState(() {
                       SubscribeMessage.messages.clear();
                     });
-
                   },
                   child:Text('clear')
               ),
-
             ],
           ),
         ),

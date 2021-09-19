@@ -11,6 +11,12 @@ class ApiCallingState extends ApiAutomateState{}
 
 class ApiCallSuccessState extends ApiAutomateState{}
 
+class ApiActionSuccessState extends ApiAutomateState{
+  late final String message;
+
+  ApiActionSuccessState(this.message);
+}
+
 class NotConnectedState extends ApiAutomateState{}
 
 class IncorrectXSecret extends ApiAutomateState{}

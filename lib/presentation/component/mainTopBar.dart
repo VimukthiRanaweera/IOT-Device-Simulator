@@ -5,7 +5,6 @@ import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
 import 'package:iot_device_simulator/logic/connectionBloc.dart';
-import 'package:iot_device_simulator/logic/connectionCubit.dart';
 import 'package:iot_device_simulator/logic/connectionEvents.dart';
 import 'package:iot_device_simulator/logic/connectionsState.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
@@ -46,7 +45,7 @@ class _MainTopBarState extends State<MainTopBar> {
                   BlocProvider.of<ProtocolCubit>(context).SetProtocol(newValue);
                 });
               },
-              items:<String>['MQTT','HTTP','CoAP'].map<DropdownMenuItem<String>>((String value) {
+              items:<String>['MQTT','HTTP','CoAP',"TCP"].map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem(
                   value: value,
                   child: Text(value),
@@ -84,9 +83,9 @@ class _MainTopBarState extends State<MainTopBar> {
                         Expanded(child: Container()),
                         if(!Responsive.isMobile(context))
                           SizedBox(width: 20,),
-                        if(protocolState.protocol!="HTTP")
+                        if(protocolState.protocol=="MQTT")
                         BlocBuilder<MqttBloc,MqttState>(
-                          builder:(cotext,state) {
+                          builder:(context,state) {
                             return AbsorbPointer(
                               absorbing: state is MqttConnectedState,
                               child: IconButton(
@@ -114,10 +113,11 @@ class _MainTopBarState extends State<MainTopBar> {
 
                         BlocBuilder<ProtocolCubit,ProtocolState>(
                           builder:(context,protocolState) {
-                            if(protocolState.protocol!='HTTP')
+                            if(protocolState.protocol=='MQTT')
                             return BlocBuilder<MqttBloc, MqttState>
                               (builder: (context, state) {
-                              if (state is MqttClientNotClickState ) {
+                              if (state is MqttClientNotClickState)
+                               {
                                 return ElevatedButton(
                                   onPressed: null,
                                   child: Text('Connect'),

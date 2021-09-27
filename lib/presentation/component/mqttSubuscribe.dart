@@ -1,4 +1,5 @@
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,6 +40,8 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
           setState(() {
             SubscribeMessage.messages.clear();
             topic.clear();
+            responseMessage.clear();
+            responseTopic.clear();
           });
         }
       },
@@ -92,15 +95,31 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                       Text("Log Write",style:TextStyle(fontWeight: FontWeight.bold),),
                       BlocBuilder<WriteSubscribeLogFileCubit,WriteSubscribeLogFileState>(
                         builder:(context,state) {
-                          return Checkbox(
-                            checkColor: Colors.white,
-                            // fillColor: MaterialStateProperty.resolveWith(getColor),
-                            value:state.isLogWrite,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                state.isLogWrite = value!;
-                              });
-                            },
+                          return AbsorbPointer(
+                            absorbing: false,
+                            child: Checkbox(
+                              checkColor: Colors.white,
+                              // fillColor: MaterialStateProperty.resolveWith(getColor),
+                              value:state.isLogWrite,
+                              onChanged: (bool? value) async {
+                                setState(() {
+                                  state.isLogWrite = value!;
+                                });
+                                if(state.isLogWrite){
+                                  String? result = await FilePicker.platform
+                                      .getDirectoryPath(
+                                      dialogTitle: "Save the File");
+                                  print(result);
+                                  if(result!=null){
+                                    state.filePath=result;
+                                  }else{
+                                    setState(() {
+                                      state.isLogWrite = false;
+                                    });
+                                  }
+                                }
+                              },
+                            ),
                           );
                         }
                       ),
@@ -190,11 +209,12 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                               BlocProvider.of<MqttBloc>(context).add(
                                   MqttSubscribeAndResponseEvent(
                                       topic.text,responseMessage.text,responseTopic.text));
-                              BlocProvider.of<WriteSubscribeLogFileCubit>(context).setResponse(true,responseMessage.text);
+                              // BlocProvider.of<WriteSubscribeLogFileCubit>(context).setResponse(responseMessage.text);
                               }
                             else{
                               if(_formTopicKey.currentState!.validate())
                                 BlocProvider.of<MqttBloc>(context).add(MqttSubscribeEvent(topic.text));
+                              // BlocProvider.of<WriteSubscribeLogFileCubit>(context).setResponse("NO RESPONSE");
                             }
                           },
                           child:Text('Subscribe')

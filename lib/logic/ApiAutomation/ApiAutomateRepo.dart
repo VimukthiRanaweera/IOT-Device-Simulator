@@ -25,7 +25,7 @@ class ApiAutomateRepo{
       }
       else {
         print(response.reasonPhrase);
-        throw Exception("bad request");
+        throw Exception("Invalid X-Secret");
       }
     }catch(_){
       throw Exception('not connect');
@@ -50,6 +50,7 @@ class ApiAutomateRepo{
       http.StreamedResponse response = await request.send();
       if (response.statusCode == 200) {
         var responseBody=convert.jsonDecode(await response.stream.bytesToString());
+        print(responseBody);
         return responseBody;
       }
       else {
@@ -66,21 +67,34 @@ class ApiAutomateRepo{
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     };
-    var request = http.Request('GET', Uri.parse('https://iot.dialog.lk/developer/api/datamgt/v1/user/devicehistory?eventName=$eventName&deviceIds=$deviceIds'
-        '&startDate=$startDate:00&endDate=$endDate:00&noOfEvents=$noOfEvents&zoneId=$zoneId&eventParams=$params'));
+    var request;
+    if(noOfEvents.isEmpty){
+       request = http.Request('GET', Uri.parse('https://iot.dialog.lk/developer/api/datamgt/v1/user/devicehistory?eventName=$eventName&deviceIds=$deviceIds'
+          '&startDate=$startDate:00&endDate=$endDate:00&zoneId=$zoneId&eventParams=$params'));
+    }
+    else{
+      request = http.Request('GET', Uri.parse('https://iot.dialog.lk/developer/api/datamgt/v1/user/devicehistory?eventName=$eventName&deviceIds=$deviceIds'
+          '&startDate=$startDate:00&endDate=$endDate:00&noOfEvents=$noOfEvents&zoneId=$zoneId&eventParams=$params'));
+    }
+
 
     request.headers.addAll(headers);
 
     http.StreamedResponse response = await request.send();
-
+    print("in the device history");
     if (response.statusCode == 200) {
       var responseBody=convert.jsonDecode(await response.stream.bytesToString());
-      return responseBody;
+      print(responseBody);
+      if(responseBody.isNotEmpty) {
+        return responseBody;
+      }else{
+        throw Exception("Not found data for the given device information");
+      }
       // print(await response.stream.bytesToString());
     }
     else {
     print(response.reasonPhrase);
-    throw Exception("error in Device history Api Call");
+    throw Exception("Invalid device Information");
     }
   }
 
@@ -127,5 +141,69 @@ class ApiAutomateRepo{
 
   }
 
+  Future<Map<String, dynamic>> createDevice({required String tokenType,required String accessToken,required String XIotJwt,required int deviceDefinitionId,
+    required String brand,required String type,required String model,required String deviceCategory,required int userId, required int deviceParentId,required String macAddress,
+    required String name,required String zoneId}) async {
+
+    var headers = {
+      'Authorization': '$tokenType $accessToken',
+      'X-IoT-JWT': '$XIotJwt',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    };
+    var request = http.Request('POST', Uri.parse('https://iot.dialog.lk/developer/api/userdevicemgt/v1/devices'));
+    request.body = json.encode({
+      "deviceDefinitionId": deviceDefinitionId,
+      "brand": "$brand",
+      "type": "$type",
+      "model": "$model",
+      "deviceCategory": "$deviceCategory",
+      "userId": userId,
+      "deviceParentId": deviceParentId,
+      "macAddress": "$macAddress",
+      "name": "$name",
+      "location": null,
+      "additionalParams": null,
+      "otherParameters": null,
+      "featured": false,
+      "nonDeletable": false,
+      "pullInterval": 0,
+      "zoneId": "$zoneId"
+    });
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+     var responseBody= convert.jsonDecode(await response.stream.bytesToString());
+    print(responseBody);
+    return responseBody;
+
+
+  }
+  Future<dynamic> createScene({required String tokenType,required String accessToken,required String XIotJwt,required var body}) async {
+    var headers = {
+      'Authorization': '$tokenType $accessToken',
+      'X-IoT-JWT': '$XIotJwt',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    };
+    print("in the createScene");
+    var request = http.Request('POST', Uri.parse('https://iot.dialog.lk/developer/api/userscenemgt/v1/scenes'));
+    request.body = json.encode(body);
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    // var responseBody= convert.jsonDecode(await response.stream.bytesToString());
+    // return responseBody;
+    if (response.statusCode == 201||response.reasonPhrase=="created") {
+      print("created scene in createscene api call::::");
+      print(await response.stream.bytesToString());
+      return true;
+    }
+    else {
+      print("error in createscene api call::::");
+    print(response.reasonPhrase);
+    return false;
+    }
+  }
 
 }

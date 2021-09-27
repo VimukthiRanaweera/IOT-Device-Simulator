@@ -33,7 +33,13 @@ class MqttSubscribedState extends MqttState{
   }
 }
 
-class MqttSubscribeResponsedState extends MqttState{}
+class MqttSubscribeResponsedState extends MqttState{
+  late String response;
+
+  MqttSubscribeResponsedState(this.response);
+
+  List<Object?> get props =>[response];
+}
 
 class MqttSubscribeNotResponsedState extends MqttState{}
 

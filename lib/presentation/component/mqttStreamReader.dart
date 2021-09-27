@@ -45,44 +45,58 @@ class _StreamReaderState extends State<StreamReader> {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      isAlwaysShown:true,
-      thickness: 9,
-      controller: scrollController,
-      child: ListView.builder(
+    return BlocListener<MqttBloc,MqttState>(
+      listener:(context,state){
+        if(state is MqttSubscribeResponsedState){
+          var inputFormat =  DateFormat("yyyy-MM-dd HH:mm:ss");
+          BlocProvider.of<WriteSubscribeLogFileCubit>(context).state.writeLogMessage(SubscribeMessage.messages[0],state.response,
+              inputFormat.format(DateTime.now()).toString(),
+              BlocProvider.of<ConnetionBloc>(context).state.superConModel.connectionName);
+        }
+        else if( state is MqttSubscribeNotResponsedState){
+          var inputFormat =  DateFormat("yyyy-MM-dd HH:mm:ss");
+          BlocProvider.of<WriteSubscribeLogFileCubit>(context).state.writeLogMessage(SubscribeMessage.messages[0],"NOT RESPONSE",
+              inputFormat.format(DateTime.now()).toString(),
+              BlocProvider.of<ConnetionBloc>(context).state.superConModel.connectionName);
+        }
+      },
+      child: Scrollbar(
+        isAlwaysShown:true,
+        thickness: 9,
         controller: scrollController,
-                  itemCount: SubscribeMessage.messages.length,
-                  itemBuilder: (context, index) {
-                    var inputFormat =  DateFormat("yyyy-MM-dd HH:mm:ss");
-                    BlocProvider.of<WriteSubscribeLogFileCubit>(context).state.writeLogMessage(SubscribeMessage.messages[0],inputFormat.format(DateTime.now()).toString(),
-                    BlocProvider.of<ConnetionBloc>(context).state.superConModel.connectionName);
-                    return Card(
-                      child: BlocBuilder<MqttBloc,MqttState>(
-                        builder:(context,state){
+        child: ListView.builder(
+          controller: scrollController,
+                    itemCount: SubscribeMessage.messages.length,
+                    itemBuilder: (context, index) {
 
-                          return ListTile(
-                            title: Text(SubscribeMessage.messages[index]),
-                            tileColor: Colors.black26,
-                            trailing: state is MqttSubscribeResponsedState?FittedBox(
-                              fit: BoxFit.fill,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.done,color:Colors.green,size:20,),
-                                  SizedBox(width: 5,),
-                                  if(Responsive.isMobile(context))
-                                  Text("Response \nPublished",style: TextStyle(color: Colors.green,fontWeight: FontWeight.w600),),
-                                  if(!Responsive.isMobile(context))
-                                    Text("Response Published",style: TextStyle(color: Colors.green,fontWeight: FontWeight.w600),),
-                                ],
-                              ),
-                            ):null,
+                      return Card(
+                        child: BlocBuilder<MqttBloc,MqttState>(
+                          builder:(context,state){
 
-                          );
-                        },
-                      ),
-                    );
-                  }
-              ),
+                            return ListTile(
+                              title: Text(SubscribeMessage.messages[index]),
+                              tileColor: Colors.black26,
+                              trailing: state is MqttSubscribeResponsedState?FittedBox(
+                                fit: BoxFit.fill,
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.done,color:Colors.green,size:20,),
+                                    SizedBox(width: 5,),
+                                    if(Responsive.isMobile(context))
+                                    Text("Response \nPublished",style: TextStyle(color: Colors.green,fontWeight: FontWeight.w600),),
+                                    if(!Responsive.isMobile(context))
+                                      Text("Response Published",style: TextStyle(color: Colors.green,fontWeight: FontWeight.w600),),
+                                  ],
+                                ),
+                              ):null,
+
+                            );
+                          },
+                        ),
+                      );
+                    }
+                ),
+      ),
     );
   }
 }

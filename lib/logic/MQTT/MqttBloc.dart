@@ -1,12 +1,10 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
 import 'package:iot_device_simulator/logic/MQTT/Repo/mqttRepo.dart';
-
+import 'package:iot_device_simulator/logic/MQTT/randomDataCubit.dart';
 import 'Data/MqttAPI.dart';
-
 part 'MqttState.dart';
 
 class MqttBloc extends Bloc<MqttEvents,MqttState>{
@@ -14,21 +12,27 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
   final MqttRepo mqttRepo;
   late StreamSubscription subscription;
   late StreamSubscription connectionSubscription;
-  late String response;
+  late String response="";
   late String responseTopic;
   bool isLogWrite = false;
+  bool isResponse = false;
   MqttBloc(this.mqttRepo) : super(MqttClientNotClickState()) {
 
-    subscription = MqttAPI.responeTopicController.stream.listen((data) {
-      if(isLogWrite){
+    subscription = MqttAPI.responeTopicController.stream.listen((data) async {
+      if(isResponse){
+        List words = data.split('/');
+        String id=words[0];
+        String pubTopic=responseTopic.replaceAll("+",id);
+        RandomDataState randomDataState = RandomDataState(dataString: response);
+        randomDataState.setData();
+       await mqttRepo.publish(pubTopic,randomDataState.dataString);
+        responseSend(randomDataState.dataString);
+        print('mqtttsubresponse...............');
 
       }
-      List words = data.split('/');
-     String id=words[0];
-     String pubTopic=responseTopic.replaceAll("+",id);
-     mqttRepo.publish(pubTopic,response);
-    responseSend();
-      print('mqtttsubresponse...............');
+      else{
+        notResponseSend();
+      }
 
     });
     connectionSubscription = MqttAPI.connectionController.stream.listen((event) {
@@ -41,8 +45,13 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
 
   }
 
-  void responseSend() {
-    emit(MqttSubscribeResponsedState());
+  void responseSend(response) {
+    emit(MqttSubscribeResponsedState(response));
+  }
+
+  void notResponseSend() {
+
+    emit(MqttSubscribeNotResponsedState());
   }
 
   void disconnected(){
@@ -87,6 +96,7 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
     }
 
     if(event is MqttSubscribeEvent){
+      isResponse=false;
       await mqttRepo.subscribe(event.topic,false);
       yield MqttSubscribeTopicState();
 
@@ -94,6 +104,7 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
     if(event is MqttSubscribeAndResponseEvent){
       response=event.response;
       responseTopic = event.responseTopic;
+      isResponse=true;
       await mqttRepo.subscribe(event.topic,true);
       yield MqttSubscribeTopicState();
 

@@ -1,8 +1,10 @@
 import 'dart:async';
 
+
 import 'package:bloc/bloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/randomDataCubit.dart';
 import 'package:iot_device_simulator/logic/TCP/TcpApi.dart';
+import 'package:iot_device_simulator/logic/TCP/createTcpLogFile.dart';
 import 'package:iot_device_simulator/logic/TCP/tcpEvents.dart';
 import 'package:iot_device_simulator/logic/TCP/tcpState.dart';
 import 'package:iot_device_simulator/presentation/component/tcp.dart';
@@ -11,6 +13,9 @@ class TcpBloc extends Bloc<TcpEvents, TcpState> {
   late TcpApi tcpApi;
   late int messageIndex;
   late int responseIndex;
+  bool isLogwrite = false;
+  String name="";
+  String path="";
   late StreamSubscription subscription;
   TcpBloc() : super(TcpDisconnectedState()){
 
@@ -35,7 +40,7 @@ class TcpBloc extends Bloc<TcpEvents, TcpState> {
       tcpApi = TcpApi();
       bool isConnect = await tcpApi.startConnection(event.host, event.port);
       if (isConnect)
-        yield TcpConnectedState();
+        yield TcpConnectionState();
       else
         yield TcpDisconnectedState();
     }
@@ -49,7 +54,7 @@ class TcpBloc extends Bloc<TcpEvents, TcpState> {
         yield TcpMessageSendingState();
         for (int i = 0; i < TcpBody.textBoxes.length; i++) {
           yield TcpAddListState.addList();
-          final randomData=new RandomDataState(dataString:TcpBody.textBoxes[i].message.text);
+          final randomData = new RandomDataState(dataString:TcpBody.textBoxes[i].message.text);
           randomData.setData();
           await Future.delayed(Duration(seconds: 3), () async {
             await tcpApi.sendMessage(randomData.dataString);
@@ -57,6 +62,7 @@ class TcpBloc extends Bloc<TcpEvents, TcpState> {
           yield TcpMessageSendState.addMessage(messageIndex,randomData.dataString);
           messageIndex++;
         }
+        yield TcpSendMessageSuccessState();
       } catch (e) {
         print(e.toString());
         tcpApi.disconnect();
@@ -65,6 +71,7 @@ class TcpBloc extends Bloc<TcpEvents, TcpState> {
     }
 
       if(event is TcpAutoSendMessageEvent){
+
         yield TcpMessageSendingState();
 
         for(int i = 0; i < TcpBody.textBoxes.length; i++){
@@ -79,9 +86,17 @@ class TcpBloc extends Bloc<TcpEvents, TcpState> {
             messageIndex++;
           }
         }
+        yield TcpSendMessageSuccessState();
       }
-      if( event is TcpMessageAndResponseListClearEvent){
-        yield TcpListClearState.clearList();
+
+      if(event is TcpMessageWriteFileEvent){
+
+        CreateTcpLogFile createTcpLogFile = CreateTcpLogFile(event.fileName,TcpState.messageAndResponse);
+        await createTcpLogFile.writeLogFile();
+
+      }
+
+      if(event is TcpMessageAndResponseListClearEvent){
         messageIndex=0;
         responseIndex=0;
       }

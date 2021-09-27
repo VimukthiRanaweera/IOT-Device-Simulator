@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iot_device_simulator/presentation/DevicesList.dart';
 import 'package:iot_device_simulator/presentation/HomePage.dart';
 import 'package:iot_device_simulator/presentation/NewConnectionPage.dart';
 
@@ -15,6 +16,10 @@ class AppRouter{
             builder:(_)=>NewConnectionPage(
               title: 'MQTT',
             )
+        );
+      case '/deviceList':
+        return MaterialPageRoute(
+            builder:(_)=>DevicesList()
         );
     }
   }

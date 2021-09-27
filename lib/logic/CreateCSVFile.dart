@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:csv/csv.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -57,7 +58,7 @@ class CreateCSVFile{
     }
     String csv = const ListToCsvConverter().convert(fileList);
     writeCounter(csv);
-    print(fileList);
+    // print(fileList);
 
   }
 
@@ -68,9 +69,17 @@ class CreateCSVFile{
   }
 
 
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
+  Future<String?> get _localPath async {
+    String? result= await FilePicker.platform.getDirectoryPath(dialogTitle: "Save the File") ;
+    print(result);
+    if(result!=null){
+      return result;
+    }
+    else {
+      final directory = await getApplicationDocumentsDirectory();
+      return directory.path;
+    }
+
   }
   Future<File> get _localFile async {
     final path = await _localPath;

@@ -6,9 +6,13 @@ import 'package:iot_device_simulator/MODEL/apiParaControllers.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateRepo.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateState.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiautomateEvents.dart';
-import 'package:iot_device_simulator/logic/ApiAutomation/writeActionFileCubit.dart';
+import 'package:iot_device_simulator/logic/ApiAutomation/CreateApiSceneBody.dart';
+import 'package:iot_device_simulator/logic/ApiAutomation/ReadDeviceList.dart';
+import 'package:iot_device_simulator/logic/ApiAutomation/writeApiActionFile.dart';
 import 'package:iot_device_simulator/logic/CreateCSVFile.dart';
 import 'package:iot_device_simulator/logic/MQTT/randomDataCubit.dart';
+
+import 'ReadSceneList.dart';
 
 
 class ApiAutomateBloc extends Bloc<ApiAutomateEvents,ApiAutomateState>{
@@ -16,12 +20,16 @@ class ApiAutomateBloc extends Bloc<ApiAutomateEvents,ApiAutomateState>{
 ApiAutomateRepo apiAutomateRepo;
   @override
   Stream<ApiAutomateState> mapEventToState(ApiAutomateEvents event) async*{
+    if( event is ClearButtonClickedEvent){
+      yield ExportButtonNotClickedState();
+    }
 
-    if(event is ExportButtonClickedEvent){
+    if(event is EventExportButtonClickedEvent){
       yield ApiCallingState();
       try {
         var responseAPIJason = await apiAutomateRepo.apiManagement(event.xSecret);
        var responseUserJason = await apiAutomateRepo.userManagemnet(event.username,event.password, responseAPIJason["token_type"], responseAPIJason["access_token"]);
+       print("in the bloc>>>> $responseUserJason");
        var finalResponseJson = await apiAutomateRepo.deviceHistory(tokenType: responseAPIJason["token_type"],accessToken:responseAPIJason["access_token"],XIotJwt: responseUserJason["X-IoT-JWT"],
        deviceIds: event.deviceIds,eventName: event.eventName,startDate: event.startDate,endDate: event.endDate,noOfEvents: event.noOfEvents,zoneId: event.zoneId,
        params: event.eventParms);
@@ -31,7 +39,7 @@ ApiAutomateRepo apiAutomateRepo;
        yield ApiCallSuccessState();
       }
       catch(e){
-        yield NotConnectedState();
+        yield ApiEventErrorState(e.toString().replaceAll("Exception:",""));
         print(e);
       }
       finally{
@@ -69,20 +77,26 @@ ApiAutomateRepo apiAutomateRepo;
                print(responseAction);
                messageRes=responseAction;
 
-            WriteActionFileState writeActionFileState=WriteActionFileState(event.isLogWrite);
-            var inputFormat =  DateFormat("yyyy-MM-dd HH:mm:ss");
+            if(event.isLogWrite) {
+              WriteApiActionFile writeApiActionFile = WriteApiActionFile(
+                  event.isLogWrite);
+              var inputFormat = DateFormat("yyyy-MM-dd HH:mm:ss");
 
-           String body = json.encode({
-              "operation": "deviceControl",
-              "deviceId": event.deviceId,
-              "actionName": event.actionName,
-              "userId": responseUserJason["data"]["userId"],
-              "actionParameters": {
-                for(var item in parameterList)
-                  "${item.para.text}": "${item.value.text}"
-              }
-            });
-            writeActionFileState.writeActionResponse(responseAction.toString(),event.deviceId.toString(),inputFormat.format(DateTime.now()).toString(),body);
+              String body = json.encode({
+                "operation": "deviceControl",
+                "deviceId": event.deviceId,
+                "actionName": event.actionName,
+                "userId": responseUserJason["data"]["userId"],
+                "actionParameters": {
+                  for(var item in parameterList)
+                    "${item.para.text}": "${item.value.text}"
+                }
+              });
+              writeApiActionFile.writeActionResponse(
+                  responseAction.toString(), event.deviceId.toString(),
+                  inputFormat.format(DateTime.now()).toString(), body,
+                  event.filePath);
+            }
 
           });
           yield ApiActionSuccessState(messageRes);
@@ -94,6 +108,116 @@ ApiAutomateRepo apiAutomateRepo;
       }
       finally{
         ExportButtonNotClickedState();
+      }
+    }
+
+    if(event is CreateDeviceEvent){
+      List notCreateDeviceList= [];
+      try{
+        ReadDeviceList readDeviceList =ReadDeviceList(event.filePath);
+        bool checkFile= await readDeviceList.readFile();
+        if(!checkFile){
+          throw Exception("Incorrect CSV File Header");
+        }
+        yield ApiCallingState();
+        var responseAPIJason = await apiAutomateRepo.apiManagement(
+            event.xSecret);
+        var responseUserJason = await apiAutomateRepo.userManagemnet(
+            event.username, event.password, responseAPIJason["token_type"],
+            responseAPIJason["access_token"]);
+        // print(responseUserJason);
+        for(var device in readDeviceList.deviceList.keys){
+          print(device);
+          print(readDeviceList.deviceList[device].toString());
+           var responseCreateDevice= await apiAutomateRepo.createDevice(tokenType: responseAPIJason["token_type"], accessToken:responseAPIJason["access_token"],
+                XIotJwt:responseUserJason["X-IoT-JWT"], deviceDefinitionId: event.deviceDefinitionId, brand: event.brand, type:event.type,
+                model:event.model, deviceCategory:event.deviceCategory, userId:responseUserJason["data"]["userId"], deviceParentId:event.deviceParentId,
+                macAddress:readDeviceList.deviceList[device].toString(), name:device.toString(), zoneId:event.zoneId);
+
+            if(responseCreateDevice["macAddress"]==readDeviceList.deviceList[device].toString()){
+              print("Device $device Successfully created");
+            }
+           else if(responseCreateDevice["errorCode"]==1000){
+             if(responseCreateDevice["desc"]=="Device with same Mac/SN address already in use") {
+               print(" Device with same Mac/SN address already in use");
+               notCreateDeviceList.add(readDeviceList.deviceList[device]);
+             }
+             else{
+               throw Exception(responseCreateDevice["desc"]);
+             }
+            }
+          else if(responseCreateDevice["errorCode"]==1001){
+            throw Exception("Incorrect Parent Device ID");
+          }
+          else{
+              throw Exception(responseCreateDevice["desc"]);
+            }
+
+          }
+
+          if(notCreateDeviceList.length==readDeviceList.deviceList.length){
+            throw Exception("All Mac address already in use");
+          }
+          else{
+            yield ApiDeviceCreateSuccessState();
+            yield ApiDeviceCreateMessageState(notCreateDeviceList,readDeviceList.deviceList.length);
+
+          }
+
+
+      }catch(e){
+          yield ApiErrorState(e.toString().replaceAll("Exception:",""));
+      }
+    }
+
+    if(event is ApiAddSceneEvent){
+      try{
+        List notCreateScenesList= [];
+        yield ApiCallingState();
+        var responseAPIJason = await apiAutomateRepo.apiManagement(
+            event.xSecret);
+        var responseUserJason = await apiAutomateRepo.userManagemnet(
+            event.username, event.password, responseAPIJason["token_type"],
+            responseAPIJason["access_token"]);
+        print(event.filePath);
+        ReadSceneList read = ReadSceneList(event.filePath);
+       var sceneList = await read.readFile();
+       print(">>>>>>>>>>>>>>>>>>");
+       print(sceneList);
+       print(sceneList.length);
+
+        for(var scene in sceneList) {
+
+          print(scene[0]);
+          CreateApiSceneBody apiSceneBody = CreateApiSceneBody();
+          bool checkBody = apiSceneBody.createBody(scene, responseUserJason["data"]["userId"]);
+          print("create body");
+          print(json.encode(apiSceneBody.sceneBody));
+          if(checkBody) {
+            var responseCreateScene = await apiAutomateRepo.createScene(
+                tokenType: responseAPIJason["token_type"],
+                accessToken: responseAPIJason["access_token"],
+                XIotJwt: responseUserJason["X-IoT-JWT"],
+                body: apiSceneBody.sceneBody);
+
+            if(!responseCreateScene) {
+              notCreateScenesList.add(scene[0]);
+               }
+          }
+          else{
+            notCreateScenesList.add(scene[0]);
+          }
+
+        }
+        if(sceneList.length==notCreateScenesList.length){
+          throw("Not created Any Scene");
+        }else {
+          yield ApiSceneCreatedState();
+          yield ApiSceneCreateMessageState(notCreateScenesList, sceneList.length);
+        }
+      }catch(e){
+        yield ApiSceneErrorState(e.toString().replaceAll("Exception:",""));
+        print(e.toString());
       }
     }
 

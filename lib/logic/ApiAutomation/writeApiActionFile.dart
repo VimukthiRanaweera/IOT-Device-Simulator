@@ -1,28 +1,22 @@
 
-
 import 'dart:io';
-
-import 'package:bloc/bloc.dart';
 import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
 
-class WriteActionFileCubit extends Cubit<WriteActionFileState>{
-  WriteActionFileCubit() : super(WriteActionFileState(false));
-
-}
 
 
-
-class WriteActionFileState{
+class WriteApiActionFile{
   late bool isCheckLogWrite;
   late String fileName;
+  late String filePath;
 
-  WriteActionFileState(this.isCheckLogWrite);
+  WriteApiActionFile(this.isCheckLogWrite);
 
-  void writeActionResponse(String message,String name,String time,String body){
+  void writeActionResponse(String message,String name,String time,String body,String path){
     if(isCheckLogWrite){
       print("Print Action file");
       fileName = name;
+      filePath= path;
       writeMessage(time,body,message);
 
     }
@@ -31,7 +25,7 @@ class WriteActionFileState{
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
 
-    return directory.path;
+    return filePath;
   }
 
   Future<File> get _localFile async {

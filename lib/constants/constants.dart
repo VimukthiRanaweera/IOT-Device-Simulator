@@ -9,4 +9,8 @@ const clickedListTileColor = Color(0xFFD7DBDD);
 
 const String ConnectionsBoxName="CONNECTIONS";
 
-enum SingingCharacter { event, action }
+enum SingingCharacter { event, action, createDevice, createScene, device }
+
+enum TcpConnectionStates { connected, disconnected, connecting }
+
+enum ApiSceneActionCharacter  {device , global}

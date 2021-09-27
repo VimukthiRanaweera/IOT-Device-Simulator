@@ -6,8 +6,8 @@ class ApiAutomateEvents extends Equatable{
   List<Object?> get props => [];
 
 }
-
-class ExportButtonClickedEvent extends ApiAutomateEvents{
+class ClearButtonClickedEvent extends ApiAutomateEvents{}
+class EventExportButtonClickedEvent extends ApiAutomateEvents{
   late final String xSecret;
   late final String username;
   late final String password;
@@ -17,10 +17,10 @@ class ExportButtonClickedEvent extends ApiAutomateEvents{
   late final String endDate;
   late final String zoneId;
   late final String eventParms;
-  late final int noOfEvents;
+  late final String noOfEvents;
 
 
-  ExportButtonClickedEvent({
+  EventExportButtonClickedEvent({
       required this.xSecret,
       required this.username,
       required this.password,
@@ -34,7 +34,8 @@ class ExportButtonClickedEvent extends ApiAutomateEvents{
 
   List<Object?> get props => [xSecret];
 
-}class ActionExportButtonClickedEvent extends ApiAutomateEvents{
+}
+class ActionExportButtonClickedEvent extends ApiAutomateEvents{
   late final String xSecret;
   late final String username;
   late final String password;
@@ -44,10 +45,11 @@ class ExportButtonClickedEvent extends ApiAutomateEvents{
   late final int time;
   late final List<ApiParaControllers> paraList;
   late final bool isLogWrite;
+  late final String filePath;
 
 
   ActionExportButtonClickedEvent(this.xSecret, this.username, this.password,
-      this.actionName, this.deviceId, this.noOfActions,this.time, this.paraList,this.isLogWrite);
+      this.actionName, this.deviceId, this.noOfActions,this.time, this.paraList,this.isLogWrite,this.filePath);
 
   List<Object?> get props => [
     xSecret,
@@ -57,6 +59,65 @@ class ExportButtonClickedEvent extends ApiAutomateEvents{
     noOfActions,
     paraList,
     time,
+    filePath
   ];
 
+}
+class CreateDeviceEvent extends ApiAutomateEvents{
+  late final String xSecret;
+  late final String username;
+  late final String password;
+  late final int deviceDefinitionId;
+  late final String brand;
+  late final String type;
+  late final String model;
+  late final String deviceCategory;
+  late final int deviceParentId;
+  late final String zoneId;
+  late final String filePath;
+
+  CreateDeviceEvent({
+      required this.xSecret,
+      required this.username,
+      required this.password,
+      required this.deviceDefinitionId,
+      required this.brand,
+      required this.type,
+      required this.model,
+      required this.deviceCategory,
+      required this.deviceParentId,
+    required this.zoneId,
+      required this.filePath});
+
+  List<Object?> get props => [
+    xSecret,
+    username,
+    password,
+    deviceDefinitionId,
+    deviceCategory,
+    brand,
+    type,
+    model,
+    deviceParentId,
+    filePath
+
+  ];
+
+}
+
+class ApiAddSceneEvent extends ApiAutomateEvents{
+  late final String xSecret;
+  late final String username;
+  late final String password;
+  late final String filePath;
+
+
+  ApiAddSceneEvent(this.xSecret, this.username, this.password, this.filePath);
+
+  List<Object?> get props => [
+    username,
+    password,
+    xSecret,
+    filePath
+  ];
 }

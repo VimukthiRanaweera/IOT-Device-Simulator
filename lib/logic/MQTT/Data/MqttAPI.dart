@@ -127,7 +127,7 @@ class MqttAPI{
       final pt =  MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
       print('EXAMPLE::Change notification:: topic is <${c[0].topic}>, payload is <-- $pt -->');
       controller.sink.add(pt);
-      if(isResponse)
+      // if(isResponse)
         responeTopicController.sink.add(c[0].topic);
     });
     client.published!.listen((MqttPublishMessage message) {

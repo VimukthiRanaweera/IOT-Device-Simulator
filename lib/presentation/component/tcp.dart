@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -277,7 +276,7 @@ class _TcpBodyState extends State<TcpBody> {
                       // padding: EdgeInsets.symmetric(vertical: 15),
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black38),
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(TextBoxRadius),
                           color: Colors.white10),
                       height: 300.0,
                       child: Form(
@@ -295,7 +294,7 @@ class _TcpBodyState extends State<TcpBody> {
                                   padding: EdgeInsets.symmetric(
                                       vertical: 15, horizontal: 15),
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
+                                    borderRadius: BorderRadius.circular(TextBoxRadius),
                                     color: Colors.black12,
                                   ),
                                   child: TcpConsole(),
@@ -467,6 +466,7 @@ class _TcpBodyState extends State<TcpBody> {
               ),
               Checkbox(
                 checkColor: Colors.white,
+                activeColor: checkBoxColor,
                 value: isChecked,
                 onChanged: (bool? value) {
                   setState(() {
@@ -497,10 +497,10 @@ class _TcpBodyState extends State<TcpBody> {
       key: key,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.black26,
+        fillColor: TextFieldColour,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
         ),
         hintText: text,
       ),
@@ -520,10 +520,10 @@ class _TcpBodyState extends State<TcpBody> {
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.black26,
+        fillColor: TextFieldColour,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
         ),
         hintText: text,
       ),
@@ -541,10 +541,10 @@ class _TcpBodyState extends State<TcpBody> {
       maxLines: 1,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.black26,
+        fillColor: TextFieldColour,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
         ),
         hintText: text,
       ),

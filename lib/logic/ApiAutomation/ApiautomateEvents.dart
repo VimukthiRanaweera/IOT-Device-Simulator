@@ -121,3 +121,65 @@ class ApiAddSceneEvent extends ApiAutomateEvents{
     filePath
   ];
 }
+class ApiGetDevicesEvent extends ApiAutomateEvents{
+  late final String xSecret;
+  late final String username;
+  late final String password;
+
+
+  ApiGetDevicesEvent(this.xSecret, this.username, this.password);
+
+  List<Object?> get props => [
+    username,
+    password,
+    xSecret,
+  ];
+}
+class ApiGetScenesEvent extends ApiAutomateEvents{
+  late final String xSecret;
+  late final String username;
+  late final String password;
+
+
+  ApiGetScenesEvent(this.xSecret, this.username, this.password);
+
+  List<Object?> get props => [
+    username,
+    password,
+    xSecret,
+  ];
+}
+class ApiGetDeviceEventsEvent extends ApiAutomateEvents{
+  late final String xSecret;
+  late final String username;
+  late final String password;
+  late final String deviceId;
+
+
+  ApiGetDeviceEventsEvent(this.xSecret, this.username, this.password,this.deviceId);
+
+  List<Object?> get props => [
+    username,
+    password,
+    xSecret,
+    deviceId,
+  ];
+}
+class ApiGetDeviceActionsEvent extends ApiAutomateEvents{
+  late final String xSecret;
+  late final String username;
+  late final String password;
+  late final String deviceId;
+
+
+  ApiGetDeviceActionsEvent(this.xSecret, this.username, this.password,this.deviceId);
+
+  List<Object?> get props => [
+    username,
+    password,
+    xSecret,
+    deviceId,
+  ];
+}
+
+class ApiChangeDeviceExploreSelectItem extends ApiAutomateEvents{}

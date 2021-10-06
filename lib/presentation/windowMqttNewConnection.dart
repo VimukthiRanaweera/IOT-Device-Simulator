@@ -12,6 +12,8 @@ import 'package:iot_device_simulator/logic/connectionEvents.dart';
 import 'package:iot_device_simulator/logic/connectionsState.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
 import 'package:iot_device_simulator/presentation/Responsive.dart';
+import 'package:numberpicker/numberpicker.dart';
+import 'package:random_string_generator/random_string_generator.dart';
 
 class WindowMqttNewConnection extends StatefulWidget {
   // const WindowMqttNewConnection({Key key}) : super(key: key);
@@ -22,6 +24,7 @@ class WindowMqttNewConnection extends StatefulWidget {
 
 
 final GlobalKey<FormState> _formKey = GlobalKey();
+ScrollController scrollController =ScrollController();
 
 class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
   late Box<HiveConObject> consBox;
@@ -31,7 +34,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
     super.initState();
    consBox=Hive.box<HiveConObject>( ConnectionsBoxName);
   }
-
+  int _currentIntValue=60;
   @override
   Widget build(BuildContext context) {
 
@@ -79,6 +82,14 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                           padding: EdgeInsets.symmetric(horizontal:Responsive.isMobile(context)?15:20,vertical:Responsive.isMobile(context)?17:20)
                       ),
                       onPressed: (){
+                        var generator = RandomStringGenerator(
+                          hasSymbols: false,
+                          alphaCase:AlphaCase.LOWERCASE_ONLY,
+                          fixedLength: 20,
+                        );
+
+                        print(generator.generate());
+                        BlocProvider.of<ConnetionBloc>(context).state.formConnectionID.text=generator.generate();
 
                       },
                       child:Text('Generate ID')
@@ -125,16 +136,11 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
               if(Responsive.isMobile(context))
               _password(),
               SizedBox(height: 30,),
-              if(!Responsive.isMobile(context))
               Row(
                 children: [
-                  Expanded(
-                    flex: 1,
-                    child: _keepAlive()
-                  ),
-                  Expanded(
-                    flex: 4,
-                      child: SizedBox(width: 10,)),
+                  Text("Keep Alive",style:TextStyle(fontWeight: FontWeight.w600),),
+                  SizedBox(width: 5,),
+                  _keepAlive()
                 ],
               ),
               SizedBox(height: 30,),
@@ -147,7 +153,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                           padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
                       ),
                       onPressed: (){
-
+                        Navigator.pop(context);
                       },
                       child:Text('Cancel')
                   ),
@@ -174,7 +180,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                                   int.parse(state.formPort.text),
                                   state.formUserName.text,
                                   state. formPassword.text,
-                                  60);
+                                  int.parse(state.keepAlive.text));
                               BlocProvider.of<ConnetionBloc>(context).add(ConnectionSaveEvent(connection));
                               BlocProvider.of<MqttBloc>(context).add(MqttClientClickedEvent());
 
@@ -202,10 +208,10 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
           decoration: InputDecoration(
             hintMaxLines: 1,
             filled: true,
-            fillColor: Colors.black26,
+            fillColor: TextFieldColour,
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
             ),
             hintText: 'Connection Name',
           ),
@@ -231,10 +237,10 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
           decoration: InputDecoration(
             hintMaxLines: 1,
             filled: true,
-            fillColor: Colors.black26,
+            fillColor: TextFieldColour,
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
             ),
             hintText: 'Client ID',
           ),
@@ -258,10 +264,10 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
           decoration: InputDecoration(
             hintMaxLines: 1,
             filled: true,
-            fillColor: Colors.black26,
+            fillColor: TextFieldColour,
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
             ),
             hintText: 'Broker Address',
           ),
@@ -285,10 +291,10 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
           decoration: InputDecoration(
             hintMaxLines: 1,
             filled: true,
-            fillColor: Colors.black26,
+            fillColor: TextFieldColour,
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
             ),
             hintText: 'Port',
           ),
@@ -314,10 +320,10 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
           decoration: InputDecoration(
             hintMaxLines: 1,
             filled: true,
-            fillColor: Colors.black26,
+            fillColor: TextFieldColour,
             border:OutlineInputBorder(
               borderSide:BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
             ),
             hintText: 'Username',
 
@@ -342,10 +348,10 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
           decoration: InputDecoration(
             hintMaxLines: 1,
             filled: true,
-            fillColor: Colors.black26,
+            fillColor: TextFieldColour,
             border:OutlineInputBorder(
               borderSide:BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
             ),
             hintText: 'Password',
           ),
@@ -364,19 +370,29 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
   Widget _keepAlive(){
     return BlocBuilder<ConnetionBloc,ConsState>(
       builder:(context,state) {
-        return TextFormField(
-          decoration: InputDecoration(
-            hintMaxLines: 1,
-            filled: true,
-            fillColor: Colors.black26,
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            hintText: 'Keep Alive',
-
+        return Container(
+          decoration: BoxDecoration(
+            color: TextFieldColour,
+            borderRadius: BorderRadius.circular(TextBoxRadius),
+            border: Border.all(color: Colors.black26),
           ),
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          child: NumberPicker(
+            value: state.keepAlive.text.isEmpty?60:int.parse(state.keepAlive.text),
+            minValue: 0,
+            maxValue: 100,
+            step: 10,
+            textStyle:TextStyle(color: Colors.black38),
+            itemHeight: 40,
+            axis: Axis.horizontal,
+            itemWidth:40,
+            haptics: false,
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(0),
+              // border: Border.symmetric(horizontal:BorderSide(color: Colors.black26)),
+            ),
+            onChanged: (value) => setState(() => state.keepAlive.text = value.toString()),
+          ),
         );
       }
     );

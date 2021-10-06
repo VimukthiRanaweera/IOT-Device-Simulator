@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iot_device_simulator/MODEL/SubscribeMessage.dart';
+import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
 import 'package:iot_device_simulator/logic/MQTT/writeSubscribeLogFileCubit.dart';
@@ -56,10 +57,10 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                 key: _formTopicKey,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: Colors.black26,
+                  fillColor:TextFieldColour,
                   border:OutlineInputBorder(
                     borderSide:BorderSide.none,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                   ),
                   hintText: 'Topic',
                 ),
@@ -79,7 +80,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                       Text("Action Response",style:TextStyle(fontWeight: FontWeight.bold),),
                       Checkbox(
                         checkColor: Colors.white,
-                        // fillColor: MaterialStateProperty.resolveWith(getColor),
+                        activeColor: checkBoxColor,
                         value:isCheckedAction,
                         onChanged: (bool? value) {
                           setState(() {
@@ -99,6 +100,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                             absorbing: false,
                             child: Checkbox(
                               checkColor: Colors.white,
+                              activeColor: checkBoxColor,
                               // fillColor: MaterialStateProperty.resolveWith(getColor),
                               value:state.isLogWrite,
                               onChanged: (bool? value) async {
@@ -137,10 +139,10 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                         maxLines: 1,
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.black26,
+                          fillColor: TextFieldColour,
                           border:OutlineInputBorder(
                             borderSide:BorderSide.none,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                           ),
                           hintText: 'Action Response Topic',
                         ),
@@ -156,10 +158,10 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                       maxLines: 2,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.black26,
+                        fillColor: TextFieldColour,
                         border:OutlineInputBorder(
                           borderSide:BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                         ),
                         hintText: 'Action Response Message',
                       ),

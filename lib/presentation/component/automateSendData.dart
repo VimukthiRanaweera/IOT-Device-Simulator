@@ -38,10 +38,10 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Colors.black26,
+                                  fillColor: TextFieldColour,
                                   border: OutlineInputBorder(
                                     borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                    borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                                   ),
                                   hintText: 'Count',
                                 ),
@@ -68,11 +68,11 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                                   maxLines: 1,
                                   decoration: InputDecoration(
                                     filled: true,
-                                    fillColor: Colors.black26,
+                                    fillColor: TextFieldColour,
                                     border: OutlineInputBorder(
                                       borderSide: BorderSide.none,
                                       borderRadius: BorderRadius.all(
-                                          Radius.circular(10)),
+                                          Radius.circular(TextBoxRadius)),
                                     ),
                                     hintText: 'Time Interval',
                                   ),

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:iot_device_simulator/MODEL/SubscribeMessage.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/presentation/ApiAutomation.dart';
 import 'package:iot_device_simulator/presentation/Responsive.dart';
@@ -14,35 +13,43 @@ class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
-List<bool> isSelected =[true,false];
+List<bool> isSelected =[true,false,false];
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: Responsive.isDesktop(context)?null:drawerConList(),
       appBar:AppBar(
-        title: !Responsive.isMobile(context)||Responsive.isTablet(context)?Text("Dialog Iot Simulator",):Text("Dialog Iot \nSimulator",style:TextStyle(fontSize:17),),
+        title: !Responsive.isMobile(context)||Responsive.isTablet(context)?Text("IoT Dev Tools",):Text("Iot Dev\n Tools",style:TextStyle(fontSize:17),),
         actions: [
           Container(
-            margin: EdgeInsets.only(right: 0),
+            margin: EdgeInsets.only(top:10,bottom:10),
             child: ToggleButtons(
               // fillColor:secondaryColor ,
               // highlightColor:secondaryColor ,
               borderWidth: 1,
               color: Colors.white70,
-              fillColor:primaryColor,
+              fillColor:secondaryColor,
               borderRadius:BorderRadius.all(Radius.circular(5)),
               selectedBorderColor: Colors.white38,
               borderColor: Colors.white38,
               selectedColor: Colors.black,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical:5,horizontal:15),
+                Container(
+                  padding:  EdgeInsets.symmetric(vertical:0,horizontal:5),
+                  margin: EdgeInsets.symmetric(horizontal: 5),
                   child: Text('Simulator',style: TextStyle(fontWeight:FontWeight.w600),),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical:5,horizontal: 25),
+                Container(
+                  padding:  EdgeInsets.symmetric(vertical:0,horizontal: 15),
+                  margin: EdgeInsets.symmetric(horizontal: 5),
                   child: Text('API',style: TextStyle(fontWeight:FontWeight.w600)),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.symmetric(vertical:0,horizontal: 15),
+
+                  child: Text('Info',style: TextStyle(fontWeight:FontWeight.w600)),
                 ),
               ],
               onPressed: (int index) {
@@ -65,7 +72,7 @@ class _HomePageState extends State<HomePage> {
 
         ],
       ),
-      body:(isSelected[0])?Simulator():ApiAitomation(),
+      body:(isSelected[0]?Simulator():isSelected[1]?ApiAitomation():Container())
 
     );
   }

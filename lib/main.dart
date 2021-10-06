@@ -7,7 +7,6 @@ import 'package:iot_device_simulator/Route/appRoute.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateBloc.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateRepo.dart';
-import 'package:iot_device_simulator/logic/ApiAutomation/writeApiActionFile.dart';
 import 'package:iot_device_simulator/logic/HTTP/HttpRepo.dart';
 import 'package:iot_device_simulator/logic/HTTP/httpBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
@@ -84,7 +83,6 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         onGenerateRoute: _appRouter.onGenerateRoute,
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
         theme: ThemeData.light().copyWith(
           appBarTheme:AppBarTheme(backgroundColor:appbarColor),
           canvasColor:primaryColor,
@@ -92,12 +90,13 @@ class _MyAppState extends State<MyApp> {
           elevatedButtonTheme:ElevatedButtonThemeData(
             style:ElevatedButton.styleFrom(
               primary:buttonColor,
-
             )
+
           ),
               scrollbarTheme: ScrollbarThemeData().copyWith(
     thumbColor: MaterialStateProperty.all(Colors.black26)),
           visualDensity:VisualDensity.adaptivePlatformDensity,
+          colorScheme: ColorScheme.light(primary: buttonColor),
         ),
       ),
     );

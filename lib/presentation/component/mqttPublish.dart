@@ -84,10 +84,10 @@ void clearText(){
                   decoration: InputDecoration(
                     hintMaxLines: 2,
                       filled: true,
-                      fillColor: Colors.black26,
+                      fillColor: TextFieldColour,
                       border:OutlineInputBorder(
                         borderSide:BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                       ),
                       hintText: 'Topic',
 
@@ -104,10 +104,10 @@ void clearText(){
                     maxLines: 2,
                     decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.black26,
+                        fillColor: TextFieldColour,
                         border:OutlineInputBorder(
                           borderSide:BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                         ),
                         hintText: 'Message'
                     ),
@@ -129,6 +129,7 @@ void clearText(){
                          SizedBox(width: 20,),
                          Checkbox(
                            checkColor: Colors.white,
+                           activeColor: checkBoxColor,
                            value:isChecked,
                            onChanged: (bool? value) {
                              setState(() {
@@ -201,6 +202,7 @@ void clearText(){
                       SizedBox(width: 20,),
                       Checkbox(
                         checkColor: Colors.white,
+                        activeColor: checkBoxColor,
                         // fillColor: MaterialStateProperty.resolveWith(getColor),
                         value:isChecked,
                         onChanged: (bool? value) {

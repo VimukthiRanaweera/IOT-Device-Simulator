@@ -4,12 +4,12 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateBloc.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateState.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiautomateEvents.dart';
-import 'package:iot_device_simulator/logic/ApiAutomation/ReadSceneList.dart';
+
 
 import '../ApiAutomation.dart';
 import '../Responsive.dart';
@@ -23,6 +23,7 @@ class ApiCreateScene extends StatefulWidget {
   _ApiCreateSceneState createState() => _ApiCreateSceneState();
 }
 String filePath = "";
+bool isNotSelectFile=false;
 final TextEditingController formSceneName = new TextEditingController();
 class _ApiCreateSceneState extends State<ApiCreateScene> {
   @override
@@ -35,6 +36,15 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
       },
       child: Column(
         children: [
+          SizedBox(height: 20,),
+          if (Responsive.isMobile(context))
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),),
+                selectFileButton(),
+              ],
+            ),
           SizedBox(height: 20,),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -49,28 +59,10 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
                 SizedBox(
                   width: 15,
                 ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: Responsive.isMobile(context)
-                              ? 18
-                              : 20,
-                          vertical: Responsive.isMobile(context)
-                              ? 18
-                              : 20)),
-                  onPressed: () async {
-                    FilePickerResult? result = await FilePicker.platform.pickFiles(
-                      type: FileType.custom,
-                      allowedExtensions: ['CSV'],
-                    );
-                    if(result != null) {
-                      File file = File(result.files.single.path!);
-                      print(file.path);
-                      filePath=file.path;
-                    }
-
-                  },
-                  child: Text('Select CSV File')),
+              if (!Responsive.isMobile(context))
+              Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),),
+              if (!Responsive.isMobile(context))
+              selectFileButton(),
               SizedBox(
                 width: Responsive.isMobile(context) ? 15 : 30,
               ),
@@ -102,10 +94,6 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
                                       : 20)),
                           onPressed: () {
                             if(filePath.isNotEmpty) {
-                              print(filePath);
-                              print(formXSecret.text);
-                              print(formUsername.text);
-                              print(formPassword.text);
                               if(formKey.currentState!.validate())
                               BlocProvider.of<ApiAutomateBloc>(context).add(ApiAddSceneEvent(formXSecret.text, formUsername.text, formPassword.text, filePath));
                             }
@@ -117,6 +105,9 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
               ),
             ],
           ),
+          SizedBox(height: 20,),
+          if(Responsive.isMobile(context))
+            eventMessages(),
         ],
       ),
     );
@@ -128,7 +119,7 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
             if (state is ApiCallingState)
               return Row(
                 children: [
-                  messageBox("Connecting ...", Colors.blue),
+                  messageBox("Connecting ...", ConnectingColor),
                   SizedBox(
                       width: Responsive.isMobile(context)
                           ? 15
@@ -142,15 +133,6 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
               return messageBox("${state.error}", Colors.red);
             else {
               return Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 50, vertical: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black26,
-                    width: 1,
-                  ),
-                ),
-                child: Text(""),
               );
             }
           }),
@@ -174,48 +156,6 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
     );
   }
 
-  Widget textField(controller, name) {
-    return TextFormField(
-      decoration: InputDecoration(
-        hintMaxLines: 1,
-        filled: true,
-        fillColor: Colors.black26,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        hintText: name,
-      ),
-      controller: controller,
-      validator: (text) {
-        if (text!.isEmpty) {
-          return 'Cannot be empty';
-        }
-      },
-    );
-  }
-  Widget numberTextField(controller, name) {
-    return TextFormField(
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      decoration: InputDecoration(
-        hintMaxLines: 1,
-        filled: true,
-        fillColor: Colors.black26,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        hintText: name,
-      ),
-      controller: controller,
-      validator: (text) {
-        if (text!.isEmpty) {
-          return 'Cannot be empty';
-        }
-      },
-      onSaved: (text) {},
-    );
-  }
   Future<void> _showMyDialog(List notCreateList,int noOfDevices) async{
     return showDialog(
       context: context,
@@ -274,6 +214,37 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
       },
     );
 
+  }
+  Widget selectFileButton(){
+    return Column(
+      children: [
+        IconButton(
+          onPressed:() async {
+
+            FilePickerResult? result = await FilePicker.platform.pickFiles(
+              type: FileType.custom,
+              allowedExtensions: ['CSV'],
+            );
+            if(result != null) {
+
+              File file = File(result.files.single.path!);
+              print(file.path);
+
+              setState(() {
+                filePath=file.path;
+                isNotSelectFile=false;
+              });
+
+            } else {
+              // User canceled the picker
+            }
+          },
+          icon:Icon(Icons.upload_file,color:filePath.isNotEmpty?Colors.green:Colors.blue,),
+        ),
+        if(isNotSelectFile)
+          Text("Select the file",style:TextStyle(color:Colors.red)),
+      ],
+    );
   }
 
   // Widget typeSelectBox() {

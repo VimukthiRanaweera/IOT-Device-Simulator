@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateBloc.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateState.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiautomateEvents.dart';
@@ -142,7 +143,7 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
                       height: 30,
                     ),
                     if(!Responsive.isMobile(context))
-                    Text("Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w600),),
+                    Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),),
                     if(!Responsive.isMobile(context))
                     selectFileButton()
                   ],
@@ -153,20 +154,15 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
                 if(Responsive.isMobile(context))
                 Row(
                   children: [
-                      Text("Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w600),),
+                      Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),),
                       selectFileButton()
                   ],
                 )
               ],
             ),
           ),
-          if (Responsive.isMobile(context))
             SizedBox(
-              height: 30,
-            ),
-          if (!Responsive.isMobile(context))
-            SizedBox(
-              height: 40,
+              height:Responsive.isMobile(context)?30: 40,
             ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -267,7 +263,8 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
   Widget selectFileButton(){
     return Column(
       children: [
-        IconButton(onPressed:() async {
+        IconButton(
+          onPressed:() async {
 
           FilePickerResult? result = await FilePicker.platform.pickFiles(
             type: FileType.custom,
@@ -302,7 +299,7 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
             if (state is ApiCallingState)
               return Row(
                 children: [
-                  messageBox("Connecting ...", Colors.blue),
+                  messageBox("Connecting ...", ConnectingColor),
                   SizedBox(
                       width: Responsive.isMobile(context)
                           ? 15
@@ -315,17 +312,7 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
             else if (state is ApiErrorState)
               return messageBox("${state.error}", Colors.red);
             else {
-              return Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 50, vertical: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black26,
-                    width: 1,
-                  ),
-                ),
-                child: Text(""),
-              );
+              return Container();
             }
           }),
     );
@@ -353,10 +340,10 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
       decoration: InputDecoration(
         hintMaxLines: 1,
         filled: true,
-        fillColor: Colors.black26,
+        fillColor: TextFieldColour,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
         ),
         hintText: name,
       ),
@@ -373,10 +360,10 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
       decoration: InputDecoration(
         hintMaxLines: 1,
         filled: true,
-        fillColor: Colors.black26,
+        fillColor: TextFieldColour,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
         ),
         hintText: name,
       ),
@@ -390,10 +377,10 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
       decoration: InputDecoration(
         hintMaxLines: 1,
         filled: true,
-        fillColor: Colors.black26,
+        fillColor: TextFieldColour,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
         ),
         hintText: name,
       ),
@@ -413,8 +400,9 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
       decoration: BoxDecoration(
           border: Border.all(color: Colors.black38),
           color: Colors.black12,
-          borderRadius: BorderRadius.circular(10)),
+          borderRadius: BorderRadius.circular(TextBoxRadius)),
       child: DropdownButton<String>(
+        underline:SizedBox(),
         value: zoneidvalue,
         onChanged: (String? newValue) {
           setState(() {

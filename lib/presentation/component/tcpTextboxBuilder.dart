@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/presentation/Responsive.dart';
 import 'package:iot_device_simulator/presentation/component/tcp.dart';
 
@@ -45,10 +46,10 @@ class _TcpTextBoxBuilderState extends State<TcpTextBoxBuilder> {
       maxLines: 1,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.black26,
+        fillColor: TextFieldColour,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
         ),
         hintText: text,
       ),
@@ -67,10 +68,10 @@ class _TcpTextBoxBuilderState extends State<TcpTextBoxBuilder> {
       maxLines: 1,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.black12,
+        fillColor: TextFieldColour,
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
         ),
         hintText: text,
       ),

@@ -79,5 +79,19 @@ class ApiSceneErrorState extends ApiAutomateState{
   error
   ];
 }
+class ApiExploreIdsSuccessed extends ApiAutomateState{}
+class ApiExploreIDsErrorState extends ApiAutomateState{
+  late final String error;
+
+  ApiExploreIDsErrorState(this.error);
+
+  List<Object?> get props => [
+  error
+  ];
+}
+class ApiGetSceneSuccssed extends ApiAutomateState{}
+
+
+
 
 

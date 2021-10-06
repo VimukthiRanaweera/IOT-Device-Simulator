@@ -10,6 +10,8 @@ class ConsState extends Equatable{
   final  TextEditingController formPort = new TextEditingController();
   final TextEditingController formUserName = new TextEditingController();
   final TextEditingController formPassword= new TextEditingController();
+  final TextEditingController keepAlive= new TextEditingController();
+
 
   final TextEditingController formHttpConnectionName = new TextEditingController();
   final TextEditingController formHttpAddress = new TextEditingController();
@@ -28,6 +30,7 @@ class ConsState extends Equatable{
     formUserName.text = superConModel.username;
     formPassword.text = superConModel.password;
     formConnectionID.text = superConModel.connectionID;
+    keepAlive.text = superConModel.keepAlive.toString();
   }
   
   ConsState.setHttpDetails(this.superConModel){

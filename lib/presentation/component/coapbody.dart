@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/COAP/coapApi.dart';
+import 'package:iot_device_simulator/logic/MQTT/Data/MqttSecureApi.dart';
 import 'package:iot_device_simulator/presentation/component/automateSendData.dart';
 
 import '../Responsive.dart';
@@ -11,6 +13,7 @@ class CoapBody extends StatefulWidget {
   @override
   _CoapBodyState createState() => _CoapBodyState();
 }
+MqttSecureApi mtt = new MqttSecureApi();
 CoapApi api = CoapApi();
 class _CoapBodyState extends State<CoapBody> {
   late String dropdownValueCOAP='GET';
@@ -30,6 +33,7 @@ class _CoapBodyState extends State<CoapBody> {
                 Row(
                   children: [
                     DropdownButton<String>(
+                      underline: SizedBox(),
                       value:dropdownValueCOAP,
                       onChanged: (String? newValue) {
                         setState(() {
@@ -49,10 +53,10 @@ class _CoapBodyState extends State<CoapBody> {
                         decoration: InputDecoration(
                           hintMaxLines: 1,
                           filled: true,
-                          fillColor: Colors.black26,
+                          fillColor: TextFieldColour,
                           border:OutlineInputBorder(
                             borderSide:BorderSide.none,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                           ),
                           hintText: 'URL',
                         ),
@@ -66,6 +70,7 @@ class _CoapBodyState extends State<CoapBody> {
                         ),
                         onPressed: (){
 
+                              // mtt.connect();
                         },
                         child:Text('Send')
                     ),
@@ -76,10 +81,10 @@ class _CoapBodyState extends State<CoapBody> {
                   maxLines: 5,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Colors.black26,
+                    fillColor: TextFieldColour,
                     border:OutlineInputBorder(
                       borderSide:BorderSide.none,
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                     ),
                     hintText: 'Message',
                   ),

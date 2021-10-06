@@ -7,9 +7,9 @@ import '../randomDataCubit.dart';
 class MqttRepo{
   late MqttAPI api;
 
-  Future<bool> connect(HiveConObject connection) async {
+  Future<bool> connect(HiveConObject connection,int qos) async {
     api=MqttAPI();
-    bool res=await api.connectDevice(connection.username, connection.password, connection.brokerAddress,connection.port);
+    bool res=await api.connectDevice(connection.username, connection.password, connection.brokerAddress,connection.port,connection.keepAlive,connection.connectionID,qos);
     return res;
   }
    Future<int> disconnect() async {

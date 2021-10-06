@@ -63,6 +63,12 @@ class _HttpBodyState extends State<HttpBody> {
                 duration: Duration(milliseconds: 500),
               )
           );
+        }if(state is HttpError){
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Request Fail',style: TextStyle(color:Colors.red,fontWeight: FontWeight.bold),),
+                duration: Duration(milliseconds: 1000),
+              )
+          );
         }
       },
       child: Form(
@@ -70,6 +76,7 @@ class _HttpBodyState extends State<HttpBody> {
         child: Container(
           padding: EdgeInsets.only(left:0,right:0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 flex: 4,
@@ -80,6 +87,7 @@ class _HttpBodyState extends State<HttpBody> {
                     Row(
                       children: [
                         DropdownButton<String>(
+                          underline: SizedBox(),
                           value:dropdownValueHttp,
                           onChanged: (String? newValue) {
                             setState(() {
@@ -102,11 +110,11 @@ class _HttpBodyState extends State<HttpBody> {
                                 decoration: InputDecoration(
                                   hintMaxLines: 1,
                                   filled: true,
-                                  fillColor: Colors.black26,
+                                  fillColor: TextFieldColour,
                                   border: OutlineInputBorder(
                                     borderSide: BorderSide.none,
                                     borderRadius: BorderRadius.all(
-                                        Radius.circular(10)),
+                                        Radius.circular(TextBoxRadius)),
                                   ),
                                   hintText: 'URL',
                                 ),
@@ -127,7 +135,7 @@ class _HttpBodyState extends State<HttpBody> {
                       builder:(context,state){
                         return ElevatedButton(
                           style:ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(horizontal:20,vertical:10)
+                              padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
                           ),
                           onPressed:(){
                             if(_formFieldKey.currentState!.validate()) {
@@ -146,10 +154,10 @@ class _HttpBodyState extends State<HttpBody> {
                       maxLines: 3,
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: Colors.black26,
+                        fillColor: TextFieldColour,
                         border:OutlineInputBorder(
                           borderSide:BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                         ),
                         hintText: 'Message',
                       ),
@@ -160,16 +168,20 @@ class _HttpBodyState extends State<HttpBody> {
                         }
                       },
                     ),
+                    SizedBox(height: 20,),
                     if(Responsive.isMobile(context))
                       Container(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text("Auto"),
                                 SizedBox(width: 20,),
                                 Checkbox(
                                   checkColor: Colors.white,
+                                  activeColor: checkBoxColor,
                                   // fillColor: MaterialStateProperty.resolveWith(getColor),
                                   value:isChecked,
                                   onChanged: (bool? value) {
@@ -195,7 +207,7 @@ class _HttpBodyState extends State<HttpBody> {
                               if(state is HttpMultiplePosting)
                                 return Row(
                                   children: [
-                                    Text("Posting . . . ",style:TextStyle(fontSize:20,color:Colors.blueAccent),),
+                                    Text("Posting . . . ",style:TextStyle(fontSize:20,color:buttonColor),),
                                     SizedBox(width:10,),
                                     CircularProgressIndicator(),
                                     SizedBox(width:10,),
@@ -205,6 +217,17 @@ class _HttpBodyState extends State<HttpBody> {
 
                             }
                         ),
+                        SizedBox(width: 10,),
+                        ElevatedButton(
+                          style:ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                          ),
+                          onPressed:(){
+                            message.clear();
+
+                          }, child:Text("Clear"),
+                        ),
+                        SizedBox(width: 10,),
                         BlocBuilder<HttpBloc,HttpState>(
                             builder:(context,state){
                               return ElevatedButton(
@@ -215,7 +238,7 @@ class _HttpBodyState extends State<HttpBody> {
                                   child:Text('Send')
                               );
                             }
-                        )
+                        ),
 
                       ],
                     ),
@@ -236,7 +259,7 @@ class _HttpBodyState extends State<HttpBody> {
                           SizedBox(width: 20,),
                           Checkbox(
                             checkColor: Colors.white,
-                            // fillColor: MaterialStateProperty.resolveWith(getColor),
+                            activeColor: checkBoxColor,
                             value:isChecked,
                             onChanged: (bool? value) {
                               setState(() {

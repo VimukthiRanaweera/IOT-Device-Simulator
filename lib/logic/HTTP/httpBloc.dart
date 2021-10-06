@@ -9,7 +9,7 @@ part 'httpState.dart';
 class HttpBloc extends Bloc<HttpEvents,HttpState>{
   HttpBloc(this.httpRepo) : super(HttpNotPost());
 
- int code=0;
+
  final HttpRepo httpRepo;
 
 
@@ -27,10 +27,15 @@ class HttpBloc extends Bloc<HttpEvents,HttpState>{
         }
       }
       if(event is MultipleHttpPost){
-        yield HttpMultiplePosting();
-        int code=await httpRepo.multiplePost(event._message,event._url,event._count, event._time);
-        if(code==200)
-          yield HttpPostSuccessState();
+        try {
+          yield HttpMultiplePosting();
+          int code = await httpRepo.multiplePost(
+              event._message, event._url, event._count, event._time);
+          if (code == 200)
+            yield HttpPostSuccessState();
+        }catch(_){
+          yield HttpError();
+        }
       }
   }
 

@@ -33,8 +33,9 @@ class ConnetionBloc extends Bloc<ConnectionEvents, ConsState> {
         yield ConnectionSelectedState(event.connection);
     }
     if (event is ClickedSettingEvent) {
-      if (event.connection.protocol == "MQTT")
+      if (event.connection.protocol == "MQTT") {
         yield SetMqttConnectionDetailsState.setMqttDetails(event.connection);
+      }
     }
     if (event is CreateNewConnetionEvent) {
       yield ClickedNewConnectionState(event.connection);
@@ -43,7 +44,7 @@ class ConnetionBloc extends Bloc<ConnectionEvents, ConsState> {
       consBox.delete(event.key);
       if (event.key == event.connection.connectionName)
         yield ConnectionDeleteState(
-            new HiveConObject("", "", "", "", 0, "", "", 0));
+            new HiveConObject("", "", "", "", 0, "", "", 60));
       else
         yield ConnectionDeleteState(event.connection);
     }

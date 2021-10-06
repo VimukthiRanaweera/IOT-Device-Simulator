@@ -11,6 +11,7 @@ import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateState.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiautomateEvents.dart';
 import 'package:iot_device_simulator/presentation/Responsive.dart';
 import 'package:iot_device_simulator/presentation/component/ApiCreateDevice.dart';
+import 'package:iot_device_simulator/presentation/component/ApiDevices.dart';
 
 import 'component/ApiCreateScene.dart';
 
@@ -59,6 +60,14 @@ class _ApiAitomationState extends State<ApiAitomation> {
       actionParamList.removeLast();
     });
   }
+  void clearParaList(){
+    setState(() {
+      actionParamList
+          .removeRange(1, actionParamList.length);
+      actionParamList[0].para.clear();
+      actionParamList[0].value.clear();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -100,27 +109,53 @@ class _ApiAitomationState extends State<ApiAitomation> {
               SizedBox(
                 height: 15,
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: radioButton("Device",SingingCharacter.device)
-                  ),
-                  Expanded(
-                    child:radioButton("Event",SingingCharacter.event)
-                  ),
-                  Expanded(
-                    child:radioButton("Action",SingingCharacter.action)
-                  ),
-                  Expanded(
-                    child:radioButton("Add Device",SingingCharacter.createDevice)
-                  ),
-                  Expanded(
-                    child:radioButton("Add Scene",SingingCharacter.createScene)
-                  ),
-                ],
+              if(!Responsive.isMobile(context))
+              Container(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: radioButton("Explore IDs",SingingCharacter.device)
+                    ),
+                    Expanded(
+                      child:radioButton("Get Events",SingingCharacter.event)
+                    ),
+                    Expanded(
+                      child:radioButton("Execute Actions",SingingCharacter.action)
+                    ),
+                    Expanded(
+                      child:radioButton("Add Devices",SingingCharacter.createDevice)
+                    ),
+                    Expanded(
+                      child:radioButton("Add Scenes",SingingCharacter.createScene)
+                    ),
+                  ],
+                ),
               ),
+              if(Responsive.isMobile(context))
+                Container(
+                  height: 150,
+                  child:Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: radioButton("Explore IDs",SingingCharacter.device)),
+                          Expanded(child: radioButton("Get Events",SingingCharacter.event)),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(child: radioButton("Execute Actions",SingingCharacter.action)),
+                          Expanded(child: radioButton("Add Devices",SingingCharacter.createDevice)),
+                        ],
+                      ),
+
+                      radioButton("Add Scenes",SingingCharacter.createScene),
+                    ],
+                  ),
+                ),
               SizedBox(
-                height: 25,
+                height: 15,
               ),
               if (character == SingingCharacter.event)
                 Column(
@@ -263,6 +298,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
                               formEventParams.clear();
                               formNoOfEvents.clear();
                               formDeviceIDs.clear();
+
                               BlocProvider.of<ApiAutomateBloc>(context)
                                   .add(ClearButtonClickedEvent());
                             },
@@ -451,6 +487,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
                                      absorbing: state is ApiCallingState,
                                      child: Checkbox(
                                        checkColor: Colors.white,
+                                       activeColor: checkBoxColor,
                                        value: isCheckLogWrite,
                                        onChanged: (bool? value) async {
                                          setState(() {
@@ -507,7 +544,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
                               formActionDeviceID.clear();
                               formNoOfActions.clear();
                               formTimeInterval.clear();
-                              actionParamList.clear();
+                              clearParaList();
                               BlocProvider.of<ApiAutomateBloc>(context)
                                   .add(ClearButtonClickedEvent());
                             },
@@ -571,6 +608,8 @@ class _ApiAitomationState extends State<ApiAitomation> {
                 ApiCreateDevice(XSecret: formXSecret.text, username: formUsername.text, password: formPassword.text),
               if (character == SingingCharacter.createScene)
                 ApiCreateScene(XSecret: formXSecret.text, username: formUsername.text, password: formPassword.text),
+              if(character== SingingCharacter.device)
+                ApiDevices(),
             ],
           ),
         ),
@@ -584,7 +623,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
             if (state is ApiCallingState)
               return Row(
                 children: [
-                  messageBox("Connecting ...", Colors.blue),
+                  messageBox("Connecting ...", ConnectingColor),
                   SizedBox(
                       width: Responsive.isMobile(context)
                           ? 15
@@ -598,18 +637,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
             else if (state is NotConnectedState)
               return messageBox("Error!", Colors.red);
             else {
-              return Container(
-                height: 45,
-                width: 120,
-                padding: EdgeInsets.only(top: 5),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black26,
-                    width: 1,
-                  ),
-                ),
-                child: Text(''),
-              );
+              return Container();
             }
           }),
     );
@@ -622,7 +650,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
             if (state is ApiCallingState)
               return Row(
                 children: [
-                  messageBox("Connecting ...", Colors.blue),
+                  messageBox("Connecting ...",ConnectingColor),
                   SizedBox(
                       width: Responsive.isMobile(context)
                           ? 15
@@ -635,17 +663,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
             else if (state is ApiEventErrorState)
               return messageBox("${state.error}", Colors.red);
             else {
-              return Container(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 50, vertical: 10),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black26,
-                    width: 1,
-                  ),
-                ),
-                child: Text(""),
-              );
+              return Container();
             }
           }),
     );
@@ -699,40 +717,45 @@ class _ApiAitomationState extends State<ApiAitomation> {
   }
 
   Widget textField(controller, name) {
-    return TextFormField(
-      decoration: InputDecoration(
-        hintMaxLines: 1,
-        filled: true,
-        fillColor: Colors.black26,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+    return Container(
+      child: TextFormField(
+        decoration: InputDecoration(
+          hintMaxLines: 1,
+          filled: true,
+          fillColor: TextFieldColour,
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+          ),
+          hintText: name,
         ),
-        hintText: name,
+        controller: controller,
+        validator: (text) {
+          if (text!.isEmpty) {
+            return 'Cannot be empty';
+          }
+        },
+        onSaved: (text) {},
       ),
-      controller: controller,
-      validator: (text) {
-        if (text!.isEmpty) {
-          return 'Cannot be empty';
-        }
-      },
-      onSaved: (text) {},
     );
   }
   Widget noOfEventsTextField(controller, name) {
-    return TextFormField(
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      decoration: InputDecoration(
-        hintMaxLines: 1,
-        filled: true,
-        fillColor: Colors.black26,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+    return Container(
+      height:TextBoxHeight,
+      child: TextFormField(
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        decoration: InputDecoration(
+          hintMaxLines: 1,
+          filled: true,
+          fillColor: TextFieldColour,
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(5)),
+          ),
+          hintText: name,
         ),
-        hintText: name,
+        controller: controller,
       ),
-      controller: controller,
     );
   }
 
@@ -744,8 +767,9 @@ class _ApiAitomationState extends State<ApiAitomation> {
       decoration: BoxDecoration(
           border: Border.all(color: Colors.black38),
           color: Colors.black12,
-          borderRadius: BorderRadius.circular(10)),
+          borderRadius: BorderRadius.circular(5)),
       child: DateTimePicker(
+        style: TextStyle(fontSize: 15),
         type: DateTimePickerType.dateTimeSeparate,
         timePickerEntryModeInput: true,
         use24HourFormat: true,
@@ -760,77 +784,85 @@ class _ApiAitomationState extends State<ApiAitomation> {
           print(val);
           return null;
         },
-        onSaved: (val) {},
       ),
     );
   }
 
   Widget listTextField(controller, name) {
-    return TextFormField(
-      decoration: InputDecoration(
-        hintMaxLines: 1,
-        filled: true,
-        fillColor: Colors.black26,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+    return Container(
+      decoration: BoxDecoration(
+          color: TextFieldColour,
+          borderRadius: BorderRadius.circular(TextBoxRadius)),
+      child: TextFormField(
+
+        decoration: InputDecoration(
+          hintMaxLines: 1,
+          // filled: true,
+          // fillColor: TextFieldColour,
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            // borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
+          ),
+          hintText: name,
         ),
-        hintText: name,
+        controller: controller,
+        validator: (text) {
+          if (text!.isEmpty) {
+            return 'Cannot be empty';
+          }
+        },
       ),
-      controller: controller,
-      validator: (text) {
-        if (text!.isEmpty) {
-          return 'Cannot be empty';
-        }
-      },
-      onSaved: (text) {},
     );
   }
 
   Widget passwordTextField(controller, name) {
-    return TextFormField(
-      // inputFormatters: [FilteringTextInputFormatter.allow("[+w]")],
-      obscureText: true,
-      decoration: InputDecoration(
-        hintMaxLines: 1,
-        filled: true,
-        fillColor: Colors.black26,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+    return Container(
+      child: TextFormField(
+        // inputFormatters: [FilteringTextInputFormatter.allow("[+w]")],
+        obscureText: true,
+        decoration: InputDecoration(
+          hintMaxLines: 1,
+          filled: true,
+          fillColor: TextFieldColour,
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
+          ),
+          hintText: name,
         ),
-        hintText: name,
+        controller: controller,
+        validator: (text) {
+          if (text!.isEmpty) {
+            return 'Cannot be empty';
+          }
+        },
+        onSaved: (text) {},
       ),
-      controller: controller,
-      validator: (text) {
-        if (text!.isEmpty) {
-          return 'Cannot be empty';
-        }
-      },
-      onSaved: (text) {},
     );
   }
 
   Widget numberTextField(controller, name) {
-    return TextFormField(
-      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      decoration: InputDecoration(
-        hintMaxLines: 1,
-        filled: true,
-        fillColor: Colors.black26,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+    return Container(
+      child: TextFormField(
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        decoration: InputDecoration(
+          hintMaxLines: 1,
+          filled: true,
+          fillColor: TextFieldColour,
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
+          ),
+          hintText: name,
         ),
-        hintText: name,
+        controller: controller,
+        validator: (text) {
+          if (text!.isEmpty) {
+            return 'Cannot be empty';
+          }
+        },
+        onSaved: (text) {},
       ),
-      controller: controller,
-      validator: (text) {
-        if (text!.isEmpty) {
-          return 'Cannot be empty';
-        }
-      },
-      onSaved: (text) {},
     );
   }
 
@@ -839,9 +871,10 @@ class _ApiAitomationState extends State<ApiAitomation> {
       padding: EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
           border: Border.all(color: Colors.black38),
-          color: Colors.black12,
-          borderRadius: BorderRadius.circular(10)),
+          color: TextFieldColour,
+          borderRadius: BorderRadius.circular(TextBoxRadius)),
       child: DropdownButton<String>(
+        underline:SizedBox(),
         value: zoneidvalue,
         onChanged: (String? newValue) {
           setState(() {
@@ -889,6 +922,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
     return ListTile(
       title:Text(name),
       leading: Radio<SingingCharacter>(
+        activeColor:checkBoxColor,
         value: select,
         groupValue: character,
         onChanged: (SingingCharacter? value) {

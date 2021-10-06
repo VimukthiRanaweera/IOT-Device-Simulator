@@ -206,4 +206,97 @@ class ApiAutomateRepo{
     }
   }
 
+  Future<dynamic> getDevices({required String tokenType,required String accessToken,required String XIotJwt}) async {
+    var headers = {
+      'Authorization': '$tokenType $accessToken',
+      'X-IoT-JWT': '$XIotJwt',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    };
+
+    var request = http.Request('GET', Uri.parse('https://iot.dialog.lk/developer/api/userdevicemgt/v1/devices'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      var responseBody= convert.jsonDecode(await response.stream.bytesToString());
+      return responseBody;
+    }
+    else {
+    throw Exception("Devices request failed");
+    }
+  }
+  Future<dynamic> getScenes({required String tokenType,required String accessToken,required String XIotJwt}) async {
+    var headers = {
+      'Authorization': '$tokenType $accessToken',
+      'X-IoT-JWT': '$XIotJwt',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    };
+    var request = http.Request('GET', Uri.parse('https://iot.dialog.lk/developer/api/userscenemgt/v1/scenes'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      var responseBody= convert.jsonDecode(await response.stream.bytesToString());
+      return responseBody;
+    }
+    else {
+      throw Exception("Scene request failed");
+    }
+
+  }
+  Future<dynamic> getEvents({required String tokenType,required String accessToken,required String XIotJwt,required String deviceId}) async {
+    var headers = {
+      'Authorization': '$tokenType $accessToken',
+      'X-IoT-JWT': '$XIotJwt',
+      'Accept': 'application/json'
+    };
+
+    var request = http.Request('GET', Uri.parse('https://iot.dialog.lk/developer/api/userdevicemgt/v1/devices/$deviceId/events'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    print(response.reasonPhrase);
+    var responseBody= convert.jsonDecode(await response.stream.bytesToString());
+    if (response.statusCode == 200) {
+      return responseBody;
+    }else if(responseBody["errorCode"] == 1000){
+      throw Exception(responseBody["desc"]);
+    }
+    else {
+    throw Exception("Get events request fail");
+    }
+
+  }
+Future<dynamic> getActions({required String tokenType,required String accessToken,required String XIotJwt,required String deviceId}) async {
+    var headers = {
+      'Authorization': '$tokenType $accessToken',
+      'X-IoT-JWT': '$XIotJwt',
+      'Accept': 'application/json'
+    };
+
+    var request = http.MultipartRequest('GET', Uri.parse('https://iot.dialog.lk/developer/api/userdevicemgt/v1/devices/$deviceId/actions'));
+
+    request.headers.addAll(headers);
+
+    http.StreamedResponse response = await request.send();
+    print(response.reasonPhrase);
+    var responseBody= convert.jsonDecode(await response.stream.bytesToString());
+    if (response.statusCode == 200) {
+      return responseBody;
+    }else if(responseBody["errorCode"] == 1000){
+      throw Exception(responseBody["desc"]);
+    }
+    else {
+    throw Exception("Get actions request fail");
+    }
+
+  }
+
 }

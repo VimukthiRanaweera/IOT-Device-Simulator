@@ -12,12 +12,13 @@ class MqttUnselectedEvent extends MqttEvents{}
 class MqttConnetEvent extends MqttEvents{
 
   late final HiveConObject con;
+  late final int qos;
 
 
-  MqttConnetEvent(this.con);
+  MqttConnetEvent(this.con,this.qos);
 
   List<Object?> get props =>[
-
+    con,
   ];
 }
 

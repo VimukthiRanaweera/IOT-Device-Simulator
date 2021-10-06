@@ -33,7 +33,7 @@ class _drawerConListState extends State<drawerConList> {
     return BlocBuilder<MqttBloc,MqttState>(
       builder:(context,conState) {
         return Container(
-          color:Colors.black38,
+          // color:Colors.black38,
           child: AbsorbPointer(
             absorbing: !( conState is MqttClientNotClickState || conState is MqttClientClickedState || conState is MqttDisconnectedState),
             child: Drawer(
@@ -65,7 +65,7 @@ class _drawerConListState extends State<drawerConList> {
                                           color: (constate.superConModel
                                               .connectionName ==
                                               hiveCon!.connectionName) ?
-                                          Colors.white10:secondaryColor,
+                                          clickedListTileColor:secondaryColor,
                                             child: ListTile(
                                               title: Text(
                                                   hiveCon.connectionName),

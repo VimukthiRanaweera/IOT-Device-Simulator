@@ -69,7 +69,7 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
 
     if(event is MqttConnetEvent){
       yield MqttConnectingState();
-      bool response = await mqttRepo.connect(event.con);
+      bool response = await mqttRepo.connect(event.con,event.qos);
       if(response)
         yield MqttConnectedState();
       else

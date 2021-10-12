@@ -52,7 +52,7 @@ void clearText(){
             if (state is MqttPublishedState) {
               ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Success!'),
-                    duration: Duration(milliseconds: 500),
+                    duration: Duration(milliseconds: 1000),
                   )
               );
             }
@@ -154,7 +154,7 @@ void clearText(){
                          if(state is MqttPublishingState){
                            return Row(
                              children: [
-                               Text("Publishing . . . ",style:TextStyle(fontSize:20,color:Colors.blueAccent),),
+                               Text("Publishing . . . ",style:TextStyle(fontSize:20,color:ConnectingColor),),
                                SizedBox(width:10,),
                                CircularProgressIndicator(),
                                SizedBox(width:10,),

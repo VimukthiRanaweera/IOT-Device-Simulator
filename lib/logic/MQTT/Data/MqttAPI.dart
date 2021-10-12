@@ -104,14 +104,20 @@ class MqttAPI{
         'EXAMPLE::OnConnected client callback - Client connection was sucessful');
   }
 
-  Future<void> Publish(String pubTopic,String message)async {
-    final builder = MqttClientPayloadBuilder();
-    builder.addString(message);
-    print('EXAMPLE::Publishing our topic $message $pubTopic');
-    var state=client.publishMessage(pubTopic, qosType, builder.payload!);
-    print("in publish before");
-    print(state);
-    print("in publish after");
+  Future<bool> Publish(String pubTopic,String message)async {
+    if (client.connectionStatus!.state == MqttConnectionState.connected) {
+      final builder = MqttClientPayloadBuilder();
+      builder.addString(message);
+      print('EXAMPLE::Publishing our topic $message $pubTopic');
+      var state = client.publishMessage(pubTopic, qosType, builder.payload!);
+      print("in publish before");
+      print(state);
+      print("in publish after");
+
+      return true;
+    }else{
+      return false;
+    }
   }
 
   Future<void> Disconnect() async {

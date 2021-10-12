@@ -140,7 +140,9 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                 children: [
                   Text("Keep Alive",style:TextStyle(fontWeight: FontWeight.w600),),
                   SizedBox(width: 5,),
-                  _keepAlive()
+                  _keepAlive(),
+                  SizedBox(width: 5,),
+                  Text("Seconds"),
                 ],
               ),
               SizedBox(height: 30,),

@@ -38,6 +38,7 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
     connectionSubscription = MqttAPI.connectionController.stream.listen((event) {
       if(event.toString() =="Disconnected"){
         print("diconnected>>>>>>>>>>>>");
+        mqttRepo.disconnect();
         disconnected();
       }
 
@@ -85,13 +86,15 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
 
     if(event is MqttPublishEvent){
       yield MqttPublishingState();
-      mqttRepo.publish(event.topic,event.message);
+     bool isPublished=await mqttRepo.publish(event.topic,event.message);
+      if(isPublished)
       yield MqttPublishedState();
     }
 
     if(event is MqttMultiplePublishEvent){
       yield MqttPublishingState();
-      await mqttRepo.multiplePublish(event.count, event.time,event.topic,event.message);
+     bool published= await mqttRepo.multiplePublish(event.count, event.time,event.topic,event.message);
+     if(published)
       yield MqttPublishedState();
     }
 

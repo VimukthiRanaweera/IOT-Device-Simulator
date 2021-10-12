@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/presentation/ApiAutomation.dart';
+import 'package:iot_device_simulator/presentation/Info.dart';
 import 'package:iot_device_simulator/presentation/Responsive.dart';
 
 import 'Simmulator.dart';
@@ -72,7 +73,7 @@ class _HomePageState extends State<HomePage> {
 
         ],
       ),
-      body:(isSelected[0]?Simulator():isSelected[1]?ApiAitomation():Container())
+      body:(isSelected[0]?Simulator():isSelected[1]?ApiAitomation():Info())
 
     );
   }

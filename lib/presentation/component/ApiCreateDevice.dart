@@ -180,12 +180,8 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(
-                          horizontal: Responsive.isMobile(context)
-                              ? 18
-                              : 20,
-                          vertical: Responsive.isMobile(context)
-                              ? 18
-                              : 20)),
+                          horizontal:30,
+                          vertical:20)),
                   onPressed: () {
                     formDeviceParentId.clear();
                     formDeviceCategory.clear();
@@ -208,26 +204,16 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
                       return ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                  Responsive.isMobile(context)
-                                      ? 15
-                                      : 20,
-                                  vertical: Responsive.isMobile(context)
-                                      ? 15
-                                      : 20)),
+                                  horizontal: 25,
+                                  vertical: 20)),
                           onPressed: null,
                           child: Text('Submit'));
                     } else
                       return ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                  Responsive.isMobile(context)
-                                      ? 18
-                                      : 20,
-                                  vertical: Responsive.isMobile(context)
-                                      ? 18
-                                      : 20)),
+                                  horizontal: 25,
+                                  vertical:  20)),
                           onPressed: () {
                             if(formKey.currentState!.validate())
                             if(filePath.isNotEmpty) {
@@ -403,6 +389,7 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
           borderRadius: BorderRadius.circular(TextBoxRadius)),
       child: DropdownButton<String>(
         underline:SizedBox(),
+        isExpanded: true,
         value: zoneidvalue,
         onChanged: (String? newValue) {
           setState(() {

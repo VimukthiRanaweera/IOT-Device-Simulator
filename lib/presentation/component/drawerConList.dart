@@ -1,3 +1,4 @@
+import 'package:coap/coap.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,8 +41,25 @@ class _drawerConListState extends State<drawerConList> {
               child: Column(
                 children: [
                   SizedBox(height: 20.0),
-                  Text("Connections",
-                      style: TextStyle(color: Colors.black87, fontSize: 20,)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Connections",
+                          style: TextStyle(color: Colors.black87, fontSize: 20,)
+                      ),
+                      BlocBuilder<ProtocolCubit, ProtocolState>(
+                        builder:(context,state) {
+                          if(state.protocol =='MQTT' )
+                          return IconButton(onPressed: () {
+                            BlocProvider.of<ConnetionBloc>(context).add(CreateNewConnetionEvent(BlocProvider.of<ConnetionBloc>(context).state.superConModel));
+                            Navigator.of(context).pushNamed(
+                                '/newConnection');
+                          }, icon: Icon(Icons.add));
+                          else
+                            return Container();
+                        }
+                      )
+                    ],
                   ),
                   SizedBox(height: 20.0),
                   Expanded(

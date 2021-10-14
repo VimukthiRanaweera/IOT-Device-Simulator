@@ -77,7 +77,6 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                 children: [
                   Row(
                     children: [
-                      Text("Action Response",style:TextStyle(fontWeight: FontWeight.bold),),
                       Checkbox(
                         checkColor: Colors.white,
                         activeColor: checkBoxColor,
@@ -88,12 +87,13 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                           });
                         },
                       ),
+                      Text("Action Response",),
                     ],
                   ),
                   SizedBox(width: 20,),
                   Row(
                     children: [
-                      Text("Log Write",style:TextStyle(fontWeight: FontWeight.bold),),
+
                       BlocBuilder<WriteSubscribeLogFileCubit,WriteSubscribeLogFileState>(
                         builder:(context,state) {
                           return AbsorbPointer(
@@ -125,6 +125,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                           );
                         }
                       ),
+                      Text("Log Write",),
                     ],
                   ),
                 ],
@@ -182,7 +183,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                     if(state is MqttSubscribeTopicState || state is MqttSubscribeResponsedState || state is MqttSubscribeNotResponsedState)
                       return ElevatedButton(
                           style:ElevatedButton.styleFrom(
-                              padding:EdgeInsets.symmetric(horizontal:30,vertical:20)
+                              padding:EdgeInsets.symmetric(horizontal:25,vertical:20)
                           ),
                           onPressed: (){
                             BlocProvider.of<MqttBloc>(context).add(MqttUnsubscribeEvent(topic.text));
@@ -195,7 +196,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                     else if(state is MqttDisconnectedState|| state is MqttClientNotClickState || state is MqttClientClickedState || state is MqttConnectingState)
                       return ElevatedButton(
                           style:ElevatedButton.styleFrom(
-                              padding:EdgeInsets.symmetric(horizontal:30,vertical:20)
+                              padding:EdgeInsets.symmetric(horizontal:25,vertical:20)
                           ),
                           onPressed:null,
                           child:Text('Subscribe')
@@ -203,7 +204,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                     else
                       return ElevatedButton(
                           style:ElevatedButton.styleFrom(
-                              padding:EdgeInsets.symmetric(horizontal:30,vertical:20)
+                              padding:EdgeInsets.symmetric(horizontal:25,vertical:20)
                           ),
                           onPressed: (){
                             if(isCheckedAction) {
@@ -232,7 +233,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
               SizedBox(height: 20,),
               ElevatedButton(
                   style:ElevatedButton.styleFrom(
-                      padding:EdgeInsets.symmetric(horizontal:20,vertical:10)
+                      padding:EdgeInsets.symmetric(horizontal:35,vertical:20)
                   ),
                   onPressed: (){
                     setState(() {

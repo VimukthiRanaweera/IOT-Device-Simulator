@@ -25,10 +25,18 @@ class ApiAutomateRepo{
       }
       else {
         print(response.reasonPhrase);
-        throw Exception("Invalid X-Secret");
+        print(response.statusCode);
+        print("in the invalid x-secret");
+        throw Exception(response.statusCode);
       }
-    }catch(_){
-      throw Exception('not connect');
+    }catch(e){
+      print("in the not connect $e");
+      if(e.toString().replaceAll("Exception:","").trim()== "401"){
+        throw Exception("invalid X-Secret");
+      }else{
+        throw Exception("Not connect");
+      }
+
     }
 
   }

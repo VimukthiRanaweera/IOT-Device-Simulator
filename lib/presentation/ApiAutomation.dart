@@ -287,12 +287,8 @@ class _ApiAitomationState extends State<ApiAitomation> {
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: Responsive.isMobile(context)
-                                        ? 18
-                                        : 20,
-                                    vertical: Responsive.isMobile(context)
-                                        ? 18
-                                        : 20)),
+                                    horizontal: 30,
+                                    vertical:20)),
                             onPressed: () {
                               formEventName.clear();
                               formEventParams.clear();
@@ -312,13 +308,8 @@ class _ApiAitomationState extends State<ApiAitomation> {
                                 return ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                            Responsive.isMobile(context)
-                                                ? 15
-                                                : 20,
-                                            vertical: Responsive.isMobile(context)
-                                                ? 15
-                                                : 20)),
+                                            horizontal: 25,
+                                            vertical:20)),
                                     onPressed: null,
                                     child: Text('Submit'));
                               } else
@@ -326,13 +317,8 @@ class _ApiAitomationState extends State<ApiAitomation> {
 
                                     style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                            Responsive.isMobile(context)
-                                                ? 18
-                                                : 20,
-                                            vertical: Responsive.isMobile(context)
-                                                ? 18
-                                                : 20)),
+                                            horizontal: 25,
+                                            vertical:  20)),
                                     onPressed: () {
                                       if (formKey.currentState!.validate())
                                       BlocProvider.of<ApiAutomateBloc>(context)
@@ -533,12 +519,8 @@ class _ApiAitomationState extends State<ApiAitomation> {
                         ElevatedButton(
                             style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: Responsive.isMobile(context)
-                                        ? 20
-                                        : 20,
-                                    vertical: Responsive.isMobile(context)
-                                        ? 18
-                                        : 20)),
+                                    horizontal: 30,
+                                    vertical:20)),
                             onPressed: () {
                               formActionName.clear();
                               formActionDeviceID.clear();
@@ -558,13 +540,8 @@ class _ApiAitomationState extends State<ApiAitomation> {
                                 return ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                            Responsive.isMobile(context)
-                                                ? 25
-                                                : 20,
-                                            vertical: Responsive.isMobile(context)
-                                                ? 15
-                                                : 20)),
+                                            horizontal: 25,
+                                            vertical: 20)),
                                     onPressed: null,
                                     child: Text('Export'));
                               }else if(state is ApiCallingState){
@@ -574,13 +551,8 @@ class _ApiAitomationState extends State<ApiAitomation> {
                                 return ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                         padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                            Responsive.isMobile(context)
-                                                ? 20
-                                                : 20,
-                                            vertical: Responsive.isMobile(context)
-                                                ? 18
-                                                : 20)),
+                                            horizontal: 25,
+                                            vertical: 20)),
                                     onPressed: () {
                                       if (formKey.currentState!.validate())
                                         BlocProvider.of<ApiAutomateBloc>(context)
@@ -719,8 +691,9 @@ class _ApiAitomationState extends State<ApiAitomation> {
   Widget textField(controller, name) {
     return Container(
       child: TextFormField(
+        maxLines: 2,
+        minLines: 1,
         decoration: InputDecoration(
-          hintMaxLines: 1,
           filled: true,
           fillColor: TextFieldColour,
           border: OutlineInputBorder(
@@ -741,7 +714,6 @@ class _ApiAitomationState extends State<ApiAitomation> {
   }
   Widget noOfEventsTextField(controller, name) {
     return Container(
-      height:TextBoxHeight,
       child: TextFormField(
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         decoration: InputDecoration(
@@ -794,9 +766,10 @@ class _ApiAitomationState extends State<ApiAitomation> {
           color: TextFieldColour,
           borderRadius: BorderRadius.circular(TextBoxRadius)),
       child: TextFormField(
+        maxLines: 2,
+        minLines: 1,
 
         decoration: InputDecoration(
-          hintMaxLines: 1,
           // filled: true,
           // fillColor: TextFieldColour,
           border: OutlineInputBorder(
@@ -875,6 +848,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
           borderRadius: BorderRadius.circular(TextBoxRadius)),
       child: DropdownButton<String>(
         underline:SizedBox(),
+        isExpanded: true,
         value: zoneidvalue,
         onChanged: (String? newValue) {
           setState(() {

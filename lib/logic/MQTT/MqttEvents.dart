@@ -12,7 +12,7 @@ class MqttUnselectedEvent extends MqttEvents{}
 class MqttConnetEvent extends MqttEvents{
 
   late final HiveConObject con;
-  late final int qos;
+  late final String qos;
 
 
   MqttConnetEvent(this.con,this.qos);

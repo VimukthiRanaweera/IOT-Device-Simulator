@@ -17,7 +17,6 @@ import 'package:iot_device_simulator/presentation/Responsive.dart';
 import 'package:iot_device_simulator/presentation/component/tcpConsole.dart';
 import 'package:iot_device_simulator/presentation/component/tcpTextboxBuilder.dart';
 import 'automateSendData.dart';
-
 class TcpBody extends StatefulWidget {
   const TcpBody() : super();
   static List<TcpControllers> textBoxes = [new TcpControllers()];
@@ -82,7 +81,7 @@ class _TcpBodyState extends State<TcpBody> {
                     child: Column(
                       children: [
                         SizedBox(
-                          height: 30,
+                          height: 42,
                         ),
                         BlocBuilder<ConnetionBloc, ConsState>(
                             builder: (context, state) {
@@ -120,12 +119,8 @@ class _TcpBodyState extends State<TcpBody> {
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: Responsive.isMobile(context)
-                                          ? 10
-                                          : 20,
-                                      vertical: Responsive.isMobile(context)
-                                          ? 15
-                                          : 20)),
+                                      horizontal: 35,
+                                      vertical: 20)),
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   String protocol =
@@ -169,14 +164,9 @@ class _TcpBodyState extends State<TcpBody> {
                                       style: ElevatedButton.styleFrom(
                                           primary: Colors.red,
                                           padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  Responsive.isMobile(context)
-                                                      ? 10
-                                                      : 20,
+                                              horizontal: 25,
                                               vertical:
-                                                  Responsive.isMobile(context)
-                                                      ? 15
-                                                      : 20)),
+                                                  20)),
                                       onPressed: () {
                                         // if (_formkeyAddress.currentState!
                                         //         .validate() &&
@@ -206,14 +196,8 @@ class _TcpBodyState extends State<TcpBody> {
                                     return ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                           padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  Responsive.isMobile(context)
-                                                      ? 10
-                                                      : 20,
-                                              vertical:
-                                                  Responsive.isMobile(context)
-                                                      ? 15
-                                                      : 20)),
+                                              horizontal: 20,
+                                              vertical:20)),
                                       onPressed: null,
                                       child: Text('Disconnect'),
                                     );
@@ -224,14 +208,8 @@ class _TcpBodyState extends State<TcpBody> {
                                       style: ElevatedButton.styleFrom(
                                           primary: Colors.green,
                                           padding: EdgeInsets.symmetric(
-                                              horizontal:
-                                                  Responsive.isMobile(context)
-                                                      ? 10
-                                                      : 20,
-                                              vertical:
-                                                  Responsive.isMobile(context)
-                                                      ? 15
-                                                      : 20)),
+                                              horizontal: 20,
+                                              vertical:20)),
                                       onPressed: () {
                                         BlocProvider.of<TcpBloc>(context)
                                             .add(TcpDisconnectEvent());
@@ -251,6 +229,7 @@ class _TcpBodyState extends State<TcpBody> {
                     ),
                   ),
                 ),
+                SizedBox(width: 20,),
                 if (!Responsive.isMobile(context))
                   Expanded(
                     flex: isChecked ? 2 : 1,
@@ -370,7 +349,7 @@ class _TcpBodyState extends State<TcpBody> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 20)),
+                          EdgeInsets.symmetric(horizontal: 35, vertical: 20)),
                   onPressed: () {
                     setState(() {
                       TcpBody.textBoxes
@@ -387,7 +366,7 @@ class _TcpBodyState extends State<TcpBody> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 20)),
+                          EdgeInsets.symmetric(horizontal: 25, vertical: 20)),
                   onPressed: () {
                     if (_formKey.currentState!.validate())
                       BlocProvider.of<TcpBloc>(context).add(
@@ -413,7 +392,7 @@ class _TcpBodyState extends State<TcpBody> {
                     return ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 20)),
+                              horizontal: 35, vertical: 20)),
                       onPressed: () {
                         if (_formKeyMessage.currentState!.validate()) {
                           if (isChecked) {
@@ -454,16 +433,12 @@ class _TcpBodyState extends State<TcpBody> {
 
   Widget automate() {
     return Container(
-      height: isChecked ? 320 : 50,
+      height: isChecked ? 330 : 60,
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text("Auto"),
-              SizedBox(
-                width: 20,
-              ),
               Checkbox(
                 checkColor: Colors.white,
                 activeColor: checkBoxColor,
@@ -474,8 +449,13 @@ class _TcpBodyState extends State<TcpBody> {
                   });
                 },
               ),
+              SizedBox(
+                width: 20,
+              ),
+              Text("Automate"),
             ],
           ),
+          SizedBox(height: 10,),
           if (isChecked) Expanded(child: AutomateSendData()),
         ],
       ),
@@ -485,7 +465,7 @@ class _TcpBodyState extends State<TcpBody> {
   Widget sendButton() {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20)),
+          padding: EdgeInsets.symmetric(horizontal: 35, vertical: 20)),
       onPressed: null,
       child: Text('Send'),
     );

@@ -74,7 +74,6 @@ class _HttpBodyState extends State<HttpBody> {
       child: Form(
         key: _formKey,
         child: Container(
-          padding: EdgeInsets.only(left:0,right:0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -83,7 +82,7 @@ class _HttpBodyState extends State<HttpBody> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    SizedBox(height: 50,),
+                    SizedBox(height: 42,),
                     Row(
                       children: [
                         DropdownButton<String>(
@@ -106,6 +105,8 @@ class _HttpBodyState extends State<HttpBody> {
                           child: BlocBuilder<ConnetionBloc,ConsState>(
                             builder:(context,state) {
                               return TextFormField(
+                                minLines: 1,
+                                maxLines: 2,
                                 key: _formFieldKey,
                                 decoration: InputDecoration(
                                   hintMaxLines: 1,
@@ -130,12 +131,12 @@ class _HttpBodyState extends State<HttpBody> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20,),
+                    SizedBox(height: 30,),
                     BlocBuilder<ConnetionBloc,ConsState>(
                       builder:(context,state){
                         return ElevatedButton(
                           style:ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                              padding: EdgeInsets.symmetric(horizontal:35,vertical:20)
                           ),
                           onPressed:(){
                             if(_formFieldKey.currentState!.validate()) {
@@ -146,9 +147,6 @@ class _HttpBodyState extends State<HttpBody> {
                         );
                       }
                     ),
-                    if(!Responsive.isMobile(context))
-                    SizedBox(height: 40,),
-                    if(Responsive.isMobile(context))
                       SizedBox(height: 30,),
                     TextFormField(
                       maxLines: 3,
@@ -170,34 +168,7 @@ class _HttpBodyState extends State<HttpBody> {
                     ),
                     SizedBox(height: 20,),
                     if(Responsive.isMobile(context))
-                      Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Auto"),
-                                SizedBox(width: 20,),
-                                Checkbox(
-                                  checkColor: Colors.white,
-                                  activeColor: checkBoxColor,
-                                  // fillColor: MaterialStateProperty.resolveWith(getColor),
-                                  value:isChecked,
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      isChecked = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                            if(isChecked)
-                              AutomateSendData(),
-                            SizedBox(height:20),
-                          ],
-                        ),
-                      ),
+                      automate(),
                     SizedBox(height: 10,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -220,7 +191,7 @@ class _HttpBodyState extends State<HttpBody> {
                         SizedBox(width: 10,),
                         ElevatedButton(
                           style:ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                              padding: EdgeInsets.symmetric(horizontal:35,vertical:20)
                           ),
                           onPressed:(){
                             message.clear();
@@ -232,7 +203,7 @@ class _HttpBodyState extends State<HttpBody> {
                             builder:(context,state){
                               return ElevatedButton(
                                   style:ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                                      padding: EdgeInsets.symmetric(horizontal:35,vertical:20)
                                   ),
                                   onPressed:state is HttpMultiplePosting?null:sendButtonClick,
                                   child:Text('Send')
@@ -245,36 +216,11 @@ class _HttpBodyState extends State<HttpBody> {
                   ],
                 ),
               ),
+              SizedBox(width: 20,),
               if(!Responsive.isMobile(context))
               Expanded(
                 flex: isChecked?2:1,
-                child: Container(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 20,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Auto"),
-                          SizedBox(width: 20,),
-                          Checkbox(
-                            checkColor: Colors.white,
-                            activeColor: checkBoxColor,
-                            value:isChecked,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isChecked = value!;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      if(isChecked)
-                        AutomateSendData(),
-                      SizedBox(height:20),
-                    ],
-                  ),
-                ),
+                child: automate(),
               ),
             ],
           ),
@@ -282,7 +228,37 @@ class _HttpBodyState extends State<HttpBody> {
       ),
     );
   }
-
+  Widget automate(){
+    return  Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Checkbox(
+                checkColor: Colors.white,
+                activeColor: checkBoxColor,
+                // fillColor: MaterialStateProperty.resolveWith(getColor),
+                value:isChecked,
+                onChanged: (bool? value) {
+                  setState(() {
+                    isChecked = value!;
+                  });
+                },
+              ),
+              SizedBox(width: 20,),
+              Text("Automate"),
+            ],
+          ),
+          SizedBox(height: 10,),
+          if(isChecked)
+            AutomateSendData(),
+          SizedBox(height:20),
+        ],
+      ),
+    );
+  }
   Future<void> _showMyDialog(String message) async{
     return showDialog<void>
       (

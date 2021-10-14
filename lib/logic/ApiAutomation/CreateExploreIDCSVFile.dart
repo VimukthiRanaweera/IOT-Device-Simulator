@@ -55,7 +55,7 @@ class CreateExploreIDCSVFile{
   }
 
   void createSceneList(){
-    fileName="SceneList";
+    fileName="ScenesList";
     List<List<dynamic>> fileList = [];
 
     List<dynamic> header = [];

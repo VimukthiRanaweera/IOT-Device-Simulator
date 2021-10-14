@@ -69,39 +69,23 @@ void clearText(){
             }
             ),
       ],
-      child: Row(
-        children: [
-      Expanded(
-        flex: 4,
-        child: Form(
-          key: _formKey,
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-             children: [
-               SizedBox(height:Responsive.isMobile(context)?20:20),
-               TextFormField(
-                  decoration: InputDecoration(
-                    hintMaxLines: 2,
-                      filled: true,
-                      fillColor: TextFieldColour,
-                      border:OutlineInputBorder(
-                        borderSide:BorderSide.none,
-                        borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
-                      ),
-                      hintText: 'Topic',
-
-                  ),
-                 controller: topic,
-                 validator: (text){
-                   if(text!.isEmpty){
-                     return 'Cannot be empty';
-                   }
-                 },
-                ),
-               SizedBox(height: 40,),
-                  TextFormField(
-                    maxLines: 2,
+      child: Container(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+        Expanded(
+          flex: 4,
+          child: Form(
+            key: _formKey,
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 // SizedBox(height:Responsive.isMobile(context)?20:20),
+                 SizedBox(height: 45,),
+                 TextFormField(
+                   maxLines: 2,
+                    minLines: 1,
                     decoration: InputDecoration(
                         filled: true,
                         fillColor: TextFieldColour,
@@ -109,118 +93,139 @@ void clearText(){
                           borderSide:BorderSide.none,
                           borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                         ),
-                        hintText: 'Message'
+                        hintText: 'Topic',
+
                     ),
-                    controller: message,
-                    validator: (text){
-                      if(text!.isEmpty){
-                        return 'Cannot be empty';
-                      }
-                    },
+                   controller: topic,
+                   validator: (text){
+                     if(text!.isEmpty){
+                       return 'Cannot be empty';
+                     }
+                   },
                   ),
-               if(Responsive.isMobile(context))
-               Container(
-                 child: Column(
+                 SizedBox(height: 30,),
+                    TextFormField(
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                          filled: true,
+                          fillColor: TextFieldColour,
+                          border:OutlineInputBorder(
+                            borderSide:BorderSide.none,
+                            borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
+                          ),
+                          hintText: 'Message'
+                      ),
+                      controller: message,
+                      validator: (text){
+                        if(text!.isEmpty){
+                          return 'Cannot be empty';
+                        }
+                      },
+                    ),
+                 if(Responsive.isMobile(context))
+                 Container(
+                   child: Column(
+                     children: [
+                       SizedBox(height: 20,),
+                       Row(
+                         children: [
+                           Checkbox(
+                             checkColor: Colors.white,
+                             activeColor: checkBoxColor,
+                             value:isChecked,
+                             onChanged: (bool? value) {
+                               setState(() {
+                                 isChecked = value!;
+                               });
+                             },
+                           ),
+                           SizedBox(width: 20,),
+                           Text("Automate"),
+                         ],
+                       ),
+                         if(isChecked)
+                         AutomateSendData(),
+                     ],
+                   ),
+                 ),
+                 SizedBox(height:20),
+                 Row(
+                   mainAxisAlignment:MainAxisAlignment.end,
                    children: [
-                     SizedBox(height: 20,),
-                     Row(
-                       children: [
-                         Text("Auto"),
-                         SizedBox(width: 20,),
-                         Checkbox(
-                           checkColor: Colors.white,
-                           activeColor: checkBoxColor,
-                           value:isChecked,
-                           onChanged: (bool? value) {
-                             setState(() {
-                               isChecked = value!;
-                             });
-                           },
-                         ),
-                       ],
+                     BlocBuilder<MqttBloc,MqttState>(
+                         builder:(context,state){
+                           if(state is MqttPublishingState){
+                             return Row(
+                               children: [
+                                 Text("Publishing . . . ",style:TextStyle(fontSize:20,color:ConnectingColor),),
+                                 SizedBox(width:10,),
+                                 CircularProgressIndicator(),
+                                 SizedBox(width:10,),
+                               ],
+                             );
+
+                           }
+                           return SizedBox(width:10,);
+                         }
                      ),
-                       if(isChecked)
-                       AutomateSendData(),
-                     SizedBox(height:20),
+                     BlocBuilder<MqttBloc,MqttState>(
+                       builder:(context,state) {
+                        return ElevatedButton(
+                             style: ElevatedButton.styleFrom(
+                                 padding: EdgeInsets.symmetric(
+                                     horizontal: 30, vertical: 20)
+                             ),
+                             onPressed:(state is MqttPublishingState || state is MqttConnectingState || state is MqttDisconnectedState || state is MqttClientNotClickState || state is MqttClientClickedState)? null:_publishButton,
+                             child: Text('Publish')
+
+                         );
+
+                       }
+                     ),
+
                    ],
                  ),
-               ),
-               SizedBox(height:20),
-               Row(
-                 mainAxisAlignment:MainAxisAlignment.end,
-                 children: [
-                   BlocBuilder<MqttBloc,MqttState>(
-                       builder:(context,state){
-                         if(state is MqttPublishingState){
-                           return Row(
-                             children: [
-                               Text("Publishing . . . ",style:TextStyle(fontSize:20,color:ConnectingColor),),
-                               SizedBox(width:10,),
-                               CircularProgressIndicator(),
-                               SizedBox(width:10,),
-                             ],
-                           );
 
-                         }
-                         return SizedBox(width:10,);
-                       }
-                   ),
-                   BlocBuilder<MqttBloc,MqttState>(
-                     builder:(context,state) {
-                      return ElevatedButton(
-                           style: ElevatedButton.styleFrom(
-                               padding: EdgeInsets.symmetric(
-                                   horizontal: 30, vertical: 20)
-                           ),
-                           onPressed:(state is MqttPublishingState || state is MqttConnectingState || state is MqttDisconnectedState || state is MqttClientNotClickState || state is MqttClientClickedState)? null:_publishButton,
-                           child: Text('Publish')
-
-                       );
-
-                     }
-                   ),
-
-                 ],
-               ),
-
-             ],
-            ),
-          ),
-        ),
-      ),
-          if(!Responsive.isMobile(context))
-          Expanded(
-            flex: isChecked?2:1,
-            child: Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Auto"),
-                      SizedBox(width: 20,),
-                      Checkbox(
-                        checkColor: Colors.white,
-                        activeColor: checkBoxColor,
-                        // fillColor: MaterialStateProperty.resolveWith(getColor),
-                        value:isChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isChecked = value!;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  SizedBox(height:20),
-                  if(isChecked)
-                    AutomateSendData(),
-                ],
+               ],
               ),
             ),
           ),
-       ]
+        ),
+            SizedBox(width: 20,),
+            if(!Responsive.isMobile(context))
+            Expanded(
+              flex: isChecked?2:1,
+              child: Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Checkbox(
+                          checkColor: Colors.white,
+                          activeColor: checkBoxColor,
+                          // fillColor: MaterialStateProperty.resolveWith(getColor),
+                          value:isChecked,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isChecked = value!;
+                            });
+                          },
+                        ),
+                        SizedBox(width: 20,),
+                        Text("Automate"),
+                      ],
+                    ),
+                    SizedBox(height:12),
+                    if(isChecked)
+                      AutomateSendData(),
+                  ],
+                ),
+              ),
+            ),
+         ]
+        ),
       ),
     );
 

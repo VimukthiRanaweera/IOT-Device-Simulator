@@ -53,19 +53,19 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
           key:_formKey,
           child: Column(
             children: [
-              Container(
-                alignment:Alignment.topRight,
-                child: ElevatedButton(
-                    style:ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal:Responsive.isMobile(context)?15:30,vertical:Responsive.isMobile(context)?10:20)
-                    ),
-                    onPressed: (){
-                        BlocProvider.of<ConnetionBloc>(context).add(CreateNewConnetionEvent(BlocProvider.of<ConnetionBloc>(context).state.superConModel));
-                    },
-                    child:Text('New Connection')
-                ),
-              ),
-              SizedBox(height: 50,),
+              // Container(
+              //   alignment:Alignment.topRight,
+              //   child: ElevatedButton(
+              //       style:ElevatedButton.styleFrom(
+              //           padding: EdgeInsets.symmetric(horizontal:Responsive.isMobile(context)?15:30,vertical:Responsive.isMobile(context)?10:20)
+              //       ),
+              //       onPressed: (){
+              //
+              //       },
+              //       child:Text('New Connection')
+              //   ),
+              // ),
+              // SizedBox(height: 50,),
               _connectionName(),
               SizedBox(height: 30,),
 
@@ -152,7 +152,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
 
                   ElevatedButton(
                       style:ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal:30,vertical:20)
+                          padding: EdgeInsets.symmetric(horizontal:33,vertical:20)
                       ),
                       onPressed: (){
                         Navigator.pop(context);
@@ -165,7 +165,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                       return ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 20)
+                                  horizontal: 35, vertical: 20)
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {

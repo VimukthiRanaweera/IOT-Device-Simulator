@@ -82,26 +82,16 @@ class _ApiDevicesState extends State<ApiDevices> {
                     return ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(
-                                horizontal:
-                                Responsive.isMobile(context)
-                                    ? 15
-                                    : 20,
-                                vertical: Responsive.isMobile(context)
-                                    ? 15
-                                    : 20)),
+                                horizontal: 25,
+                                vertical:20)),
                         onPressed: null,
                         child: Text('Submit'));
                   } else
                     return ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(
-                                horizontal:
-                                Responsive.isMobile(context)
-                                    ? 18
-                                    : 25,
-                                vertical: Responsive.isMobile(context)
-                                    ? 18
-                                    : 20)),
+                                horizontal: 25,
+                                vertical: 20)),
                         onPressed: () {
 
                           if(selectItem=='Get Devices') {

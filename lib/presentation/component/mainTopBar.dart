@@ -19,7 +19,7 @@ class MainTopBar extends StatefulWidget {
   _MainTopBarState createState() => _MainTopBarState();
 }
 
-String qosValue = "0";
+String qosValue = '0-At most once';
 
 class _MainTopBarState extends State<MainTopBar> {
   late String dropdownValue = 'MQTT';
@@ -109,7 +109,7 @@ class _MainTopBarState extends State<MainTopBar> {
                   style: ElevatedButton.styleFrom(
                       padding:
                       EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 15)),
+                          horizontal: 20, vertical: 20)),
                   onPressed: null,
                   child: Text('Connect'),
                 );
@@ -120,7 +120,7 @@ class _MainTopBarState extends State<MainTopBar> {
                   style: ElevatedButton.styleFrom(
                     padding:
                     EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 15),
+                        horizontal: 20, vertical: 20),
                     primary: Colors.red,
                   ),
                   onPressed: () async {
@@ -128,7 +128,7 @@ class _MainTopBarState extends State<MainTopBar> {
                         MqttConnetEvent(BlocProvider
                             .of<ConnetionBloc>(context)
                             .state
-                            .superConModel, int.parse(qosValue)));
+                            .superConModel, qosValue));
                   },
                   child: Text('Connect'),
                 );
@@ -140,7 +140,7 @@ class _MainTopBarState extends State<MainTopBar> {
                   style: ElevatedButton.styleFrom(
                     padding:
                     EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 15),
+                        horizontal: 18, vertical: 20),
                     primary: Colors.green,
                   ),
                   onPressed: () async {
@@ -199,7 +199,7 @@ class _MainTopBarState extends State<MainTopBar> {
             qosValue= newValue!;
           });
         },
-        items: <String>['0', '1', '2'].map<
+        items: <String>['0-At most once', '1-At least once', '2-Exactly once'].map<
             DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem(
             value: value,
@@ -214,7 +214,7 @@ class _MainTopBarState extends State<MainTopBar> {
     return BlocBuilder<MqttBloc, MqttState>(
         builder: (context, state) {
           return AbsorbPointer(
-            absorbing: state is MqttConnectedState,
+            absorbing: state is MqttConnectedState || state is MqttClientNotClickState,
             child: IconButton(
               iconSize: 30,
               icon: Icon(Icons.settings,

@@ -338,7 +338,7 @@ ApiAutomateRepo apiAutomateRepo;
         yield ApiExploreIdsSuccessed();
       }
       catch (e) {
-        if (e.toString().replaceAll("Exception:", "") ==
+        if (e.toString().replaceAll("Exception:", "").trim() ==
             "Get actions request fail")
           yield ApiExploreIDsErrorState(
               e.toString().replaceAll("Exception:", ""));

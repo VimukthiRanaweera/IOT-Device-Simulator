@@ -20,7 +20,7 @@ class _AutomateSendDataState extends State<AutomateSendData> {
 
     return Container(
       alignment:Alignment.topCenter,
-      padding: EdgeInsets.only(left:30,right:10),
+      padding: EdgeInsets.only(),
       child: BlocBuilder<AutomateCubit,AutomateState>(
         builder:(context,state) {
           return Form(
@@ -30,7 +30,6 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                   Container(
                     child: Column(
                       children: [
-                        SizedBox(height: 5,),
                         Row(
                           children: [
                             Expanded(
@@ -60,10 +59,11 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                                 child: Container()),
                           ],
                         ),
-                         SizedBox(height: 15,),
+                         SizedBox(height: 30,),
                           Row(
                             children: [
                               Expanded(
+                                flex: 4,
                                 child: TextFormField(
                                   maxLines: 1,
                                   decoration: InputDecoration(
@@ -88,6 +88,9 @@ class _AutomateSendDataState extends State<AutomateSendData> {
                               ),
                               SizedBox(width: 5,),
                               Text('Seconds',style:TextStyle(color:Colors.black,fontWeight:FontWeight.bold)),
+                              Expanded(
+                                  flex:1,
+                                  child: Container()),
                             ],
                           ),
                         SizedBox(height:10,),

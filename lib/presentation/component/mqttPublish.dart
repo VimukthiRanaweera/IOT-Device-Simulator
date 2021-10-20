@@ -7,7 +7,6 @@ import 'package:iot_device_simulator/logic/MQTT/MqttEvents.dart';
 import 'package:iot_device_simulator/logic/automateCubit.dart';
 import 'package:iot_device_simulator/logic/connectionBloc.dart';
 import 'package:iot_device_simulator/logic/connectionsState.dart';
-import 'package:iot_device_simulator/presentation/Responsive.dart';
 import 'package:iot_device_simulator/presentation/component/automateSendData.dart';
 
 
@@ -122,7 +121,7 @@ void clearText(){
                         }
                       },
                     ),
-                 if(Responsive.isMobile(context))
+
                  Container(
                    child: Column(
                      children: [
@@ -139,10 +138,11 @@ void clearText(){
                                });
                              },
                            ),
-                           SizedBox(width: 20,),
+                           SizedBox(width: 10,),
                            Text("Automate"),
                          ],
                        ),
+                       SizedBox(height:10),
                          if(isChecked)
                          AutomateSendData(),
                      ],
@@ -191,39 +191,6 @@ void clearText(){
             ),
           ),
         ),
-            SizedBox(width: 20,),
-            if(!Responsive.isMobile(context))
-            Expanded(
-              flex: isChecked?2:1,
-              child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Checkbox(
-                          checkColor: Colors.white,
-                          activeColor: checkBoxColor,
-                          // fillColor: MaterialStateProperty.resolveWith(getColor),
-                          value:isChecked,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isChecked = value!;
-                            });
-                          },
-                        ),
-                        SizedBox(width: 20,),
-                        Text("Automate"),
-                      ],
-                    ),
-                    SizedBox(height:12),
-                    if(isChecked)
-                      AutomateSendData(),
-                  ],
-                ),
-              ),
-            ),
          ]
         ),
       ),
@@ -231,34 +198,5 @@ void clearText(){
 
   }
 
-  Future<void> _showMyDialog(String message) async{
-  return showDialog<void>
-    (
-      context: context,
-      barrierDismissible: true,
-      builder:(BuildContext context){
-      return AlertDialog(
-        title: Text('Alert',style:TextStyle(color:Colors.redAccent,fontWeight:FontWeight.bold),),
-        content: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Text(message)
-            ],
-          ),
-        ),
-        backgroundColor:primaryColor,
-        actions: [
-          TextButton(
-              onPressed:(){
-                Navigator.of(context).pop();
-              },
-              child:Text("OK",style:TextStyle(fontSize:14,color: Colors.black,fontWeight:FontWeight.bold),)
-          ),
-        ],
-      );
-      },
-  );
-
-  }
 
 }

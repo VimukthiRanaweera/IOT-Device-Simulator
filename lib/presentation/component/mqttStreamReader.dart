@@ -8,7 +8,7 @@ import 'package:iot_device_simulator/MODEL/SubscribeMessage.dart';
 import 'package:iot_device_simulator/logic/MQTT/Data/MqttAPI.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/writeSubscribeLogFileCubit.dart';
-import 'package:iot_device_simulator/logic/connectionBloc.dart';
+
 
 import '../Responsive.dart';
 
@@ -50,14 +50,12 @@ class _StreamReaderState extends State<StreamReader> {
         if(state is MqttSubscribeResponsedState){
           var inputFormat =  DateFormat("yyyy-MM-dd HH:mm:ss");
           BlocProvider.of<WriteSubscribeLogFileCubit>(context).state.writeLogMessage(SubscribeMessage.messages[0],state.response,
-              inputFormat.format(DateTime.now()).toString(),
-              BlocProvider.of<ConnetionBloc>(context).state.superConModel.connectionName);
+              inputFormat.format(DateTime.now()).toString());
         }
         else if( state is MqttSubscribeNotResponsedState){
           var inputFormat =  DateFormat("yyyy-MM-dd HH:mm:ss");
           BlocProvider.of<WriteSubscribeLogFileCubit>(context).state.writeLogMessage(SubscribeMessage.messages[0],"NOT RESPONSE",
-              inputFormat.format(DateTime.now()).toString(),
-              BlocProvider.of<ConnetionBloc>(context).state.superConModel.connectionName);
+              inputFormat.format(DateTime.now()).toString());
         }
       },
       child: Scrollbar(

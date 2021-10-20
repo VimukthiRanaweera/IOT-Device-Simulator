@@ -35,109 +35,151 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
   @override
   Widget build(BuildContext context) {
 
-    return BlocListener<ConnetionBloc,ConsState>(
-      listener:(context,state){
-        if(state is ConnectionSelectedState){
-          setState(() {
-            SubscribeMessage.messages.clear();
-            topic.clear();
-            responseMessage.clear();
-            responseTopic.clear();
-          });
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal:Responsive.isMobile(context)?5:50,vertical: 10),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              TextFormField(
-                key: _formTopicKey,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor:TextFieldColour,
-                  border:OutlineInputBorder(
-                    borderSide:BorderSide.none,
-                    borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
+    return MultiBlocListener(
+      listeners: [
+       BlocListener<ConnetionBloc,ConsState>(
+        listener:(context,state){
+          if(state is ConnectionSelectedState){
+            setState(() {
+              SubscribeMessage.messages.clear();
+              topic.clear();
+              responseMessage.clear();
+              responseTopic.clear();
+              SubscribeMessage.messages.clear();
+            });
+            BlocProvider.of<WriteSubscribeLogFileCubit>(context).state.isLogWrite=false;
+          }
+        },
+       ),
+        BlocListener<MqttBloc,MqttState>(
+          listener:(context,state) {
+            if (state is MqttDisconnectedState) {
+              setState(() {
+                BlocProvider
+                    .of<WriteSubscribeLogFileCubit>(context)
+                    .state
+                    .isLogWrite = false;
+              });
+
+            }
+          }
+        ),
+        ],
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal:Responsive.isMobile(context)?5:50,vertical: 10),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                TextFormField(
+                  key: _formTopicKey,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor:TextFieldColour,
+                    border:OutlineInputBorder(
+                      borderSide:BorderSide.none,
+                      borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
+                    ),
+                    hintText: 'Topic',
                   ),
-                  hintText: 'Topic',
+                  controller: topic,
+                  validator: (text) {
+                    if (text!.isEmpty) {
+                      return 'Cannot be empty';
+                    }
+                  },
                 ),
-                controller: topic,
-                validator: (text) {
-                  if (text!.isEmpty) {
-                    return 'Cannot be empty';
-                  }
-                },
-              ),
-              SizedBox(height: 20,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Checkbox(
-                        checkColor: Colors.white,
-                        activeColor: checkBoxColor,
-                        value:isCheckedAction,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isCheckedAction = value!;
-                          });
-                        },
-                      ),
-                      Text("Action Response",),
-                    ],
-                  ),
-                  SizedBox(width: 20,),
-                  Row(
-                    children: [
-
-                      BlocBuilder<WriteSubscribeLogFileCubit,WriteSubscribeLogFileState>(
-                        builder:(context,state) {
-                          return AbsorbPointer(
-                            absorbing: false,
-                            child: Checkbox(
-                              checkColor: Colors.white,
-                              activeColor: checkBoxColor,
-                              // fillColor: MaterialStateProperty.resolveWith(getColor),
-                              value:state.isLogWrite,
-                              onChanged: (bool? value) async {
-                                setState(() {
-                                  state.isLogWrite = value!;
-                                });
-                                if(state.isLogWrite){
-                                  String? result = await FilePicker.platform
-                                      .getDirectoryPath(
-                                      dialogTitle: "Save the File");
-                                  print(result);
-                                  if(result!=null){
-                                    state.filePath=result;
-                                  }else{
-                                    setState(() {
-                                      state.isLogWrite = false;
-                                    });
-                                  }
-                                }
-                              },
-                            ),
-                          );
-                        }
-                      ),
-                      Text("Log Write",),
-                    ],
-                  ),
-                ],
-              ),
-              if(isCheckedAction)
-              Container(
-                child: Column(
+                SizedBox(height: 20,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Row(
+                      children: [
+                        Checkbox(
+                          checkColor: Colors.white,
+                          activeColor: checkBoxColor,
+                          value:isCheckedAction,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isCheckedAction = value!;
+                            });
+                          },
+                        ),
+                        SizedBox(width: 10,),
+                        Text("Action Response",),
+                      ],
+                    ),
+                    SizedBox(width: 20,),
+                    Row(
+                      children: [
 
+                        BlocBuilder<WriteSubscribeLogFileCubit,WriteSubscribeLogFileState>(
+                          builder:(context,state) {
+                            return AbsorbPointer(
+                              absorbing: false,
+                              child: Checkbox(
+                                checkColor: Colors.white,
+                                activeColor: checkBoxColor,
+                                // fillColor: MaterialStateProperty.resolveWith(getColor),
+                                value:state.isLogWrite,
+                                onChanged: (bool? value) async {
+                                  setState(() {
+                                    state.isLogWrite = value!;
+                                  });
+                                  if(state.isLogWrite){
+                                    String? result = await FilePicker.platform
+                                        .saveFile(
+                                        dialogTitle: "Save the File",
+                                        type:FileType.custom,
+                                        allowedExtensions:['CSV']);
+                                    print(result);
+                                    if(result!=null){
+                                      state.filePath=result;
+                                    }else{
+                                      setState(() {
+                                        state.isLogWrite = false;
+                                      });
+                                    }
+                                  }
+                                },
+                              ),
+                            );
+                          }
+                        ),
+                        SizedBox(width: 10,),
+                        Text("Save Logs",),
+                      ],
+                    ),
+                  ],
+                ),
+                if(isCheckedAction)
+                Container(
+                  child: Column(
+                    children: [
+
+                        SizedBox(height: 20,),
+                        TextFormField(
+                          maxLines: 1,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: TextFieldColour,
+                            border:OutlineInputBorder(
+                              borderSide:BorderSide.none,
+                              borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
+                            ),
+                            hintText: 'Action Response Topic',
+                          ),
+                          controller: responseTopic,
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'Cannot be empty';
+                            }
+                          },
+                        ),
                       SizedBox(height: 20,),
                       TextFormField(
-                        maxLines: 1,
+                        maxLines: 2,
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: TextFieldColour,
@@ -145,107 +187,89 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                             borderSide:BorderSide.none,
                             borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
                           ),
-                          hintText: 'Action Response Topic',
+                          hintText: 'Action Response Message',
                         ),
-                        controller: responseTopic,
+                        controller: responseMessage,
                         validator: (text) {
                           if (text!.isEmpty) {
                             return 'Cannot be empty';
                           }
                         },
                       ),
-                    SizedBox(height: 20,),
-                    TextFormField(
-                      maxLines: 2,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: TextFieldColour,
-                        border:OutlineInputBorder(
-                          borderSide:BorderSide.none,
-                          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
-                        ),
-                        hintText: 'Action Response Message',
-                      ),
-                      controller: responseMessage,
-                      validator: (text) {
-                        if (text!.isEmpty) {
-                          return 'Cannot be empty';
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 20,),
-              BlocBuilder<MqttBloc,MqttState>(
-                  builder:(context,state){
-                    if(state is MqttSubscribeTopicState || state is MqttSubscribeResponsedState || state is MqttSubscribeNotResponsedState)
-                      return ElevatedButton(
-                          style:ElevatedButton.styleFrom(
-                              padding:EdgeInsets.symmetric(horizontal:25,vertical:20)
-                          ),
-                          onPressed: (){
-                            BlocProvider.of<MqttBloc>(context).add(MqttUnsubscribeEvent(topic.text));
-                            setState(() {
-                              SubscribeMessage.messages.clear();
-                            });
-                          },
-                          child:Text('Unsubscribe')
-                      );
-                    else if(state is MqttDisconnectedState|| state is MqttClientNotClickState || state is MqttClientClickedState || state is MqttConnectingState)
-                      return ElevatedButton(
-                          style:ElevatedButton.styleFrom(
-                              padding:EdgeInsets.symmetric(horizontal:25,vertical:20)
-                          ),
-                          onPressed:null,
-                          child:Text('Subscribe')
-                      );
-                    else
-                      return ElevatedButton(
-                          style:ElevatedButton.styleFrom(
-                              padding:EdgeInsets.symmetric(horizontal:25,vertical:20)
-                          ),
-                          onPressed: (){
-                            if(isCheckedAction) {
-                              if(_formKey.currentState!.validate())
-                              BlocProvider.of<MqttBloc>(context).add(
-                                  MqttSubscribeAndResponseEvent(
-                                      topic.text,responseMessage.text,responseTopic.text));
-                              // BlocProvider.of<WriteSubscribeLogFileCubit>(context).setResponse(responseMessage.text);
-                              }
-                            else{
-                              if(_formTopicKey.currentState!.validate())
-                                BlocProvider.of<MqttBloc>(context).add(MqttSubscribeEvent(topic.text));
-                              // BlocProvider.of<WriteSubscribeLogFileCubit>(context).setResponse("NO RESPONSE");
-                            }
-                          },
-                          child:Text('Subscribe')
-                      );
-                  }
-              ),
-              SizedBox(height: 40,),
-              Container(
-                height: 300,
-                  color: Colors.black12,
-                  child: StreamReader()
-              ),
-              SizedBox(height: 20,),
-              ElevatedButton(
-                  style:ElevatedButton.styleFrom(
-                      padding:EdgeInsets.symmetric(horizontal:35,vertical:20)
+                    ],
                   ),
-                  onPressed: (){
-                    setState(() {
-                      SubscribeMessage.messages.clear();
-                    });
-                  },
-                  child:Text('clear')
-              ),
-            ],
+                ),
+
+                SizedBox(height: 20,),
+                BlocBuilder<MqttBloc,MqttState>(
+                    builder:(context,state){
+                      if(state is MqttSubscribeTopicState || state is MqttSubscribeResponsedState || state is MqttSubscribeNotResponsedState)
+                        return ElevatedButton(
+                            style:ElevatedButton.styleFrom(
+                                padding:EdgeInsets.symmetric(horizontal:25,vertical:20)
+                            ),
+                            onPressed: (){
+                              BlocProvider.of<MqttBloc>(context).add(MqttUnsubscribeEvent(topic.text));
+                              setState(() {
+                                SubscribeMessage.messages.clear();
+                              });
+                              BlocProvider.of<WriteSubscribeLogFileCubit>(context).state.isLogWrite=false;
+                            },
+                            child:Text('Unsubscribe')
+                        );
+                      else if(state is MqttDisconnectedState|| state is MqttClientNotClickState || state is MqttClientClickedState || state is MqttConnectingState)
+                        return ElevatedButton(
+                            style:ElevatedButton.styleFrom(
+                                padding:EdgeInsets.symmetric(horizontal:25,vertical:20)
+                            ),
+                            onPressed:null,
+                            child:Text('Subscribe')
+                        );
+                      else
+                        return ElevatedButton(
+                            style:ElevatedButton.styleFrom(
+                                padding:EdgeInsets.symmetric(horizontal:25,vertical:20)
+                            ),
+                            onPressed: (){
+                              if(isCheckedAction) {
+                                if(_formKey.currentState!.validate())
+                                BlocProvider.of<MqttBloc>(context).add(
+                                    MqttSubscribeAndResponseEvent(
+                                        topic.text,responseMessage.text,responseTopic.text));
+                                // BlocProvider.of<WriteSubscribeLogFileCubit>(context).setResponse(responseMessage.text);
+                                }
+                              else{
+                                if(_formTopicKey.currentState!.validate())
+                                  BlocProvider.of<MqttBloc>(context).add(MqttSubscribeEvent(topic.text));
+                                // BlocProvider.of<WriteSubscribeLogFileCubit>(context).setResponse("NO RESPONSE");
+                              }
+                            },
+                            child:Text('Subscribe')
+                        );
+                    }
+                ),
+                SizedBox(height: 40,),
+                Container(
+                  height: 300,
+                    color: Colors.black12,
+                    child: StreamReader()
+                ),
+                SizedBox(height: 20,),
+                ElevatedButton(
+                    style:ElevatedButton.styleFrom(
+                        padding:EdgeInsets.symmetric(horizontal:35,vertical:20)
+                    ),
+                    onPressed: (){
+                      setState(() {
+                        SubscribeMessage.messages.clear();
+                      });
+                    },
+                    child:Text('Clear')
+                ),
+              ],
+            ),
           ),
         ),
-      ),
     );
   }
 }

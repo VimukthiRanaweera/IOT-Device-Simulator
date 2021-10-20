@@ -22,7 +22,7 @@ class MainTopBar extends StatefulWidget {
 String qosValue = '0-At most once';
 
 class _MainTopBarState extends State<MainTopBar> {
-  late String dropdownValue = 'MQTT';
+  late String dropdownValue = MQTT;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +72,7 @@ class _MainTopBarState extends State<MainTopBar> {
                         if(!Responsive.isMobile(context))
                         qosContent(),
                           SizedBox(width: Responsive.isMobile(context)?10:20),
-                        if(protocolState.protocol == "MQTT")
+                        if(protocolState.protocol == MQTT)
                           settingButton(),
                           SizedBox(width: Responsive.isMobile(context) ? 3 : 20,),
                         if(!Responsive.isMobile(context))
@@ -101,7 +101,7 @@ class _MainTopBarState extends State<MainTopBar> {
   Widget mqttButton(){
     return  BlocBuilder<ProtocolCubit, ProtocolState>(
         builder: (context, protocolState) {
-          if (protocolState.protocol == 'MQTT')
+          if (protocolState.protocol == MQTT)
             return BlocBuilder<MqttBloc, MqttState>
               (builder: (context, state) {
               if (state is MqttClientNotClickState) {
@@ -146,6 +146,7 @@ class _MainTopBarState extends State<MainTopBar> {
                   onPressed: () async {
                     BlocProvider.of<MqttBloc>(context).add(
                         MqttDisConnectEvent());
+
                   },
                   child: Text('Disconnect'),
                 );
@@ -162,7 +163,7 @@ class _MainTopBarState extends State<MainTopBar> {
   Widget qosContent(){
     return BlocBuilder<ProtocolCubit, ProtocolState>(
       builder:(context,state){
-        if(state.protocol == 'MQTT') {
+        if(state.protocol == MQTT) {
           return Container(
               child: Row(
                 children: [
@@ -211,23 +212,25 @@ class _MainTopBarState extends State<MainTopBar> {
   }
 
   Widget settingButton() {
+    void click(){
+      BlocProvider.of<ConnetionBloc>(context).add(
+          ClickedSettingEvent(BlocProvider
+              .of<ConnetionBloc>(context)
+              .state
+              .superConModel));
+      Navigator.of(context).pushNamed(
+          '/newConnection');
+    }
     return BlocBuilder<MqttBloc, MqttState>(
         builder: (context, state) {
           return AbsorbPointer(
             absorbing: state is MqttConnectedState || state is MqttClientNotClickState,
             child: IconButton(
+
               iconSize: 30,
               icon: Icon(Icons.settings,
               ),
-              onPressed: () {
-                BlocProvider.of<ConnetionBloc>(context).add(
-                    ClickedSettingEvent(BlocProvider
-                        .of<ConnetionBloc>(context)
-                        .state
-                        .superConModel));
-                Navigator.of(context).pushNamed(
-                    '/newConnection');
-              },
+              onPressed: (state is MqttDisconnectedState|| state is MqttClientClickedState)?click:null,
             ),
           );
         }
@@ -253,7 +256,7 @@ class _MainTopBarState extends State<MainTopBar> {
             BlocProvider.of<ProtocolCubit>(context).SetProtocol(newValue);
           });
         },
-        items: <String>['MQTT', 'HTTP', 'CoAP', "TCP"].map<
+        items: <String>[MQTT, HTTP, TCP, CoAP].map<
             DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem(
             value: value,

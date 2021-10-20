@@ -3,8 +3,7 @@ import 'dart:io';
 
 import 'package:csv/csv.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
+
 
 
 class CreateCSVFile{
@@ -15,99 +14,107 @@ class CreateCSVFile{
 
   CreateCSVFile(this.body, this.params, this.devicesIds,this.eventName);
 
-  void createList(){
-    List paramsList =seperateStrings(params);
-    List deviIdsList =seperateStrings(devicesIds);
+  Future<int> createList() async {
+    try {
+      List paramsList = await seperateStrings(params);
+      List deviIdsList = await seperateStrings(devicesIds);
+      print('in the write device history file');
+      var deviceLists = [];
 
-    var deviceLists = [];
-
-    for(var ids in deviIdsList){
-      List deviceIdBody = body[ids];
-      deviceLists.add(deviceIdBody);
-    }
-
-    List<List<dynamic>> fileList = [];
-
-    List<dynamic> header = [];
-    header.add("device_id");
-    for(var params in paramsList){
-      header.add(params);
-    }
-
-    header.add("stateName_s");
-    header.add("timestamp_s");
-    header.add("time_s");
-    header.add("mac_s");
-
-    fileList.add(header);
-
-    for(int i=0;i<deviceLists.length;i++){
-      for(var rowList in deviceLists[i]){
-        List<dynamic> row = [];
-        row.add(deviIdsList[i]);
-        for(var params in paramsList){
-          row.add(rowList[params]);
+      for (var ids in deviIdsList) {
+        if(body[ids]!=null) {
+          List deviceIdBody = body[ids];
+          deviceLists.add(deviceIdBody);
         }
-        row.add(rowList["stateName_s"]);
-        row.add(rowList["timestamp_s"]);
-        row.add(rowList["time_s"]);
-        row.add(rowList["mac_s"]);
-        fileList.add(row);
       }
 
+      List<List<dynamic>> fileList = [];
+
+      List<dynamic> header = [];
+      header.add("device_id");
+      for (var params in paramsList) {
+        header.add(params);
+        print(params);
+      }
+
+      header.add("stateName_s");
+      header.add("timestamp_s");
+      header.add("time_s");
+      header.add("mac_s");
+
+      fileList.add(header);
+
+      for (int i = 0; i < deviceLists.length; i++) {
+        for (var rowList in deviceLists[i]) {
+          List<dynamic> row = [];
+          row.add(deviIdsList[i]);
+          for (var params in paramsList) {
+            if(rowList[params]!=null) {
+              row.add(rowList[params]);
+            }else{
+              row.add("");
+            }
+          }
+          row.add(rowList["stateName_s"]);
+          row.add(rowList["timestamp_s"]);
+          row.add(rowList["time_s"]);
+          row.add(rowList["mac_s"]);
+          fileList.add(row);
+          print(row);
+        }
+      }
+      String csv = const ListToCsvConverter().convert(fileList);
+      await writeCounter(csv);
+      return 0;
+    }catch(e){
+      throw Exception(e);
     }
-    String csv = const ListToCsvConverter().convert(fileList);
-    writeCounter(csv);
     // print(fileList);
 
   }
 
 
-  List<dynamic> seperateStrings(String value){
+  Future<List> seperateStrings(String value) async {
     List<dynamic>  valuesList = value.split(',');
     return valuesList;
   }
 
 
   Future<String?> get _localPath async {
-    String? result= await FilePicker.platform.getDirectoryPath(dialogTitle: "Save the File") ;
+    String? result= await FilePicker.platform.saveFile(
+        dialogTitle: "Save the File",
+    type: FileType.custom,
+    allowedExtensions: ['CSV']) ;
     print(result);
     if(result!=null){
       return result;
     }
     else {
-      final directory = await getApplicationDocumentsDirectory();
-      return directory.path;
+     return null;
     }
 
   }
   Future<File> get _localFile async {
-    final path = await _localPath;
-    print("File path "+path.toString());
-    var inputFormat =  DateFormat("yyyyMMdd-HHmmss");
-    String time=inputFormat.format(DateTime.now()).toString();
-    return File('$path\\$eventName-$time.csv');
+    try {
+      final path = await _localPath;
+      print("File path " + path.toString());
+      return File('$path.csv');
+    }catch(_){
+      throw Exception('File Not Save');
+    }
   }
   Future<File> writeCounter(csv) async {
-    final file = await _localFile;
-
-    // Write the file
-    return file.writeAsString('$csv',mode: FileMode.append, flush: true);
+    try {
+      final file = await _localFile;
+      // Write the file
+      return file.writeAsString('$csv', mode: FileMode.append, flush: true);
+    }
+    catch(e){
+      throw Exception(e);
+    }
   }
 
 
 
-// Future<void> downloadCSV() async {
-  //   await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
-  //   bool checkPermission = await SimplePermissions.checkPermission(
-  //       Permission.WriteExternalStorage);
-  //   if (checkPermission) {
-  //     String dir = (await getExternalStorageDirectory())!.absolute.path +
-  //         "/documents";
-  //     var file = "$dir";
-  //     print(" FILE " + file);
-  //     File f = new File((file + "filename.csv"),);
-  // }
-  // }
 }
 

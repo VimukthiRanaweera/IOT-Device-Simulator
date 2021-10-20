@@ -150,7 +150,7 @@ class ApiAutomateRepo{
   }
 
   Future<Map<String, dynamic>> createDevice({required String tokenType,required String accessToken,required String XIotJwt,required int deviceDefinitionId,
-    required String brand,required String type,required String model,required String deviceCategory,required int userId, required int deviceParentId,required String macAddress,
+    required String brand,required String type,required int userId, required int deviceParentId,required String macAddress,
     required String name,required String zoneId}) async {
 
     var headers = {
@@ -164,8 +164,8 @@ class ApiAutomateRepo{
       "deviceDefinitionId": deviceDefinitionId,
       "brand": "$brand",
       "type": "$type",
-      "model": "$model",
-      "deviceCategory": "$deviceCategory",
+      "model": "",
+      "deviceCategory": "",
       "userId": userId,
       "deviceParentId": deviceParentId,
       "macAddress": "$macAddress",

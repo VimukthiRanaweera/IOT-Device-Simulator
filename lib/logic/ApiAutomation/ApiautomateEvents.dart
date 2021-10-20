@@ -70,8 +70,6 @@ class CreateDeviceEvent extends ApiAutomateEvents{
   late final int deviceDefinitionId;
   late final String brand;
   late final String type;
-  late final String model;
-  late final String deviceCategory;
   late final int deviceParentId;
   late final String zoneId;
   late final String filePath;
@@ -83,8 +81,6 @@ class CreateDeviceEvent extends ApiAutomateEvents{
       required this.deviceDefinitionId,
       required this.brand,
       required this.type,
-      required this.model,
-      required this.deviceCategory,
       required this.deviceParentId,
     required this.zoneId,
       required this.filePath});
@@ -94,10 +90,8 @@ class CreateDeviceEvent extends ApiAutomateEvents{
     username,
     password,
     deviceDefinitionId,
-    deviceCategory,
     brand,
     type,
-    model,
     deviceParentId,
     filePath
 

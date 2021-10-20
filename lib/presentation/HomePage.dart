@@ -19,9 +19,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Responsive.isDesktop(context)?null:drawerConList(),
+      drawer: Responsive.isDesktop(context)?null:isSelected[0]?drawerConList():null,
       appBar:AppBar(
-        title: !Responsive.isMobile(context)||Responsive.isTablet(context)?Text("IoT Dev Tools",):Text("Iot Dev\n Tools",style:TextStyle(fontSize:17),),
+        title: !Responsive.isMobile(context)||Responsive.isTablet(context)?Text("IoT Dev Tools",):Text("IoT Dev\n Tools",style:TextStyle(fontSize:17),),
         actions: [
           Container(
             margin: EdgeInsets.only(top:10,bottom:10),

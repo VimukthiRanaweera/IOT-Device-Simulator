@@ -38,11 +38,10 @@ class TcpAutoSendMessageEvent extends TcpEvents{
 
 }
 class TcpMessageWriteFileEvent extends TcpEvents{
-  late final String fileName;
 
-  TcpMessageWriteFileEvent(this.fileName);
+
+  TcpMessageWriteFileEvent();
   List<Object?> get props => [
-    fileName
   ];
 }
 

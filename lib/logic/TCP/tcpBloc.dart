@@ -91,7 +91,7 @@ class TcpBloc extends Bloc<TcpEvents, TcpState> {
 
       if(event is TcpMessageWriteFileEvent){
 
-        CreateTcpLogFile createTcpLogFile = CreateTcpLogFile(event.fileName,TcpState.messageAndResponse);
+        CreateTcpLogFile createTcpLogFile = CreateTcpLogFile(TcpState.messageAndResponse);
         await createTcpLogFile.writeLogFile();
 
       }

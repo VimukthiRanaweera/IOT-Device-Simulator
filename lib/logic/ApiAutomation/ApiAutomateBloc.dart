@@ -49,7 +49,7 @@ ApiAutomateRepo apiAutomateRepo;
         CreateCSVFile createCSVFile = new CreateCSVFile(
             finalResponseJson, event.eventParms, event.deviceIds,
             event.eventName);
-        createCSVFile.createList();
+        await createCSVFile.createList();
         yield ApiCallSuccessState();
       }
       catch (e) {
@@ -61,6 +61,7 @@ ApiAutomateRepo apiAutomateRepo;
       }
     }
 
+    //Execute Action
     if (event is ActionExportButtonClickedEvent) {
       String messageRes = "";
       try {
@@ -75,6 +76,7 @@ ApiAutomateRepo apiAutomateRepo;
           await Future.delayed(Duration(seconds: event.time), () async {
             List<ApiParaControllers> parameterList = [new ApiParaControllers()];
             for (int i = 0; i < event.paraList.length; i++) {
+
               RandomDataState randomData = RandomDataState(
                   dataString: event.paraList[i].value.text);
               randomData.setData();
@@ -110,7 +112,7 @@ ApiAutomateRepo apiAutomateRepo;
                 }
               });
               writeApiActionFile.writeActionResponse(
-                  responseAction.toString(), event.deviceId.toString(),
+                  responseAction.toString(),
                   inputFormat.format(DateTime.now()).toString(), body,
                   event.filePath);
             }
@@ -151,8 +153,6 @@ ApiAutomateRepo apiAutomateRepo;
               deviceDefinitionId: event.deviceDefinitionId,
               brand: event.brand,
               type: event.type,
-              model: event.model,
-              deviceCategory: event.deviceCategory,
               userId: responseUserJason["data"]["userId"],
               deviceParentId: event.deviceParentId,
               macAddress: readDeviceList.deviceList[device].toString(),
@@ -193,7 +193,7 @@ ApiAutomateRepo apiAutomateRepo;
         yield ApiErrorState(e.toString().replaceAll("Exception:", ""));
       }
     }
-
+  // Add scenes
     if (event is ApiAddSceneEvent) {
       try {
         List notCreateScenesList = [];
@@ -233,7 +233,7 @@ ApiAutomateRepo apiAutomateRepo;
           }
         }
         if (sceneList.length == notCreateScenesList.length) {
-          throw("Not created Any Scene");
+          throw("Invalid CSV File");
         } else {
           yield ApiSceneCreatedState();
           yield ApiSceneCreateMessageState(
@@ -244,6 +244,9 @@ ApiAutomateRepo apiAutomateRepo;
         print(e.toString());
       }
     }
+
+    //Explore Ids
+      //Get Devices
     if (event is ApiGetDevicesEvent) {
       try {
         yield ApiCallingState();
@@ -260,13 +263,13 @@ ApiAutomateRepo apiAutomateRepo;
         yield ApiExploreIdsSuccessed();
         CreateExploreIDCSVFile idCsvFile = CreateExploreIDCSVFile(
             responseDevices);
-        idCsvFile.createDevicesList();
+       await idCsvFile.createDevicesList();
       } catch (e) {
         yield ApiExploreIDsErrorState(
             e.toString().replaceAll("Exception:", ""));
       }
     }
-
+    //Get Scenes
     if (event is ApiGetScenesEvent) {
       try {
         yield ApiCallingState();
@@ -283,13 +286,15 @@ ApiAutomateRepo apiAutomateRepo;
         // print(responseScenes);
         CreateExploreIDCSVFile idCsvFile = CreateExploreIDCSVFile(
             responseScenes);
-        idCsvFile.createSceneList();
+       await idCsvFile.createSceneList();
         yield ApiExploreIdsSuccessed();
       } catch (e) {
         yield ApiExploreIDsErrorState(
             e.toString().replaceAll("Exception:", ""));
       }
     }
+
+    //Get Device Events
     if (event is ApiGetDeviceEventsEvent) {
       try {
         yield ApiCallingState();
@@ -306,7 +311,7 @@ ApiAutomateRepo apiAutomateRepo;
         print(responseScenes);
         CreateExploreIDCSVFile idCsvFile = CreateExploreIDCSVFile(
             responseScenes);
-        idCsvFile.createDeviceEvents(event.deviceId);
+       await idCsvFile.createDeviceEvents(event.deviceId);
         yield ApiExploreIdsSuccessed();
       } catch (e) {
         if (e.toString().replaceAll("Exception:", "") ==
@@ -317,6 +322,8 @@ ApiAutomateRepo apiAutomateRepo;
           yield ApiExploreIDsErrorState("Invalid Device ID: ${event.deviceId}");
       }
     }
+
+    //Get Devices Actions
     if (event is ApiGetDeviceActionsEvent) {
       try {
         yield ApiCallingState();
@@ -333,7 +340,7 @@ ApiAutomateRepo apiAutomateRepo;
         print(responseScenes);
         CreateExploreIDCSVFile idCsvFile = CreateExploreIDCSVFile(
             responseScenes);
-        idCsvFile.createDeviceActions(event.deviceId);
+       await idCsvFile.createDeviceActions(event.deviceId);
 
         yield ApiExploreIdsSuccessed();
       }

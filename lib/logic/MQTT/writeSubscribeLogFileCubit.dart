@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:csv/csv.dart';
-import 'package:path_provider/path_provider.dart';
+
 
 class WriteSubscribeLogFileCubit extends Cubit<WriteSubscribeLogFileState>{
   WriteSubscribeLogFileCubit() : super(WriteSubscribeLogFileState(false,""));
@@ -19,9 +19,8 @@ class WriteSubscribeLogFileState{
   late String filePath;
   WriteSubscribeLogFileState(this.isLogWrite,this.filePath);
 
-  Future<void> writeLogMessage(String message,String responseMsg,String time,String name) async {
+  Future<void> writeLogMessage(String message,String responseMsg,String time) async {
     if(isLogWrite){
-      filename = name;
       response=responseMsg;
      await writeMessage(message,time);
 
@@ -36,13 +35,18 @@ class WriteSubscribeLogFileState{
 
   Future<File> get _localFile async {
     final path = await _localPath;
-    return File('$path/$filename.csv',);
+    return File('$path.csv',);
   }
 
   Future<File> writeMessage(message,time) async {
     final file = await _localFile;
     // Write the file
     List<List<dynamic>> fileList = [];
+    List<dynamic> header = [];
+    header.add("Timestamp");
+    header.add("Subscribe");
+    header.add("Response");
+    fileList.add(header);
     List<dynamic> row = [];
     row.add(time);
     row.add(message);

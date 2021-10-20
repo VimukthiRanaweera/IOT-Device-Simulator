@@ -39,9 +39,9 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
           SizedBox(height: 20,),
           if (Responsive.isMobile(context))
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),),
+                Expanded(child: Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),textAlign: TextAlign.end,)),
                 selectFileButton(),
               ],
             ),
@@ -49,6 +49,8 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              if (!Responsive.isMobile(context))
+                Expanded(flex:Responsive.isTablet(context)?1:2,child: Container()),
               if(!Responsive.isMobile(context))
                 eventMessages(),
               if (!Responsive.isMobile(context))
@@ -60,7 +62,8 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
                   width: 15,
                 ),
               if (!Responsive.isMobile(context))
-              Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),),
+              Expanded(flex:2,child: Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),
+              textAlign: TextAlign.end,)),
               if (!Responsive.isMobile(context))
               selectFileButton(),
               SizedBox(
@@ -72,30 +75,24 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
                       return ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                  Responsive.isMobile(context)
-                                      ? 15
-                                      : 20,
-                                  vertical: Responsive.isMobile(context)
-                                      ? 15
-                                      : 20)),
+                                  horizontal:20,
+                                  vertical: 20)),
                           onPressed: null,
                           child: Text('Submit'));
                     } else
                       return ElevatedButton(
                           style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                  Responsive.isMobile(context)
-                                      ? 18
-                                      : 25,
-                                  vertical: Responsive.isMobile(context)
-                                      ? 18
-                                      : 20)),
+                                  horizontal: 25,
+                                  vertical: 20)),
                           onPressed: () {
+                            if(formKey.currentState!.validate())
                             if(filePath.isNotEmpty) {
-                              if(formKey.currentState!.validate())
                               BlocProvider.of<ApiAutomateBloc>(context).add(ApiAddSceneEvent(formXSecret.text, formUsername.text, formPassword.text, filePath));
+                            }else{
+                              setState(() {
+                                isNotSelectFile=true;
+                              });
                             }
 
 
@@ -118,6 +115,7 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
           builder: (context, state) {
             if (state is ApiCallingState)
               return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   messageBox("Connecting ...", ConnectingColor),
                   SizedBox(
@@ -140,6 +138,9 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
   }
   Widget messageBox(String message, Color color) {
     return Container(
+      alignment: Alignment.center,
+      width: 200,
+      height:45,
       padding: EdgeInsets.all(Responsive.isMobile(context) ? 8 : 10),
       decoration: BoxDecoration(
         border: Border.all(
@@ -217,6 +218,7 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
   }
   Widget selectFileButton(){
     return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         IconButton(
           onPressed:() async {
@@ -242,36 +244,9 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
           icon:Icon(Icons.upload_file,color:filePath.isNotEmpty?Colors.green:Colors.blue,),
         ),
         if(isNotSelectFile)
-          Text("Select the file",style:TextStyle(color:Colors.red)),
+          Text("File not select",style:TextStyle(color:Colors.red)),
       ],
     );
   }
 
-  // Widget typeSelectBox() {
-  //   return Container(
-  //     padding: EdgeInsets.symmetric(horizontal: 10),
-  //     decoration: BoxDecoration(
-  //         border: Border.all(color: Colors.black38),
-  //         color: Colors.black12,
-  //         borderRadius: BorderRadius.circular(10)),
-  //     child: DropdownButton<String>(
-  //       value:sceneType,
-  //       onChanged: (String? newValue) {
-  //         setState(() {
-  //           sceneType = newValue!;
-  //         });
-  //       },
-  //       items: <String>[
-  //         'Select Type',
-  //         'By Device',
-  //         'By Time',
-  //       ].map<DropdownMenuItem<String>>((String value) {
-  //         return DropdownMenuItem(
-  //           value: value,
-  //           child: Text(value),
-  //         );
-  //       }).toList(),
-  //     ),
-  //   );
-  // }
 }

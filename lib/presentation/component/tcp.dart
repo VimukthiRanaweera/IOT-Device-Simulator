@@ -26,12 +26,11 @@ class TcpBody extends StatefulWidget {
   _TcpBodyState createState() => _TcpBodyState();
 }
 
-TextEditingController profileName = TextEditingController();
 
 final GlobalKey<FormState> _formKey = GlobalKey();
+
+
 final GlobalKey<FormState> _formKeyMessage = GlobalKey();
-final _formkeyAddress = GlobalKey<FormFieldState>();
-final _formkeyPort = GlobalKey<FormFieldState>();
 bool isChecked = false;
 bool isLogWrite = false;
 String path = "";
@@ -47,21 +46,11 @@ class _TcpBodyState extends State<TcpBody> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        BlocListener<ConnetionBloc, ConsState>(
-          listener: (context, state) {
-            if (state is SaveConnectionState) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Connection Saved!'),
-                duration: Duration(milliseconds: 500),
-              ));
-            }
-          },
-        ),
         BlocListener<TcpBloc, TcpState>(
           listener: (context, state) {
             if (state is TcpSendMessageSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text('Success!'),
+                content: Text('Success'),
                 duration: Duration(milliseconds: 500),
               ));
             }
@@ -71,182 +60,169 @@ class _TcpBodyState extends State<TcpBody> {
       child: Container(
         child: Column(
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 42,
-                        ),
-                        BlocBuilder<ConnetionBloc, ConsState>(
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: BlocBuilder<ConnetionBloc, ConsState>(
                             builder: (context, state) {
-                          return textForm(
-                              state.formTcpProfileName, "Profile Name");
-                        }),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        BlocBuilder<ConnetionBloc, ConsState>(
-                            builder: (context, state) {
-                          return textFormKeyAddressFiled(
+                          return textFormAddressFiled(
                               state.formTcpHostAddress,
-                              "Host Address",
-                              _formkeyAddress);
+                              "Host Address");
                         }),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: BlocBuilder<ConnetionBloc, ConsState>(
-                                  builder: (context, state) {
-                                return textFormKeyPortField(
-                                    state.formTcpHostPort,
-                                    "Host Port",
-                                    _formkeyPort);
-                              }),
-                            ),
-                            SizedBox(
-                              width: Responsive.isMobile(context) ? 15 : 30,
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 35,
-                                      vertical: 20)),
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  String protocol =
-                                      BlocProvider.of<ProtocolCubit>(context)
-                                          .state
-                                          .protocol;
-                                  HiveConObject connection = HiveConObject(
-                                      protocol,
-                                      BlocProvider.of<ConnetionBloc>(context)
-                                          .state
-                                          .formTcpProfileName
-                                          .text,
-                                      "",
-                                      BlocProvider.of<ConnetionBloc>(context)
-                                          .state
-                                          .formTcpHostAddress
-                                          .text,
-                                      int.parse(BlocProvider.of<ConnetionBloc>(
-                                              context)
-                                          .state
-                                          .formTcpHostPort
-                                          .text),
-                                      "username",
-                                      "password",
-                                      60);
-                                  BlocProvider.of<ConnetionBloc>(context)
-                                      .add(ConnectionSaveEvent(connection));
-                                }
-                              },
-                              child: Text('Save'),
-                            ),
-                            SizedBox(
-                              width: Responsive.isMobile(context) ? 15 : 30,
-                            ),
-                            Container(
-                              alignment: Alignment.topRight,
-                              child: BlocBuilder<TcpBloc, TcpState>(
-                                builder: (context, tcpState) {
-                                  if (tcpState is TcpDisconnectedState) {
-                                    return ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          primary: Colors.red,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 25,
-                                              vertical:
-                                                  20)),
-                                      onPressed: () {
-                                        // if (_formkeyAddress.currentState!
-                                        //         .validate() &&
-                                        //     _formkeyPort.currentState!
-                                        //         .validate())
-                                        if (_formKey.currentState!.validate()) {
-                                          BlocProvider.of<TcpBloc>(context).add(
-                                              TcpConnectEvent(
-                                                  BlocProvider.of<
-                                                              ConnetionBloc>(
-                                                          context)
-                                                      .state
-                                                      .formTcpHostAddress
-                                                      .text,
-                                                  int.parse(BlocProvider.of<
-                                                              ConnetionBloc>(
-                                                          context)
-                                                      .state
-                                                      .formTcpHostPort
-                                                      .text)));
-                                        }
-                                      },
-                                      child: Text('Connect'),
-                                    );
-                                  } else if (tcpState
-                                      is TcpMessageSendingState) {
-                                    return ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 20,
-                                              vertical:20)),
-                                      onPressed: null,
-                                      child: Text('Disconnect'),
-                                    );
-                                  } else if (tcpState is TcpConnectingState) {
-                                    return CircularProgressIndicator();
-                                  } else {
-                                    return ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                          primary: Colors.green,
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 20,
-                                              vertical:20)),
-                                      onPressed: () {
-                                        BlocProvider.of<TcpBloc>(context)
-                                            .add(TcpDisconnectEvent());
-                                      },
-                                      child: Text('Disconnect'),
-                                    );
+                      ),
+                      if(!Responsive.isMobile(context))
+                      SizedBox(
+                        width: Responsive.isMobile(context) ? 15 : 30,
+                      ),
+                      if(!Responsive.isMobile(context))
+                      Expanded(
+                        child: BlocBuilder<ConnetionBloc, ConsState>(
+                            builder: (context, state) {
+                              return textFormPortField(
+                                  state.formTcpHostPort,
+                                  "Host Port",);
+                            }),
+                      ),
+                    ],
+                  ),
+                  if(Responsive.isMobile(context))
+                  SizedBox(
+                    height: 30,
+                  ),
+                  if(Responsive.isMobile(context))
+                  BlocBuilder<ConnetionBloc, ConsState>(
+                      builder: (context, state) {
+                    return textFormPortField(
+                        state.formTcpHostPort,
+                        "Host Port");
+                  }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 25,
+                                vertical: 20)),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            String protocol =
+                                BlocProvider.of<ProtocolCubit>(context)
+                                    .state
+                                    .protocol;
+                            HiveConObject connection = HiveConObject(
+                                protocol,
+                                BlocProvider.of<ConnetionBloc>(context)
+                                    .state
+                                    .formTcpProfileName
+                                    .text,
+                                "",
+                                BlocProvider.of<ConnetionBloc>(context)
+                                    .state
+                                    .formTcpHostAddress
+                                    .text,
+                                int.parse(BlocProvider.of<ConnetionBloc>(
+                                        context)
+                                    .state
+                                    .formTcpHostPort
+                                    .text),
+                                "username",
+                                "password",
+                                60);
+                            BlocProvider.of<ConnetionBloc>(context)
+                                .add(ConnectionSaveEvent(connection));
+                          }
+                        },
+                        child: Text('Update'),
+                      ),
+                      SizedBox(
+                        width: Responsive.isMobile(context) ? 15 : 30,
+                      ),
+                      Container(
+                        alignment: Alignment.topRight,
+                        child: BlocBuilder<TcpBloc, TcpState>(
+                          builder: (context, tcpState) {
+                            if (tcpState is TcpDisconnectedState) {
+                              return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.red,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 25,
+                                        vertical:
+                                            20)),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    BlocProvider.of<TcpBloc>(context).add(
+                                        TcpConnectEvent(
+                                            BlocProvider.of<
+                                                        ConnetionBloc>(
+                                                    context)
+                                                .state
+                                                .formTcpHostAddress
+                                                .text,
+                                            int.parse(BlocProvider.of<
+                                                        ConnetionBloc>(
+                                                    context)
+                                                .state
+                                                .formTcpHostPort
+                                                .text)));
                                   }
                                 },
-                              ),
-                            ),
-                          ],
+                                child: Text('Connect'),
+                              );
+                            } else if (tcpState
+                                is TcpMessageSendingState) {
+                              return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical:20)),
+                                onPressed: null,
+                                child: Text('Disconnect'),
+                              );
+                            } else if (tcpState is TcpConnectingState) {
+                              return CircularProgressIndicator();
+                            } else {
+                              return ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.green,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical:20)),
+                                onPressed: () {
+                                  BlocProvider.of<TcpBloc>(context)
+                                      .add(TcpDisconnectEvent());
+                                },
+                                child: Text('Disconnect'),
+                              );
+                            }
+                          },
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(width: 20,),
-                if (!Responsive.isMobile(context))
-                  Expanded(
-                    flex: isChecked ? 2 : 1,
-                    child: automate(),
-                  ),
-              ],
+                ],
+              ),
             ),
-            if (!Responsive.isMobile(context))
-              if (!isChecked)
-                SizedBox(
-                  height: 20,
-                ),
-            if (Responsive.isMobile(context))
+
               SizedBox(
                 height: 20,
               ),
-            if (Responsive.isMobile(context)) automate(),
+              automate(),
+            SizedBox(
+              height: 20,
+            ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -282,45 +258,28 @@ class _TcpBodyState extends State<TcpBody> {
                           ))),
                 ),
                 SizedBox(
-                  width: 10,
+                  width: 20,
                 ),
                 Column(
                   children: [
-                    Ink(
-                      padding: EdgeInsets.all(12),
-                      decoration: const ShapeDecoration(
-                        color: primaryColor,
-                        shape: CircleBorder(),
-                      ),
-                      child: IconButton(
-                        visualDensity: VisualDensity.adaptivePlatformDensity,
-                        hoverColor: secondaryColor,
-                        onPressed: () {
-                          setState(() {
-                            TcpBody.textBoxes.add(new TcpControllers());
-                          });
-                        },
-                        icon: Icon(Icons.add),
-                      ),
+                    IconButton(
+                      visualDensity: VisualDensity.adaptivePlatformDensity,
+                      onPressed: () {
+                        setState(() {
+                          TcpBody.textBoxes.add(new TcpControllers());
+                        });
+                      },
+                      icon: Icon(Icons.add),
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    Ink(
-                      padding: EdgeInsets.all(12),
-                      decoration: const ShapeDecoration(
-                        color: primaryColor,
-                        shape: CircleBorder(),
-                      ),
-                      child: IconButton(
-                        iconSize: 25,
-                        disabledColor: Colors.black26,
-                        visualDensity: VisualDensity.adaptivePlatformDensity,
-                        hoverColor: secondaryColor,
-                        onPressed:
-                            TcpBody.textBoxes.length > 1 ? removeList : null,
-                        icon: Icon(Icons.remove),
-                      ),
+                    IconButton(
+                      iconSize: 25,
+                      visualDensity: VisualDensity.adaptivePlatformDensity,
+                      onPressed:
+                          TcpBody.textBoxes.length > 1 ? removeList : null,
+                      icon: Icon(Icons.remove),
                     ),
                   ],
                 )
@@ -370,11 +329,7 @@ class _TcpBodyState extends State<TcpBody> {
                   onPressed: () {
                     if (_formKey.currentState!.validate())
                       BlocProvider.of<TcpBloc>(context).add(
-                          TcpMessageWriteFileEvent(
-                              BlocProvider.of<ConnetionBloc>(context)
-                                  .state
-                                  .formTcpProfileName
-                                  .text));
+                          TcpMessageWriteFileEvent());
                   },
                   child: Text('Save File'),
                 ),
@@ -432,33 +387,30 @@ class _TcpBodyState extends State<TcpBody> {
   }
 
   Widget automate() {
-    return Container(
-      height: isChecked ? 330 : 60,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Checkbox(
-                checkColor: Colors.white,
-                activeColor: checkBoxColor,
-                value: isChecked,
-                onChanged: (bool? value) {
-                  setState(() {
-                    isChecked = value!;
-                  });
-                },
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Text("Automate"),
-            ],
-          ),
-          SizedBox(height: 10,),
-          if (isChecked) Expanded(child: AutomateSendData()),
-        ],
-      ),
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Checkbox(
+              checkColor: Colors.white,
+              activeColor: checkBoxColor,
+              value: isChecked,
+              onChanged: (bool? value) {
+                setState(() {
+                  isChecked = value!;
+                });
+              },
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text("Automate"),
+          ],
+        ),
+        SizedBox(height: 10,),
+        if (isChecked) AutomateSendData(),
+      ],
     );
   }
 
@@ -471,10 +423,9 @@ class _TcpBodyState extends State<TcpBody> {
     );
   }
 
-  Widget textFormKeyAddressFiled(controller, text, key) {
+  Widget textFormAddressFiled(controller, text) {
     return TextFormField(
       maxLines: 1,
-      key: key,
       decoration: InputDecoration(
         filled: true,
         fillColor: TextFieldColour,
@@ -493,10 +444,9 @@ class _TcpBodyState extends State<TcpBody> {
     );
   }
 
-  Widget textFormKeyPortField(controller, text, key) {
+  Widget textFormPortField(controller, text) {
     return TextFormField(
       maxLines: 1,
-      key: key,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
         filled: true,
@@ -536,4 +486,6 @@ class _TcpBodyState extends State<TcpBody> {
       },
     );
   }
+
+
 }

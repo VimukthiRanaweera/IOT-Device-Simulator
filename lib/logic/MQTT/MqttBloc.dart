@@ -84,7 +84,7 @@ class MqttBloc extends Bloc<MqttEvents,MqttState>{
     }
 
     if(event is MqttDisConnectEvent){
-      int response= await mqttRepo.disconnect();
+       await mqttRepo.disconnect();
       yield MqttDisconnectedState();
 
     }

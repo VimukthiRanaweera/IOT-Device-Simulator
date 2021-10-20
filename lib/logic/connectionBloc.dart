@@ -17,23 +17,27 @@ class ConnetionBloc extends Bloc<ConnectionEvents, ConsState> {
     if (event is ConnectionSaveEvent) {
       consBox.put(event.connectionModel.connectionName, event.connectionModel);
       yield SaveConnectionState(event.connectionModel);
-      if (event.connectionModel.protocol == "HTTP")
+      if (event.connectionModel.protocol == HTTP)
         yield SetHttpConnectionDetails.setHttpDetails(event.connectionModel);
-      else if (event.connectionModel.protocol == "TCP")
+      else if (event.connectionModel.protocol == TCP)
         yield SetTcpConnectionDetails.setTcpDetails(event.connectionModel);
+      else if(event.connectionModel.protocol==CoAP)
+        yield SetCoapConnectionDetails.setCoapDetails(event.connectionModel);
       else
       yield ConnectionSelectedState(event.connectionModel);
     }
     if (event is SelectConnectionEvent) {
-      if (event.connection.protocol == "HTTP")
+      if (event.connection.protocol == HTTP)
         yield SetHttpConnectionDetails.setHttpDetails(event.connection);
-      else if (event.connection.protocol == "TCP")
+      else if (event.connection.protocol == TCP)
         yield SetTcpConnectionDetails.setTcpDetails(event.connection);
-      else if (event.connection.protocol == "MQTT")
+      else if (event.connection.protocol == MQTT)
         yield ConnectionSelectedState(event.connection);
+      else if(event.connection.protocol == CoAP)
+        yield SetCoapConnectionDetails.setCoapDetails(event.connection);
     }
     if (event is ClickedSettingEvent) {
-      if (event.connection.protocol == "MQTT") {
+      if (event.connection.protocol == MQTT) {
         yield SetMqttConnectionDetailsState.setMqttDetails(event.connection);
       }
     }
@@ -45,8 +49,17 @@ class ConnetionBloc extends Bloc<ConnectionEvents, ConsState> {
       if (event.key == event.connection.connectionName)
         yield ConnectionDeleteState(
             new HiveConObject("", "", "", "", 0, "", "", 60));
-      else
+      else {
         yield ConnectionDeleteState(event.connection);
+        if (event.connection.protocol == HTTP)
+          yield SetHttpConnectionDetails.setHttpDetails(event.connection);
+        else if (event.connection.protocol == TCP)
+          yield SetTcpConnectionDetails.setTcpDetails(event.connection);
+        else if (event.connection.protocol == CoAP)
+          yield SetCoapConnectionDetails.setCoapDetails(event.connection);
+        else
+          yield ConnectionSelectedState(event.connection);
+      }
     }
   }
 }

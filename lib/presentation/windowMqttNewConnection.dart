@@ -34,7 +34,6 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
     super.initState();
    consBox=Hive.box<HiveConObject>( ConnectionsBoxName);
   }
-  int _currentIntValue=60;
   @override
   Widget build(BuildContext context) {
 
@@ -53,19 +52,6 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
           key:_formKey,
           child: Column(
             children: [
-              // Container(
-              //   alignment:Alignment.topRight,
-              //   child: ElevatedButton(
-              //       style:ElevatedButton.styleFrom(
-              //           padding: EdgeInsets.symmetric(horizontal:Responsive.isMobile(context)?15:30,vertical:Responsive.isMobile(context)?10:20)
-              //       ),
-              //       onPressed: (){
-              //
-              //       },
-              //       child:Text('New Connection')
-              //   ),
-              // ),
-              // SizedBox(height: 50,),
               _connectionName(),
               SizedBox(height: 30,),
 
@@ -173,7 +159,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                                   .of<ProtocolCubit>(context)
                                   .state
                                   .protocol;
-
+                                int keepAlive = state.keepAlive.text.isEmpty?60:int.parse(state.keepAlive.text);
                               HiveConObject connection = HiveConObject(
                                   protocol,
                                   state.formMqttConnectionName.text,
@@ -182,7 +168,7 @@ class _WindowMqttNewConnectionState extends State<WindowMqttNewConnection> {
                                   int.parse(state.formPort.text),
                                   state.formUserName.text,
                                   state. formPassword.text,
-                                  int.parse(state.keepAlive.text));
+                                  keepAlive);
                               BlocProvider.of<ConnetionBloc>(context).add(ConnectionSaveEvent(connection));
                               BlocProvider.of<MqttBloc>(context).add(MqttClientClickedEvent());
 

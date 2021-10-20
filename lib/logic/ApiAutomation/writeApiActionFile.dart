@@ -1,7 +1,6 @@
 
 import 'dart:io';
 import 'package:csv/csv.dart';
-import 'package:path_provider/path_provider.dart';
 
 
 
@@ -12,31 +11,30 @@ class WriteApiActionFile{
 
   WriteApiActionFile(this.isCheckLogWrite);
 
-  void writeActionResponse(String message,String name,String time,String body,String path){
+  void writeActionResponse(String message,String time,String body,String path){
     if(isCheckLogWrite){
       print("Print Action file");
-      fileName = name;
       filePath= path;
       writeMessage(time,body,message);
 
     }
   }
 
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-
-    return filePath;
-  }
 
   Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path\\$fileName.csv',);
+    final path = filePath;
+    return File('$path.csv',);
   }
 
   Future<File> writeMessage(time,body,message,) async {
     final file = await _localFile;
 
     List<List<dynamic>> fileList = [];
+    List<dynamic> header = [];
+    header.add("Timestamp");
+    header.add("Action");
+    header.add("Response");
+    fileList.add(header);
     List<dynamic> row = [];
     row.add(time);
     row.add(body);

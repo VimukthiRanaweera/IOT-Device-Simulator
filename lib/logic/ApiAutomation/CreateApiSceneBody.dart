@@ -8,12 +8,12 @@ class CreateApiSceneBody{
       sceneBody["userId"] = userId;
       sceneBody["featured"] = true;
       sceneBody["icon"] = "light";
-      sceneBody["type"] = scene[1];
+      sceneBody["type"] = "device";
 
-      if (scene[1] == "device") {
+
         createDeviceBody(scene);
         createActionBody(scene);
-      }
+
       return true;
     }
     catch(e){
@@ -24,9 +24,9 @@ class CreateApiSceneBody{
   }
   void createDeviceBody(scene){
     var deviceBody = new Map();
-    deviceBody["inDeviceId"]=scene[2];
-    deviceBody["eventName"]=scene[3];
-    deviceBody["stateName"]=scene[4];
+    deviceBody["inDeviceId"]=scene[1];
+    deviceBody["eventName"]=scene[2];
+    deviceBody["stateName"]="none";
     deviceBody["alwaysOn"]=true;
     deviceBody["effectiveDate"]=null;
     deviceBody["expireDate"]=null;
@@ -42,14 +42,14 @@ class CreateApiSceneBody{
 
   void createActionBody(scene){
     var actionBody=[];
-    if(scene[5]=="email"){
+    if(scene[3]=="email"){
       createActionMail(scene, actionBody);
     }
-    else if(scene[5]=="sms"){
+    else if(scene[3]=="sms"){
       print("in the sms");
       createActionSms(scene,actionBody);
     }
-    else if(scene[5]=="callUrl"){
+    else if(scene[3]=="callUrl"){
       createCallUrl(scene,actionBody);
     }
     sceneBody["actions"]=actionBody;
@@ -58,12 +58,12 @@ class CreateApiSceneBody{
   void createActionMail(scene,actionBody){
     var actions= new Map();
     actions["sequence"]=0;
-    actions["action"]=scene[5];
+    actions["action"]=scene[3];
 
     var externalService= new Map();
-    externalService["toAddress"]=scene[6];
-    externalService["subject"]=scene[7];
-    externalService["content"]=scene[8];
+    externalService["toAddress"]=scene[4];
+    externalService["subject"]=scene[5];
+    externalService["content"]=scene[6];
 
     actions["externalServiceData"]=externalService;
     actionBody.add(actions);
@@ -73,11 +73,11 @@ class CreateApiSceneBody{
   void createActionSms(scene,actionBody){
     var actions= new Map();
     actions["sequence"]=0;
-    actions["action"]=scene[5];
+    actions["action"]=scene[3];
 
     var externalService = new Map();
-    externalService["receiverAddress"]=scene[6].toString();
-    externalService["message"]=scene[7];
+    externalService["receiverAddress"]=scene[4].toString();
+    externalService["message"]=scene[5];
 
     actions["externalServiceData"]=externalService;
     actionBody.add(actions);
@@ -85,11 +85,11 @@ class CreateApiSceneBody{
   void createCallUrl(scene,actionBody){
     var actions= new Map();
     actions["sequence"]=0;
-    actions["action"]=scene[5];
+    actions["action"]=scene[3];
 
     var externalService = new Map();
-    externalService["autherization"]=scene[6];
-    externalService["callback"]=scene[7];
+    externalService["autherization"]="NoAuth";
+    externalService["callback"]=scene[4];
 
     actions["externalServiceData"]=externalService;
     actionBody.add(actions);

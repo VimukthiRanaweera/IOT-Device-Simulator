@@ -7,6 +7,8 @@ import 'package:iot_device_simulator/Route/appRoute.dart';
 import 'package:iot_device_simulator/data/hiveConObject.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateBloc.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateRepo.dart';
+import 'package:iot_device_simulator/logic/COAP/coapApi.dart';
+import 'package:iot_device_simulator/logic/COAP/coapBloc.dart';
 import 'package:iot_device_simulator/logic/HTTP/HttpRepo.dart';
 import 'package:iot_device_simulator/logic/HTTP/httpBloc.dart';
 import 'package:iot_device_simulator/logic/MQTT/MqttBloc.dart';
@@ -76,6 +78,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider(
               create:(context)=>WriteSubscribeLogFileCubit(),
+          ),
+          BlocProvider(
+              create:(context)=>CoapBloc(CoapApi()),
           ),
 
         ],

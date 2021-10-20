@@ -45,7 +45,8 @@ final TextEditingController formNoOfEvents = new TextEditingController();
 final TextEditingController formZoneId = new TextEditingController();
 final TextEditingController formEventParams = new TextEditingController();
 String zoneidvalue = "Asia/Colombo";
-ScrollController scrollController = new ScrollController();
+ScrollController actionScrollController = new ScrollController();
+ScrollController eventScrollController = new ScrollController();
 SingingCharacter character = SingingCharacter.event;
 bool isCheckLogWrite = false;
 String filePath="";
@@ -70,347 +71,348 @@ class _ApiAitomationState extends State<ApiAitomation> {
   }
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        padding: !Responsive.isMobile(context)
-            ? EdgeInsets.symmetric(horizontal: 60, vertical: 50)
-            : EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-        child: Form(
-          key: formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              textField(formXSecret, "X-Secret"),
-              SizedBox(
-                height: 40,
-              ),
-              if (!Responsive.isMobile(context))
-                Row(
-                  children: [
-                    Expanded(
-                      child: textField(formUsername, "Username"),
-                    ),
-                    SizedBox(
-                      width: 40,
-                    ),
-                    Expanded(
-                      child: passwordTextField(formPassword, "Password"),
-                    )
-                  ],
-                ),
-              if (Responsive.isMobile(context))
-                textField(formUsername, "Username"),
-              if (Responsive.isMobile(context))
+    return BlocListener<ApiAutomateBloc,ApiAutomateState>(
+      listener: (context,state){
+        if(state is ApiActionSuccessState || state is NotConnectedState){
+          setState(() {
+            isCheckLogWrite = false;
+          });
+        }
+      },
+      child: SingleChildScrollView(
+        child: Container(
+          padding: !Responsive.isMobile(context)
+              ? EdgeInsets.symmetric(horizontal: 60, vertical: 50)
+              : EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                textField(formXSecret, "X-Secret"),
                 SizedBox(
-                  height: 30,
+                  height: 40,
                 ),
-              if (Responsive.isMobile(context))
-                passwordTextField(formPassword, "Password"),
-              SizedBox(
-                height: 15,
-              ),
-              if(!Responsive.isMobile(context))
-              Container(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: radioButton("Explore IDs",SingingCharacter.device)
-                    ),
-                    Expanded(
-                      child:radioButton("Get Events",SingingCharacter.event)
-                    ),
-                    Expanded(
-                      child:radioButton("Execute Actions",SingingCharacter.action)
-                    ),
-                    Expanded(
-                      child:radioButton("Add Devices",SingingCharacter.createDevice)
-                    ),
-                    Expanded(
-                      child:radioButton("Add Scenes",SingingCharacter.createScene)
-                    ),
-                  ],
-                ),
-              ),
-              if(Responsive.isMobile(context))
-                Container(
-                  height: 150,
-                  child:Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                if (!Responsive.isMobile(context))
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Expanded(child: radioButton("Explore IDs",SingingCharacter.device)),
-                          Expanded(child: radioButton("Get Events",SingingCharacter.event)),
-                        ],
+                      Expanded(
+                        child: textField(formUsername, "Username"),
                       ),
-                      Row(
-                        children: [
-                          Expanded(child: radioButton("Execute Actions",SingingCharacter.action)),
-                          Expanded(child: radioButton("Add Devices",SingingCharacter.createDevice)),
-                        ],
+                      SizedBox(
+                        width: 40,
                       ),
-
-                      radioButton("Add Scenes",SingingCharacter.createScene),
+                      Expanded(
+                        child: passwordTextField(formPassword, "Password"),
+                      )
+                    ],
+                  ),
+                if (Responsive.isMobile(context))
+                  textField(formUsername, "Username"),
+                if (Responsive.isMobile(context))
+                  SizedBox(
+                    height: 30,
+                  ),
+                if (Responsive.isMobile(context))
+                  passwordTextField(formPassword, "Password"),
+                SizedBox(
+                  height: 15,
+                ),
+                if(!Responsive.isMobile(context))
+                Container(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: radioButton("Explore IDs",SingingCharacter.device)
+                      ),
+                      Expanded(
+                        child:radioButton("Get Events",SingingCharacter.event)
+                      ),
+                      Expanded(
+                        child:radioButton("Execute Actions",SingingCharacter.action)
+                      ),
+                      Expanded(
+                        child:radioButton("Add Devices",SingingCharacter.createDevice)
+                      ),
+                      Expanded(
+                        child:radioButton("Add Scenes",SingingCharacter.createScene)
+                      ),
                     ],
                   ),
                 ),
-              SizedBox(
-                height: 15,
-              ),
-              if (character == SingingCharacter.event)
-                Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black54, width: 3),
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.white10),
-                      child: Column(
-                        children: [
-                          if (!Responsive.isMobile(context))
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: textField(formEventName, "Event Name"),
-                                ),
-                                SizedBox(
-                                  width: 40,
-                                ),
-                                Expanded(
-                                  child: listTextField(formDeviceIDs,
-                                      "Device IDs   eg: 24153,58261"),
-                                )
-                              ],
-                            ),
-                          if (Responsive.isMobile(context))
-                            textField(formEventName, "Event Name"),
-                          if (Responsive.isMobile(context))
+                if(Responsive.isMobile(context))
+                  Container(
+                    height: 150,
+                    child:Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(child: radioButton("Explore IDs",SingingCharacter.device)),
+                            Expanded(child: radioButton("Get Events",SingingCharacter.event)),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(child: radioButton("Execute Actions",SingingCharacter.action)),
+                            Expanded(child: radioButton("Add Devices",SingingCharacter.createDevice)),
+                          ],
+                        ),
+
+                        radioButton("Add Scenes",SingingCharacter.createScene),
+                      ],
+                    ),
+                  ),
+                SizedBox(
+                  height: 15,
+                ),
+                if (character == SingingCharacter.event)
+                  Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black54, width: 3),
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.white10),
+                        child: Column(
+                          children: [
+                            if (!Responsive.isMobile(context))
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: textField(formEventName, "Event Name"),
+                                  ),
+                                  SizedBox(
+                                    width: 40,
+                                  ),
+                                  Expanded(
+                                    child: listTextField(formDeviceIDs,
+                                        "Device IDs   eg: 24153,58261"),
+                                  )
+                                ],
+                              ),
+                            if (Responsive.isMobile(context))
+                              textField(formEventName, "Event Name"),
+                            if (Responsive.isMobile(context))
+                              SizedBox(
+                                height: 30,
+                              ),
+                            if (Responsive.isMobile(context))
+                              listTextField(
+                                  formDeviceIDs, "Device IDs   eg: 24153,58261"),
                             SizedBox(
                               height: 30,
                             ),
-                          if (Responsive.isMobile(context))
-                            listTextField(
-                                formDeviceIDs, "Device IDs   eg: 24153,58261"),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          if (!Responsive.isMobile(context))
-                            Row(
-                              children: [
-                                Expanded(child: dateField(formStartDate, "Start")),
-                                SizedBox(
-                                  width: 40,
-                                ),
-                                Expanded(child: dateField(formEndDate, "End")),
-                              ],
-                            ),
-                          if (Responsive.isMobile(context))
-                            dateField(formStartDate, "Start"),
-                          if (Responsive.isMobile(context))
-                            SizedBox(
-                              height: 30,
-                            ),
-                          if (Responsive.isMobile(context))
-                            dateField(formEndDate, "End"),
-                          if (!Responsive.isMobile(context))
+                            if (!Responsive.isMobile(context))
+                              Row(
+                                children: [
+                                  Expanded(child: dateField(formStartDate, "Start")),
+                                  SizedBox(
+                                    width: 40,
+                                  ),
+                                  Expanded(child: dateField(formEndDate, "End")),
+                                ],
+                              ),
+                            if (Responsive.isMobile(context))
+                              dateField(formStartDate, "Start"),
+                            if (Responsive.isMobile(context))
+                              SizedBox(
+                                height: 30,
+                              ),
+                            if (Responsive.isMobile(context))
+                              dateField(formEndDate, "End"),
+                            if (!Responsive.isMobile(context))
+                              SizedBox(
+                                height: 40,
+                              ),
+                            if (!Responsive.isMobile(context))
+                              Row(
+                                children: [
+                                  Expanded(child: zoneId()),
+                                  SizedBox(
+                                    width: 40,
+                                  ),
+                                  Expanded(
+                                      child: listTextField(formEventParams,
+                                          "Event Params   eg: temp,speed")),
+                                ],
+                              ),
+                            if (Responsive.isMobile(context))
+                              SizedBox(
+                                height: 30,
+                              ),
+                            if (Responsive.isMobile(context)) zoneId(),
                             SizedBox(
                               height: 40,
                             ),
+                            if (Responsive.isMobile(context))
+                              listTextField(
+                                  formEventParams, "Event Params   eg: temp,speed"),
+                            if (Responsive.isMobile(context))
+                              SizedBox(
+                                height: 30,
+                              ),
+                            if (!Responsive.isMobile(context))
+                              Row(
+                                children: [
+                                  Expanded(
+                                      flex: 1,
+                                      child: noOfEventsTextField(
+                                          formNoOfEvents, "No Of Events")),
+                                  Expanded(
+                                      flex: 4,
+                                      child: SizedBox(
+                                        width: 40,
+                                      )),
+                                ],
+                              ),
+                            if (Responsive.isMobile(context))
+                              noOfEventsTextField(formNoOfEvents, "No Of Events"),
+                          ],
+                        ),
+                      ),
+                      if (Responsive.isMobile(context))
+                        SizedBox(
+                          height: 30,
+                        ),
+                      if (!Responsive.isMobile(context))
+                        SizedBox(
+                          height: 40,
+                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if(!Responsive.isMobile(context))
+                            eventMessages(),
                           if (!Responsive.isMobile(context))
-                            Row(
-                              children: [
-                                Expanded(child: zoneId()),
-                                SizedBox(
-                                  width: 40,
-                                ),
-                                Expanded(
-                                    child: listTextField(formEventParams,
-                                        "Event Params   eg: temp,speed")),
-                              ],
+                            SizedBox(
+                              width: 30,
                             ),
                           if (Responsive.isMobile(context))
                             SizedBox(
-                              height: 30,
+                              width: 15,
                             ),
-                          if (Responsive.isMobile(context)) zoneId(),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 30,
+                                      vertical:20)),
+                              onPressed: () {
+                                formEventName.clear();
+                                formEventParams.clear();
+                                formNoOfEvents.clear();
+                                formDeviceIDs.clear();
+
+                                BlocProvider.of<ApiAutomateBloc>(context)
+                                    .add(ClearButtonClickedEvent());
+                              },
+                              child: Text('Clear')),
                           SizedBox(
-                            height: 40,
+                            width: Responsive.isMobile(context) ? 15 : 30,
                           ),
-                          if (Responsive.isMobile(context))
-                            listTextField(
-                                formEventParams, "Event Params   eg: temp,speed"),
-                          if (Responsive.isMobile(context))
-                            SizedBox(
-                              height: 30,
-                            ),
-                          if (!Responsive.isMobile(context))
-                            Row(
-                              children: [
-                                Expanded(
-                                    flex: 1,
-                                    child: noOfEventsTextField(
-                                        formNoOfEvents, "No Of Events")),
-                                Expanded(
-                                    flex: 4,
-                                    child: SizedBox(
-                                      width: 40,
-                                    )),
-                              ],
-                            ),
-                          if (Responsive.isMobile(context))
-                            noOfEventsTextField(formNoOfEvents, "No Of Events"),
+                          BlocBuilder<ApiAutomateBloc, ApiAutomateState>(
+                              builder: (context, state) {
+                                if (state is ApiCallingState) {
+                                  return ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 25,
+                                              vertical:20)),
+                                      onPressed: null,
+                                      child: Text('Submit'));
+                                } else
+                                  return ElevatedButton(
+
+                                      style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 25,
+                                              vertical:  20)),
+                                      onPressed: () {
+                                        if (formKey.currentState!.validate())
+                                        BlocProvider.of<ApiAutomateBloc>(context)
+                                            .add(EventExportButtonClickedEvent(
+                                            xSecret: formXSecret.text,
+                                            username: formUsername.text,
+                                            password: formPassword.text,
+                                            eventName: formEventName.text,
+                                            deviceIds: formDeviceIDs.text,
+                                            startDate: formStartDate.text,
+                                            endDate: formEndDate.text,
+                                            zoneId: zoneidvalue,
+                                            eventParms: formEventParams.text,
+                                            noOfEvents: formNoOfEvents.text));
+                                      },
+                                      child: Text('Submit'));
+                              }),
                         ],
                       ),
-                    ),
-                    if (Responsive.isMobile(context))
-                      SizedBox(
-                        height: 30,
-                      ),
-                    if (!Responsive.isMobile(context))
-                      SizedBox(
-                        height: 40,
-                      ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if(!Responsive.isMobile(context))
-                          eventMessages(),
-                        if (!Responsive.isMobile(context))
-                          SizedBox(
-                            width: 30,
-                          ),
-                        if (Responsive.isMobile(context))
-                          SizedBox(
-                            width: 15,
-                          ),
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 30,
-                                    vertical:20)),
-                            onPressed: () {
-                              formEventName.clear();
-                              formEventParams.clear();
-                              formNoOfEvents.clear();
-                              formDeviceIDs.clear();
-
-                              BlocProvider.of<ApiAutomateBloc>(context)
-                                  .add(ClearButtonClickedEvent());
-                            },
-                            child: Text('Clear')),
-                        SizedBox(
-                          width: Responsive.isMobile(context) ? 15 : 30,
-                        ),
-                        BlocBuilder<ApiAutomateBloc, ApiAutomateState>(
-                            builder: (context, state) {
-                              if (state is ApiCallingState) {
-                                return ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 25,
-                                            vertical:20)),
-                                    onPressed: null,
-                                    child: Text('Submit'));
-                              } else
-                                return ElevatedButton(
-
-                                    style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 25,
-                                            vertical:  20)),
-                                    onPressed: () {
-                                      if (formKey.currentState!.validate())
-                                      BlocProvider.of<ApiAutomateBloc>(context)
-                                          .add(EventExportButtonClickedEvent(
-                                          xSecret: formXSecret.text,
-                                          username: formUsername.text,
-                                          password: formPassword.text,
-                                          eventName: formEventName.text,
-                                          deviceIds: formDeviceIDs.text,
-                                          startDate: formStartDate.text,
-                                          endDate: formEndDate.text,
-                                          zoneId: zoneidvalue,
-                                          eventParms: formEventParams.text,
-                                          noOfEvents: formNoOfEvents.text));
-                                    },
-                                    child: Text('Submit'));
-                            }),
-                      ],
-                    ),
-                    SizedBox(height: 20,),
-                    if(Responsive.isMobile(context))
-                      eventMessages(),
-                  ],
-                ),
-              if (character == SingingCharacter.action)
-                Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black54, width: 3),
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.white10),
-                      child: Column(
-                        children: [
-                          if (!Responsive.isMobile(context))
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: textField(formActionDeviceID, "Device ID"),
-                                ),
-                                SizedBox(
-                                  width: 40,
-                                ),
-                                Expanded(
-                                  child: textField(formActionName, "Action Name"),
-                                ),
-                              ],
-                            ),
-                          if (Responsive.isMobile(context))
-                            textField(formActionDeviceID, "Device ID"),
-                          if (Responsive.isMobile(context))
+                      SizedBox(height: 20,),
+                      if(Responsive.isMobile(context))
+                        eventMessages(),
+                    ],
+                  ),
+                if (character == SingingCharacter.action)
+                  Column(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black54, width: 3),
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.white10),
+                        child: Column(
+                          children: [
+                            if (!Responsive.isMobile(context))
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: textField(formActionDeviceID, "Device ID"),
+                                  ),
+                                  SizedBox(
+                                    width: 40,
+                                  ),
+                                  Expanded(
+                                    child: textField(formActionName, "Action Name"),
+                                  ),
+                                ],
+                              ),
+                            if (Responsive.isMobile(context))
+                              textField(formActionDeviceID, "Device ID"),
+                            if (Responsive.isMobile(context))
+                              SizedBox(
+                                height: 30,
+                              ),
+                            if (Responsive.isMobile(context))
+                              textField(formActionName, "Action Name"),
                             SizedBox(
                               height: 30,
                             ),
-                          if (Responsive.isMobile(context))
-                            textField(formActionName, "Action Name"),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                flex: 7,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 15, horizontal: 15),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.black38),
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: Colors.white10),
-                                  height: 150.0,
-                                  child: parameterBuilder(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  flex: 7,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 15),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black38),
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: Colors.white10),
+                                    height: 150.0,
+                                    child: parameterBuilder(),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Container(
-                                child: Column(
-                                  children: [
-                                    Ink(
-                                      padding: EdgeInsets.all(12),
-                                      decoration: const ShapeDecoration(
-                                        color: primaryColor,
-                                        shape: CircleBorder(),
-                                      ),
-                                      child: IconButton(
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Container(
+                                  child: Column(
+                                    children: [
+                                      IconButton(
                                         visualDensity:
                                             VisualDensity.adaptivePlatformDensity,
-                                        hoverColor: secondaryColor,
                                         onPressed: () {
                                           setState(() {
                                             actionParamList.add(new ApiParaControllers());
@@ -418,174 +420,192 @@ class _ApiAitomationState extends State<ApiAitomation> {
                                         },
                                         icon: Icon(Icons.add),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Ink(
-                                      padding: EdgeInsets.all(12),
-                                      decoration: const ShapeDecoration(
-                                        color: primaryColor,
-                                        shape: CircleBorder(),
+                                      SizedBox(
+                                        height: 10,
                                       ),
-                                      child: IconButton(
+                                      IconButton(
                                         visualDensity:
                                             VisualDensity.adaptivePlatformDensity,
-                                        hoverColor: secondaryColor,
                                         onPressed:actionParamList.length >1?removeActionParaList:null,
                                         icon: Icon(Icons.remove),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: numberTextField(
-                                    formTimeInterval, "Time Interval"),
-                              ),
-                              SizedBox(
-                                width: Responsive.isMobile(context) ? 10 : 40,
-                              ),
-                              Expanded(
-                                child: numberTextField(
-                                    formNoOfActions, "No of Actions"),
-                              ),
-                              if (!Responsive.isMobile(context))
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            Row(
+                              children: [
                                 Expanded(
-                                    flex: Responsive.isTablet(context) ? 1 : 3,
-                                    child: SizedBox(
-                                      width: 20,
-                                    )),
-                              Text("Log Write"),
-                              SizedBox(
-                                width: 10,
-                              ),
-                               BlocBuilder<ApiAutomateBloc, ApiAutomateState>(
-                                 builder:(context,state) {
-                                   return AbsorbPointer(
-                                     absorbing: state is ApiCallingState,
-                                     child: Checkbox(
-                                       checkColor: Colors.white,
-                                       activeColor: checkBoxColor,
-                                       value: isCheckLogWrite,
-                                       onChanged: (bool? value) async {
-                                         setState(() {
-                                           isCheckLogWrite = value!;
-                                         });
-                                         if (isCheckLogWrite) {
-                                           String? result = await FilePicker
-                                               .platform
-                                               .getDirectoryPath(
-                                               dialogTitle: "Select a path");
-                                           print(result);
-                                           if (result != null) {
-                                             filePath = result;
-                                           }
-                                           else {
-                                             setState(() {
-                                               isCheckLogWrite = false;
-                                             });
-                                           }
-                                         }
-                                       },
-                                     ),
-                                   );
-                                 }
-                               ),
-                            ],
+                                  child: numberTextField(
+                                      formNoOfActions, "No of Actions"),
+                                ),
+                                SizedBox(
+                                  width: Responsive.isMobile(context) ? 10 : 35,
+                                ),
+                                Expanded(
+                                  child: timeInterval(
+                                      formTimeInterval, "Time Interval in seconds"),
+                                ),
+
+                                if (!Responsive.isMobile(context))
+                                  Expanded(
+                                      flex: Responsive.isTablet(context) ? 0 : 2,
+                                      child: SizedBox(
+                                        width: 10,
+                                      )),
+
+                                if (!Responsive.isMobile(context))
+                                logSaveCheckBox(),
+                                if (!Responsive.isMobile(context))
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                if (!Responsive.isMobile(context))
+                                Text("Save Logs"),
+
+                              ],
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            if (Responsive.isMobile(context))
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                  logSaveCheckBox(),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("Save Logs"),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if(!Responsive.isMobile(context))
+                            actionMessages(),
+                          if (!Responsive.isMobile(context))
+                            SizedBox(
+                              width: 30,
+                            ),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 30,
+                                      vertical:20)),
+                              onPressed: () {
+                                formActionName.clear();
+                                formActionDeviceID.clear();
+                                formNoOfActions.clear();
+                                formTimeInterval.clear();
+                                clearParaList();
+                                BlocProvider.of<ApiAutomateBloc>(context)
+                                    .add(ClearButtonClickedEvent());
+                              },
+                              child: Text('Clear')),
+                          SizedBox(
+                            width: Responsive.isMobile(context) ? 15 : 30,
                           ),
+                          BlocBuilder<ApiAutomateBloc, ApiAutomateState>(
+                              builder: (context, state) {
+                                if (state is ApiCallingState) {
+                                  return ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 25,
+                                              vertical: 20)),
+                                      onPressed: null,
+                                      child: Text('Execute'));
+                                }else if(state is ApiCallingState){
+                                  return CircularProgressIndicator();
+                                }
+                                else
+                                  return ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 25,
+                                              vertical: 20)),
+                                      onPressed: () {
+                                        if (formKey.currentState!.validate())
+                                          BlocProvider.of<ApiAutomateBloc>(context)
+                                              .add(ActionExportButtonClickedEvent(
+                                              formXSecret.text,
+                                              formUsername.text,
+                                              formPassword.text,
+                                              formActionName.text,
+                                              formActionDeviceID.text,
+                                              int.parse(formNoOfActions.text),
+                                              int.parse(formTimeInterval.text),
+                                              actionParamList,
+                                              isCheckLogWrite,filePath));
+                                      },
+                                      child: Text('Execute'));
+                              }),
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if(!Responsive.isMobile(context))
-                          actionMessages(),
-                        if (!Responsive.isMobile(context))
-                          SizedBox(
-                            width: 30,
-                          ),
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 30,
-                                    vertical:20)),
-                            onPressed: () {
-                              formActionName.clear();
-                              formActionDeviceID.clear();
-                              formNoOfActions.clear();
-                              formTimeInterval.clear();
-                              clearParaList();
-                              BlocProvider.of<ApiAutomateBloc>(context)
-                                  .add(ClearButtonClickedEvent());
-                            },
-                            child: Text('Clear')),
-                        SizedBox(
-                          width: Responsive.isMobile(context) ? 15 : 30,
-                        ),
-                        BlocBuilder<ApiAutomateBloc, ApiAutomateState>(
-                            builder: (context, state) {
-                              if (state is ApiCallingState) {
-                                return ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 25,
-                                            vertical: 20)),
-                                    onPressed: null,
-                                    child: Text('Export'));
-                              }else if(state is ApiCallingState){
-                                return CircularProgressIndicator();
-                              }
-                              else
-                                return ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 25,
-                                            vertical: 20)),
-                                    onPressed: () {
-                                      if (formKey.currentState!.validate())
-                                        BlocProvider.of<ApiAutomateBloc>(context)
-                                            .add(ActionExportButtonClickedEvent(
-                                            formXSecret.text,
-                                            formUsername.text,
-                                            formPassword.text,
-                                            formActionName.text,
-                                            formActionDeviceID.text,
-                                            int.parse(formNoOfActions.text),
-                                            int.parse(formTimeInterval.text),
-                                            actionParamList,
-                                            isCheckLogWrite,filePath));
-                                    },
-                                    child: Text('Export'));
-                            }),
-                      ],
-                    ),
-                    SizedBox(height: 20,),
-                    if(Responsive.isMobile(context))
-                      actionMessages(),
-                  ],
-                ),
-              if (character == SingingCharacter.createDevice)
-                ApiCreateDevice(XSecret: formXSecret.text, username: formUsername.text, password: formPassword.text),
-              if (character == SingingCharacter.createScene)
-                ApiCreateScene(XSecret: formXSecret.text, username: formUsername.text, password: formPassword.text),
-              if(character== SingingCharacter.device)
-                ApiDevices(),
-            ],
+                      SizedBox(height: 20,),
+                      if(Responsive.isMobile(context))
+                        actionMessages(),
+                    ],
+                  ),
+                if (character == SingingCharacter.createDevice)
+                  ApiCreateDevice(XSecret: formXSecret.text, username: formUsername.text, password: formPassword.text),
+                if (character == SingingCharacter.createScene)
+                  ApiCreateScene(XSecret: formXSecret.text, username: formUsername.text, password: formPassword.text),
+                if(character== SingingCharacter.device)
+                  ApiDevices(),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+  Widget logSaveCheckBox(){
+    return BlocBuilder<ApiAutomateBloc, ApiAutomateState>(
+        builder:(context,state) {
+          return AbsorbPointer(
+            absorbing: state is ApiCallingState,
+            child: Checkbox(
+              checkColor: Colors.white,
+              activeColor: checkBoxColor,
+              value: isCheckLogWrite,
+              onChanged: (bool? value) async {
+                setState(() {
+                  isCheckLogWrite = value!;
+                });
+                if (isCheckLogWrite) {
+                  String? result = await FilePicker
+                      .platform
+                      .saveFile(
+                      dialogTitle: "Select a path",
+                    type: FileType.custom,
+                    allowedExtensions: ['.CSV']
+                  );
+                  print(result);
+                  if (result != null) {
+                    filePath = result;
+                  }
+                  else {
+                    setState(() {
+                      isCheckLogWrite = false;
+                    });
+                  }
+                }
+              },
+            ),
+          );
+        }
     );
   }
   Widget actionMessages(){
@@ -594,8 +614,9 @@ class _ApiAitomationState extends State<ApiAitomation> {
           builder: (context, state) {
             if (state is ApiCallingState)
               return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  messageBox("Connecting ...", ConnectingColor),
+                  eventMessageBox("Connecting ...", ConnectingColor),
                   SizedBox(
                       width: Responsive.isMobile(context)
                           ? 15
@@ -604,10 +625,10 @@ class _ApiAitomationState extends State<ApiAitomation> {
                 ],
               );
             else if (state is ApiActionSuccessState)
-              return successMessageBox(
+              return actionMessageBox(
                   state.message, Colors.green);
             else if (state is NotConnectedState)
-              return messageBox("Error!", Colors.red);
+              return eventMessageBox("Error!", Colors.red);
             else {
               return Container();
             }
@@ -621,8 +642,9 @@ class _ApiAitomationState extends State<ApiAitomation> {
           builder: (context, state) {
             if (state is ApiCallingState)
               return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  messageBox("Connecting ...",ConnectingColor),
+                  eventMessageBox("Connecting ...",ConnectingColor),
                   SizedBox(
                       width: Responsive.isMobile(context)
                           ? 15
@@ -631,9 +653,9 @@ class _ApiAitomationState extends State<ApiAitomation> {
                 ],
               );
             else if (state is ApiCallSuccessState)
-              return messageBox("Success", Colors.green);
+              return eventMessageBox("Success", Colors.green);
             else if (state is ApiEventErrorState)
-              return messageBox("${state.error}", Colors.red);
+              return eventMessageBox("${state.error}", Colors.red);
             else {
               return Container();
             }
@@ -641,7 +663,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
     );
   }
 
-  Widget messageBox(String message, Color color) {
+  Widget eventMessageBox(String message, Color color) {
     return Container(
       padding: EdgeInsets.all(Responsive.isMobile(context) ? 8 : 10),
       decoration: BoxDecoration(
@@ -651,6 +673,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
         ),
       ),
       child: SingleChildScrollView(
+          controller:eventScrollController,
           scrollDirection: Axis.horizontal,
           child: Text(
             message,
@@ -659,11 +682,11 @@ class _ApiAitomationState extends State<ApiAitomation> {
     );
   }
 
-  Widget successMessageBox(String message, Color color) {
+  Widget actionMessageBox(String message, Color color) {
     return Container(
-      width: 400,
+      width: 350,
       height:45,
-      padding: EdgeInsets.only(top: 5),
+      padding: EdgeInsets.only(top: 5,left: 5,right: 5),
       decoration: BoxDecoration(
         border: Border.all(
           color: color,
@@ -671,13 +694,15 @@ class _ApiAitomationState extends State<ApiAitomation> {
         ),
       ),
       child: Scrollbar(
-        controller: scrollController,
+        controller: actionScrollController,
         isAlwaysShown: true,
         child: SingleChildScrollView(
-            controller: scrollController,
+            controller: actionScrollController,
             scrollDirection: Axis.horizontal,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Text("Last Action: "),
                 Text(
                   message,
                   style: TextStyle(color: color),
@@ -791,10 +816,9 @@ class _ApiAitomationState extends State<ApiAitomation> {
   Widget passwordTextField(controller, name) {
     return Container(
       child: TextFormField(
-        // inputFormatters: [FilteringTextInputFormatter.allow("[+w]")],
+        keyboardType:TextInputType.visiblePassword,
         obscureText: true,
         decoration: InputDecoration(
-          hintMaxLines: 1,
           filled: true,
           fillColor: TextFieldColour,
           border: OutlineInputBorder(
@@ -832,6 +856,32 @@ class _ApiAitomationState extends State<ApiAitomation> {
         validator: (text) {
           if (text!.isEmpty) {
             return 'Cannot be empty';
+          }
+        },
+        onSaved: (text) {},
+      ),
+    );
+  }
+  Widget timeInterval(controller, name) {
+    return Container(
+      child: TextFormField(
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        decoration: InputDecoration(
+          hintMaxLines: 1,
+          filled: true,
+          fillColor: TextFieldColour,
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
+          ),
+          hintText: name,
+        ),
+        controller: controller,
+        validator: (text) {
+          if (text!.isEmpty) {
+            return 'Cannot be empty';
+          }else if(int.parse(text)<10){
+            return 'Should be >=10';
           }
         },
         onSaved: (text) {},
@@ -880,7 +930,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
                   children: [
                     Expanded(child: textField(actionParamList[index].para, "Para")),
                     SizedBox(
-                      width: 20,
+                      width:Responsive.isMobile(context) ? 10 : 40,
                     ),
                     Expanded(child: textField(actionParamList[index].value, "Value")),
                   ],

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/protocolCubit.dart';
 import 'package:iot_device_simulator/presentation/component/coapbody.dart';
 import 'package:iot_device_simulator/presentation/component/httpBody.dart';
@@ -28,11 +29,11 @@ class _PageBodyState extends State<PageBody> {
               SizedBox(height: 30.0,),
                BlocBuilder<ProtocolCubit,ProtocolState>(
                  builder:(context,state){
-                   if(state.protocol=="HTTP")
+                   if(state.protocol==HTTP)
                      return HttpBody();
-                   else if(state.protocol=='CoAP')
+                   else if(state.protocol==CoAP)
                      return CoapBody();
-                   else if(state.protocol=="TCP")
+                   else if(state.protocol==TCP)
                      return TcpBody();
                    else
                      return MqttBody();

@@ -20,6 +20,10 @@ class ConsState extends Equatable{
   final TextEditingController formTcpHostAddress = new TextEditingController();
   final TextEditingController formTcpHostPort = new TextEditingController();
 
+  final TextEditingController formCoapProfileName = new TextEditingController();
+  final TextEditingController formCoapHostAddress = new TextEditingController();
+  final TextEditingController formCoapHostPort = new TextEditingController();
+
 
   ConsState(this.superConModel);
 
@@ -44,6 +48,14 @@ class ConsState extends Equatable{
     formTcpHostAddress.text = superConModel.brokerAddress;
     formTcpHostPort.text = superConModel.port.toString();
   }
+
+
+  ConsState.setCoapDetails(this.superConModel){
+    formCoapProfileName.text=superConModel.connectionName;
+    formCoapHostAddress.text=superConModel.brokerAddress;
+    formCoapHostPort.text=superConModel.port.toString();
+  }
+
 
   ConsState.newConnection();
 
@@ -78,6 +90,10 @@ class SetTcpConnectionDetails extends ConsState{
   SetTcpConnectionDetails.setTcpDetails(HiveConObject superConModel) : super.setTcpDetails(superConModel);
 
 }
+class SetCoapConnectionDetails extends ConsState{
+  SetCoapConnectionDetails.setCoapDetails(HiveConObject superConModel) : super.setCoapDetails(superConModel);
+
+}
 
 class ClickedNewConnectionState extends ConsState{
   ClickedNewConnectionState(HiveConObject superConModel) : super(superConModel);
@@ -90,10 +106,5 @@ class SaveConnectionState extends ConsState{
 
 class ConnectionDeleteState extends ConsState{
   ConnectionDeleteState(HiveConObject superConModel) : super(superConModel);
-
-}
-
-class SelectedConnectionDeleteState extends ConsState{
-  SelectedConnectionDeleteState(HiveConObject superConModel) : super(superConModel);
 
 }

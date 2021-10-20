@@ -90,8 +90,9 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
                       width: 40,
                     ),
                     Expanded(
-                      child: optionalTextField(formModel, "Model"),
+                      child: numberTextField(formDeviceParentId, "Device Parent Id"),
                     )
+
                   ],
                 ),
                 if (Responsive.isMobile(context))
@@ -101,26 +102,7 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
                     height: 30,
                   ),
                 if (Responsive.isMobile(context))
-                  optionalTextField(formModel, "Model"),
-                SizedBox(
-                  height: 30,
-                ),
-                if (!Responsive.isMobile(context))
-                Row(
-                  children: [
-                    Expanded(
-                      child: optionalTextField(formDeviceCategory, "Device Category"),
-                    ),
-                    SizedBox(
-                      width: 40,
-                    ),
-                    Expanded(
-                      child: numberTextField(formDeviceParentId, "Device Parent Id"),
-                    )
-                  ],
-                ),
-                if (Responsive.isMobile(context))
-                  optionalTextField(formDeviceCategory, "Device Category"),
+                numberTextField(formDeviceParentId, "Device Parent Id"),
                 if (Responsive.isMobile(context))
                   SizedBox(
                     height: 30,
@@ -143,7 +125,7 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
                       height: 30,
                     ),
                     if(!Responsive.isMobile(context))
-                    Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),),
+                    Expanded(child: Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500), textAlign: TextAlign.end)),
                     if(!Responsive.isMobile(context))
                     selectFileButton()
                   ],
@@ -153,9 +135,11 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
                     height: 20,),
                 if(Responsive.isMobile(context))
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                      Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),),
-                      selectFileButton()
+                      Expanded(flex:8,child: Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.end,)),
+                      selectFileButton(),
                   ],
                 )
               ],
@@ -183,14 +167,15 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
                           horizontal:30,
                           vertical:20)),
                   onPressed: () {
+                    setState(() {
+                      isNotSelectFile=false;
+                    });
                     formDeviceParentId.clear();
                     formDeviceCategory.clear();
                     formModel.clear();
                     formType.clear();
                     formBrand.clear();
-                    formXSecret.clear();
-                     formUsername.clear();
-                    formPassword.clear();
+                    formDeviceDefinitionId.clear();
                     BlocProvider.of<ApiAutomateBloc>(context)
                         .add(ClearButtonClickedEvent());
                   },
@@ -225,8 +210,6 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
                                           formDeviceDefinitionId.text),
                                       brand: formBrand.text,
                                       type: formType.text,
-                                      model: formModel.text,
-                                      deviceCategory: formDeviceCategory.text,
                                       deviceParentId: int.parse(formDeviceParentId
                                           .text),zoneId: zoneidvalue,
                                       filePath: filePath));
@@ -242,6 +225,9 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
                   ),
             ],
           ),
+          SizedBox(height: 20,),
+          if(Responsive.isMobile(context))
+            eventMessages(),
         ],
       ),
     );
@@ -273,7 +259,7 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
           icon:Icon(Icons.upload_file,color:filePath.isNotEmpty?Colors.green:Colors.blue,),
         ),
         if(isNotSelectFile)
-          Text("Select the file",style:TextStyle(color:Colors.red)),
+          Text("File not select",style:TextStyle(color:Colors.red)),
       ],
     );
   }
@@ -284,6 +270,7 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
           builder: (context, state) {
             if (state is ApiCallingState)
               return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   messageBox("Connecting ...", ConnectingColor),
                   SizedBox(
@@ -305,7 +292,10 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
   }
   Widget messageBox(String message, Color color) {
     return Container(
-      padding: EdgeInsets.all(Responsive.isMobile(context) ? 8 : 10),
+      alignment: Alignment.center,
+      width: 230,
+      height:45,
+      padding: EdgeInsets.all(Responsive.isMobile(context) ? 5: 5),
       decoration: BoxDecoration(
         border: Border.all(
           color: color,
@@ -341,21 +331,21 @@ class _ApiCreateDeviceState extends State<ApiCreateDevice> {
       },
     );
   }
-  Widget optionalTextField(controller, name) {
-    return TextFormField(
-      decoration: InputDecoration(
-        hintMaxLines: 1,
-        filled: true,
-        fillColor: TextFieldColour,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
-        ),
-        hintText: name,
-      ),
-      controller: controller,
-    );
-  }
+  // Widget optionalTextField(controller, name) {
+  //   return TextFormField(
+  //     decoration: InputDecoration(
+  //       hintMaxLines: 1,
+  //       filled: true,
+  //       fillColor: TextFieldColour,
+  //       border: OutlineInputBorder(
+  //         borderSide: BorderSide.none,
+  //         borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
+  //       ),
+  //       hintText: name,
+  //     ),
+  //     controller: controller,
+  //   );
+  // }
 
   Widget numberTextField(controller, name) {
     return TextFormField(

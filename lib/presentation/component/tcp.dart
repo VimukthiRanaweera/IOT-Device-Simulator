@@ -327,7 +327,6 @@ class _TcpBodyState extends State<TcpBody> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 25, vertical: 20)),
                   onPressed: () {
-                    if (_formKey.currentState!.validate())
                       BlocProvider.of<TcpBloc>(context).add(
                           TcpMessageWriteFileEvent());
                   },

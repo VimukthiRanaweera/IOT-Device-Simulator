@@ -6,12 +6,11 @@ import 'package:file_picker/file_picker.dart';
 
 class CreateExploreIDCSVFile{
   var body;
-  String fileName="";
 
   CreateExploreIDCSVFile(this.body);
 
   Future<int> createDevicesList() async {
-    fileName="DeviceList";
+
     try{
     List<List<dynamic>> fileList = [];
 
@@ -62,7 +61,7 @@ class CreateExploreIDCSVFile{
   }
 
   Future<int> createSceneList() async {
-    fileName="ScenesList";
+
     try {
       List<List<dynamic>> fileList = [];
 
@@ -145,7 +144,7 @@ class CreateExploreIDCSVFile{
   }
 
   Future<int> createDeviceEvents(String deviceId) async {
-    fileName="$deviceId-DeviceEvents";
+
     try {
       List<List<dynamic>> fileList = [];
 
@@ -185,7 +184,6 @@ class CreateExploreIDCSVFile{
 
   }
   Future<int> createDeviceActions(String deviceId) async {
-    fileName="$deviceId-DeviceActions";
     try {
       List<List<dynamic>> fileList = [];
 

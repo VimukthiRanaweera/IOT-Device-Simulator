@@ -29,7 +29,6 @@ final _formTopicKey = GlobalKey<FormFieldState>();
 final GlobalKey<FormState> _formKey = GlobalKey();
 
 bool isCheckedAction=false;
-bool isCheckedLogWrite=false;
 class _MqttSubscribeState extends State<MqttSubscribe> {
 
   @override
@@ -46,6 +45,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
               responseMessage.clear();
               responseTopic.clear();
               SubscribeMessage.messages.clear();
+              isCheckedAction=false;
             });
             BlocProvider.of<WriteSubscribeLogFileCubit>(context).state.isLogWrite=false;
           }
@@ -55,6 +55,7 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
           listener:(context,state) {
             if (state is MqttDisconnectedState) {
               setState(() {
+                isCheckedAction=false;
                 BlocProvider
                     .of<WriteSubscribeLogFileCubit>(context)
                     .state
@@ -96,15 +97,23 @@ class _MqttSubscribeState extends State<MqttSubscribe> {
                   children: [
                     Row(
                       children: [
-                        Checkbox(
-                          checkColor: Colors.white,
-                          activeColor: checkBoxColor,
-                          value:isCheckedAction,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              isCheckedAction = value!;
-                            });
-                          },
+                        BlocBuilder<MqttBloc,MqttState>(
+                          builder:(context,state) {
+                            return AbsorbPointer
+                              (
+                              absorbing:state is MqttSubscribeTopicState || state is MqttSubscribeResponsedState || state is MqttSubscribeNotResponsedState,
+                              child: Checkbox(
+                                checkColor: Colors.white,
+                                activeColor: checkBoxColor,
+                                value: isCheckedAction,
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    isCheckedAction = value!;
+                                  });
+                                },
+                              ),
+                            );
+                          }
                         ),
                         SizedBox(width: 10,),
                         Text("Action Response",),

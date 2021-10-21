@@ -40,13 +40,17 @@ class WriteSubscribeLogFileState{
 
   Future<File> writeMessage(message,time) async {
     final file = await _localFile;
+    print(file.exists());
     // Write the file
     List<List<dynamic>> fileList = [];
-    List<dynamic> header = [];
-    header.add("Timestamp");
-    header.add("Subscribe");
-    header.add("Response");
-    fileList.add(header);
+    if(!await file.exists()) {
+      List<dynamic> header = [];
+      header.add("Timestamp");
+      header.add("Subscribe");
+      header.add("Response");
+      fileList.add(header);
+    }
+
     List<dynamic> row = [];
     row.add(time);
     row.add(message);

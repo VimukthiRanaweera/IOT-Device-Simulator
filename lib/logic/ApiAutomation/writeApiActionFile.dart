@@ -30,11 +30,13 @@ class WriteApiActionFile{
     final file = await _localFile;
 
     List<List<dynamic>> fileList = [];
-    List<dynamic> header = [];
-    header.add("Timestamp");
-    header.add("Action");
-    header.add("Response");
-    fileList.add(header);
+    if(!await file.exists()) {
+      List<dynamic> header = [];
+      header.add("Timestamp");
+      header.add("Action");
+      header.add("Response");
+      fileList.add(header);
+    }
     List<dynamic> row = [];
     row.add(time);
     row.add(body);

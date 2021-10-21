@@ -19,7 +19,7 @@ const TextFieldColour = Colors.black12;
 const String MQTT = 'MQTT';
 const String HTTP = 'HTTP';
 const String TCP = 'TCP';
-const String CoAP = 'CoAP';
+const String CoAP = 'CoAP-beta';
 
 enum SingingCharacter { event, action, createDevice, createScene, device }
 

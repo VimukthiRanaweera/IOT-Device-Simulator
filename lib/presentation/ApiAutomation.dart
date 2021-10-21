@@ -142,7 +142,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
                 ),
                 if(Responsive.isMobile(context))
                   Container(
-                    height: 150,
+                    height: 170,
                     child:Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -881,7 +881,7 @@ class _ApiAitomationState extends State<ApiAitomation> {
           if (text!.isEmpty) {
             return 'Cannot be empty';
           }else if(int.parse(text)<10){
-            return 'Should be >=10';
+            return 'Should be >10';
           }
         },
         onSaved: (text) {},

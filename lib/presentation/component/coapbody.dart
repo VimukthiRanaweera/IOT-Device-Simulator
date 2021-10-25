@@ -69,7 +69,7 @@ class _CoapBodyState extends State<CoapBody> {
                         dropdownValueCOAP = newValue!;
                       });
                     },
-                    items:<String>['GET','POST','PUT'].map<DropdownMenuItem<String>>((String value) {
+                    items:<String>['GET','POST'].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem(
                         value: value,
                         child: Text(value),
@@ -306,9 +306,9 @@ class _CoapBodyState extends State<CoapBody> {
           decoration: InputDecoration(
             hintMaxLines: 1,
             filled: true,
-            fillColor:Colors.black26,
+            fillColor:Colors.white10,
             border:OutlineInputBorder(
-              borderSide:BorderSide.none,
+              // borderSide:BorderSide.none,
               borderRadius: BorderRadius.all(Radius.circular(TextBoxRadius)),
             ),
             hintText:"Response",

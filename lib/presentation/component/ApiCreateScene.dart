@@ -37,13 +37,20 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
       child: Column(
         children: [
           SizedBox(height: 20,),
-          if (Responsive.isMobile(context))
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(child: Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),textAlign: TextAlign.end,)),
-                selectFileButton(),
-              ],
+          // if (Responsive.isMobile(context))
+            Container(
+              padding:EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black54, width: 3),
+                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.white10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(child: Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),textAlign: TextAlign.end,)),
+                  selectFileButton(),
+                ],
+              ),
             ),
           SizedBox(height: 20,),
           Row(
@@ -53,22 +60,9 @@ class _ApiCreateSceneState extends State<ApiCreateScene> {
                 Expanded(flex:Responsive.isTablet(context)?1:2,child: Container()),
               if(!Responsive.isMobile(context))
                 eventMessages(),
-              if (!Responsive.isMobile(context))
                 SizedBox(
                   width: 30,
                 ),
-              if (Responsive.isMobile(context))
-                SizedBox(
-                  width: 15,
-                ),
-              if (!Responsive.isMobile(context))
-              Expanded(flex:2,child: Text(filePath.isNotEmpty?filePath:"Select Device List CSV File",style:TextStyle(fontWeight: FontWeight.w500),
-              textAlign: TextAlign.end,)),
-              if (!Responsive.isMobile(context))
-              selectFileButton(),
-              SizedBox(
-                width: Responsive.isMobile(context) ? 15 : 30,
-              ),
               BlocBuilder<ApiAutomateBloc, ApiAutomateState>(
                   builder: (context, state) {
                     if (state is ApiCallingState) {

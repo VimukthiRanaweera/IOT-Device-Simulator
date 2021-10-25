@@ -90,7 +90,7 @@ class CreateCSVFile{
       return result;
     }
     else {
-     return null;
+      throw Exception();
     }
 
   }

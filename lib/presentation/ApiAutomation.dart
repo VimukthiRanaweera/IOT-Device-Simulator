@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:iot_device_simulator/MODEL/apiParaControllers.dart';
 import 'package:iot_device_simulator/constants/constants.dart';
 import 'package:iot_device_simulator/logic/ApiAutomation/ApiAutomateBloc.dart';
@@ -36,11 +37,11 @@ final TextEditingController formActionDeviceID = new TextEditingController();
 final TextEditingController formActionName = new TextEditingController();
 final TextEditingController formTimeInterval = new TextEditingController();
 final TextEditingController formNoOfActions = new TextEditingController();
-
+var inputFormat =  DateFormat("yyyy-MM-dd HH:mm");
 late TextEditingController formStartDate =
-    new TextEditingController(text: DateTime.now().toString());
+    new TextEditingController(text: inputFormat.format(DateTime.now()).toString());
 late TextEditingController formEndDate =
-    new TextEditingController(text: DateTime.now().toString());
+    new TextEditingController(text: inputFormat.format(DateTime.now()).toString());
 final TextEditingController formNoOfEvents = new TextEditingController();
 final TextEditingController formZoneId = new TextEditingController();
 final TextEditingController formEventParams = new TextEditingController();
@@ -329,6 +330,8 @@ class _ApiAitomationState extends State<ApiAitomation> {
                                               horizontal: 25,
                                               vertical:  20)),
                                       onPressed: () {
+                                        print(formStartDate.text);
+                                        print(formEndDate.text);
                                         if (formKey.currentState!.validate())
                                         BlocProvider.of<ApiAutomateBloc>(context)
                                             .add(EventExportButtonClickedEvent(
@@ -777,10 +780,10 @@ class _ApiAitomationState extends State<ApiAitomation> {
         dateLabelText: '$label Date',
         timeLabelText: "Hour",
         controller: controller,
-        validator: (val) {
-          print(val);
-          return null;
-        },
+        // validator: (val) {
+        //   print(val);
+        //   return null;
+        // },
       ),
     );
   }

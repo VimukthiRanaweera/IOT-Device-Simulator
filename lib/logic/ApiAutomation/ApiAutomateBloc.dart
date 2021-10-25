@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:iot_device_simulator/MODEL/apiParaControllers.dart';
@@ -311,15 +311,22 @@ ApiAutomateRepo apiAutomateRepo;
         print(responseScenes);
         CreateExploreIDCSVFile idCsvFile = CreateExploreIDCSVFile(
             responseScenes);
-       await idCsvFile.createDeviceEvents(event.deviceId);
+        await idCsvFile.createDeviceEvents(event.deviceId);
         yield ApiExploreIdsSuccessed();
-      } catch (e) {
-        if (e.toString().replaceAll("Exception:", "") ==
-            "Get actions request fail")
+      }
+      on DeferredLoadException{
+        yield ApiExploreIDsErrorState("Invalid Device ID: ${event.deviceId}");
+
+      }
+      catch (e) {
+        if(e.toString().replaceAll("Exception:", "").trim() =="type '_InternalLinkedHashMap<String, dynamic>' is not a subtype of type 'Iterable<dynamic>'"){
+
+          yield ApiExploreIDsErrorState("Invalid Device ID: ${event.deviceId}");
+        }
+        else {
           yield ApiExploreIDsErrorState(
               e.toString().replaceAll("Exception:", ""));
-        else
-          yield ApiExploreIDsErrorState("Invalid Device ID: ${event.deviceId}");
+        }
       }
     }
 
@@ -345,12 +352,14 @@ ApiAutomateRepo apiAutomateRepo;
         yield ApiExploreIdsSuccessed();
       }
       catch (e) {
-        if (e.toString().replaceAll("Exception:", "").trim() ==
-            "Get actions request fail")
+        if(e.toString().replaceAll("Exception:", "").trim() =="type '_InternalLinkedHashMap<String, dynamic>' is not a subtype of type 'Iterable<dynamic>'"){
+
+          yield ApiExploreIDsErrorState("Invalid Device ID: ${event.deviceId}");
+        }
+        else {
           yield ApiExploreIDsErrorState(
               e.toString().replaceAll("Exception:", ""));
-        else
-          yield ApiExploreIDsErrorState("Invalid Device ID: ${event.deviceId}");
+        }
       }
     }
   }
